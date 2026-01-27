@@ -10,6 +10,9 @@
     <!-- Google Pay API -->
     <script async src="https://pay.google.com/gp/p/js/pay.js" onload="onGooglePayLoaded()"></script>
     
+    <!-- Razorpay SDK -->
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    
     <style>
         :root {
             --bg-deep: #080a0f;
@@ -133,7 +136,7 @@
 
                     <div class="mt-6">
                         <label class="block text-[10px] font-black text-gray-500 uppercase tracking-widest mb-4">Pay Using</label>
-                        <button onclick="onGooglePaymentButtonClicked()" class="w-full bg-white hover:bg-gray-100 text-black font-bold py-5 rounded-2xl flex items-center justify-center gap-3 transition-all shadow-lg">
+                        <button onclick="onGooglePaymentButtonClicked()" class="w-full bg-white hover:bg-gray-100 text-black font-bold py-5 rounded-2xl flex items-center justify-center gap-3 transition-all shadow-lg mb-4">
                             <svg width="41" height="17" viewBox="0 0 41 17" fill="none" xmlns="http://www.w3.org/2000/svg">
                                 <path d="M19.526 9.695h-1.628V4.77h2.747c.768 0 1.403.256 1.903.767.5.512.75 1.162.75 1.951 0 .81-.254 1.47-.76 1.982-.507.51-1.136.766-1.887.766h-1.125v-.542zm0-4.382v3.84h1.154c.522 0 .953-.178 1.293-.534.34-.356.51-.817.51-1.382 0-.545-.168-.995-.505-1.35-.337-.356-.766-.534-1.288-.534h-1.164v-.04zm5.748 4.382l-.03-1.095c-.146.366-.408.66-.786.883a2.24 2.24 0 0 1-1.193.334c-.612 0-1.13-.214-1.556-.642-.425-.428-.638-.96-.638-1.596 0-.687.235-1.234.704-1.642.47-.408 1.109-.612 1.918-.612h1.551v-.301c0-.377-.123-.683-.37-.917-.246-.235-.574-.352-.983-.352-.654 0-1.196.27-1.628.812l-.827-.679c.593-.752 1.397-1.128 2.414-1.128.726 0 1.327.207 1.802.622.475.415.713.965.713 1.652v3.661h-1.09zm-1.648-.863c.501 0 .923-.173 1.266-.52.343-.345.515-.774.515-1.285v-.444h-1.48c-.931 0-1.397.352-1.397 1.056 0 .316.113.577.34.783.226.206.514.31.863.31h-.107zm4.772-5.702l2.07 5.21 2.019-5.21h1.206l-3.164 7.728h-1.134l.984-2.318-2.196-5.41h1.215z" fill="#5F6368"/>
                                 <path d="M13.324 7.174c0-.454-.038-.892-.113-1.314H6.822v2.487h3.644a3.117 3.117 0 0 1-1.35 2.044v1.614h2.185c1.279-1.177 2.017-2.91 2.017-4.831h.006z" fill="#4285F4"/>
@@ -141,7 +144,15 @@
                                 <path d="M3.036 8.396a4.205 4.205 0 0 1 0-2.692V4.05H.815a6.997 6.997 0 0 0 0 6.287l2.221-1.754v.813z" fill="#FBBC04"/>
                                 <path d="M6.822 3.178c.994 0 1.886.341 2.588 1.012l1.94-1.94C10.174 1.145 8.648.5 6.822.5A6.999 6.999 0 0 0 .815 4.222L3.036 5.97c.532-1.599 2.024-2.793 3.786-2.793z" fill="#EA4335"/>
                             </svg>
-                            <span class="text-base">Pay via Google Pay</span>
+                            <span class="text-base">Pay with Google Pay</span>
+                        </button>
+
+                        <button onclick="payWithRazorpay()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-5 rounded-2xl flex items-center justify-center gap-3 transition-all shadow-lg">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M14.7 12.3l-2.7 2.7-9-9L5.7.3l9 9 3 3z" fill="currentColor"/>
+                                <path d="M18 6L6 18l3 3 12-12-3-3z" fill="currentColor"/>
+                            </svg>
+                            <span class="text-base">Pay with Razorpay</span>
                         </button>
                     </div>
                 </div>
@@ -242,22 +253,12 @@
         }
 
         function onGooglePaymentButtonClicked() {
-            const upiId = document.getElementById('upiInput').value;
             const amount = document.getElementById('claimAmount').value;
-
-            if (!upiId) {
-                alert('Please enter your UPI ID first');
-                return;
-            }
 
             if (!amount || amount <= 0) {
                 alert('Please enter a valid claim amount');
                 return;
             }
-
-            // Open Google Pay UPI payment link
-            const upiLink = `upi://pay?pa=${upiId}&pn=SmartClaim Pro&am=${amount}&cu=INR&tn=Insurance Claim Settlement`;
-            window.location.href = upiLink;
 
             // Log the action
             const logs = document.getElementById('logs');
@@ -279,6 +280,66 @@
                     window.location.href = 'receipt.html';
                 }, 1500);
             }, 3000);
+        }
+
+        function payWithRazorpay() {
+            const amount = document.getElementById('claimAmount').value;
+
+            if (!amount || amount <= 0) {
+                alert('Please enter a valid claim amount');
+                return;
+            }
+
+            const logs = document.getElementById('logs');
+            logs.prepend(Object.assign(document.createElement('div'), {
+                className: 'text-yellow-400 font-bold',
+                innerHTML: `> Initializing Razorpay payment...`
+            }));
+
+            var options = {
+                "key": "rzp_test_1DP5mmOlF5G5ag",
+                "amount": amount * 100,
+                "currency": "INR",
+                "name": "SmartClaim Pro",
+                "description": "Insurance Claim Settlement",
+                "handler": function (response){
+                    logs.prepend(Object.assign(document.createElement('div'), {
+                        className: 'text-green-400 font-bold',
+                        innerHTML: `> Payment Received via Razorpay ✓`
+                    }));
+                    
+                    setTimeout(() => {
+                        alert('Payment Received via Razorpay!\n\nPayment ID: ' + response.razorpay_payment_id + '\nAmount: ₹' + amount + '\n\nRedirecting to receipt...');
+                        window.location.href = 'receipt.html';
+                    }, 1000);
+                },
+                "prefill": {
+                    "name": "Customer Name",
+                    "email": "customer@example.com",
+                    "contact": "9999999999"
+                },
+                "notes": {
+                    "claim_type": "Insurance Settlement"
+                },
+                "theme": {
+                    "color": "#38bdf8"
+                },
+                "method": {
+                    "upi": true
+                }
+            };
+            
+            var rzp1 = new Razorpay(options);
+            
+            rzp1.on('payment.failed', function (response){
+                logs.prepend(Object.assign(document.createElement('div'), {
+                    className: 'text-red-400 font-bold',
+                    innerHTML: `> Payment failed: ${response.error.description}`
+                }));
+                alert('Payment Failed!\n\n' + response.error.description);
+            });
+            
+            rzp1.open();
         }
 
         function processPayment(paymentData) {
@@ -328,12 +389,7 @@
 
         function processFinalPayout() {
             if (currentMethod === 'upi') {
-                const upiId = document.getElementById('upiInput').value;
-                if (!upiId) {
-                    alert('Please enter your UPI ID');
-                    return;
-                }
-                onGooglePaymentButtonClicked();
+                alert('Please select a payment method (Google Pay or Razorpay) to proceed.');
                 return;
             }
 
