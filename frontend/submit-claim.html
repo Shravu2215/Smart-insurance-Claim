@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>File a Claim | SmartClaim.Pro</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --bg: #07090f;
+  --glass: rgba(255,255,255,0.04);
+  --border: rgba(255,255,255,0.08);
+  --blue: #38bdf8;
+}
+
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background: radial-gradient(1200px 600px at 20% -10%, #1e3a8a, var(--bg) 60%);
+  color: #f8fafc;
+}
+
+.glass {
+  background: var(--glass);
+  backdrop-filter: blur(24px);
+  border: 1px solid var(--border);
+}
+
+.flow-card {
+  transition: all .6s cubic-bezier(.22,1,.36,1);
+  position: relative;
+  overflow: hidden;
+}
+
+.flow-card::after {
+  content:'';
+  position:absolute;
+  inset:0;
+  background: linear-gradient(120deg, transparent 30%, rgba(56,189,248,.15), transparent 70%);
+  opacity:0;
+  transition:.6s;
+}
+
+.flow-card:hover::after { opacity:1; }
+.flow-card:hover { transform: translateY(-10px); }
+
+.step-num {
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: .25em;
+  color: var(--blue);
+}
+
+.reveal {
+  opacity:0;
+  transform: translateY(40px);
+  transition: .9s cubic-bezier(.22,1,.36,1);
+}
+.reveal.active {
+  opacity:1;
+  transform: translateY(0);
+}
+</style>
+</head>
+
+<body class="pb-40">
+
+<!-- NAV -->
+<nav class="sticky top-0 z-50 bg-black/40 backdrop-blur-xl border-b border-white/10">
+  <div class="max-w-7xl mx-auto px-6 h-14 flex items-center justify-between">
+    <div class="font-extrabold text-xl">
+      SmartClaim<span class="text-sky-400">.Pro</span>
+    </div>
+    <div class="hidden md:flex gap-8 text-sm font-bold text-gray-300">
+      <a href="home.html">Home</a>
+      <a href="how-it-works.html">Process</a>
+      <a href="submit-claim.html" class="text-white">File Claim</a>
+      <a href="history.html">History</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<header class="max-w-6xl mx-auto px-6 pt-16 pb-20 text-center reveal">
+  <h1 class="text-5xl md:text-6xl font-extrabold leading-tight">
+    Claim Approval  
+    <span class="text-sky-400">Starts at the Accident.</span>
+  </h1>
+  <p class="mt-6 text-gray-300 max-w-2xl mx-auto text-lg">
+    No garages. No paperwork chaos.  
+    File your claim on the spot and let AI handle the rest.
+  </p>
+
+  <a href="incident.html"
+     class="inline-block mt-10 bg-sky-500 hover:bg-sky-400 text-black font-black px-10 py-5 rounded-[24px] tracking-[0.3em] text-[11px] transition shadow-2xl">
+     START CLAIM
+  </a>
+</header>
+
+<!-- FLOW -->
+<section class="max-w-7xl mx-auto px-6 space-y-24">
+
+  <!-- STEP GRID -->
+  <div class="grid md:grid-cols-3 gap-10 reveal">
+
+    <!-- STEP 1 -->
+    <div class="glass flow-card rounded-3xl p-8">
+      <div class="step-num">STEP 01</div>
+      <h3 class="text-2xl font-bold mt-4">On-Spot Filing</h3>
+      <p class="text-gray-300 mt-3">
+        Enter incident details immediately after the accident.
+        Location, driver, vehicle, damage. No delay.
+      </p>
+      <div class="text-5xl mt-6">📍</div>
+    </div>
+
+    <!-- STEP 2 -->
+    <div class="glass flow-card rounded-3xl p-8">
+      <div class="step-num">STEP 02</div>
+      <h3 class="text-2xl font-bold mt-4">Live Evidence Capture</h3>
+      <p class="text-gray-300 mt-3">
+        Upload photos and videos directly from the accident spot.
+        AI verifies damage authenticity instantly.
+      </p>
+      <div class="text-5xl mt-6">📸</div>
+    </div>
+
+    <!-- STEP 3 -->
+    <div class="glass flow-card rounded-3xl p-8">
+      <div class="step-num">STEP 03</div>
+      <h3 class="text-2xl font-bold mt-4">AI Cost Estimation</h3>
+      <p class="text-gray-300 mt-3">
+        No garage visit needed. AI estimates repair cost,
+        checks policy limits, and predicts approval.
+      </p>
+      <div class="text-5xl mt-6">🧠</div>
+    </div>
+
+  </div>
+
+  <!-- FRAUD LOGIC -->
+  <div class="glass rounded-3xl p-12 reveal">
+    <h2 class="text-4xl font-extrabold text-center">
+      Fraud Intelligence Engine
+    </h2>
+    <p class="text-gray-400 text-center mt-4 max-w-xl mx-auto">
+      Every claim is scored in real time using document validation,
+      behavior patterns, and historical honesty.
+    </p>
+
+    <div class="grid md:grid-cols-3 gap-8 mt-14">
+
+      <div class="glass rounded-2xl p-6 border border-green-500/40">
+        <h4 class="text-green-400 font-bold mb-3">GREEN &lt; 30</h4>
+        <ul class="text-sm text-gray-300 space-y-2">
+          <li>✔ Verified documents</li>
+          <li>✔ Policy match</li>
+          <li>✔ Normal limits</li>
+        </ul>
+        <button class="mt-6 w-full bg-green-500 text-black font-black py-3 rounded-xl">
+          Instant UPI Payout
+        </button>
+      </div>
+
+      <div class="glass rounded-2xl p-6 border border-yellow-400/40">
+        <h4 class="text-yellow-400 font-bold mb-3">YELLOW 30–70</h4>
+        <ul class="text-sm text-gray-300 space-y-2">
+          <li>⚠ Late reporting</li>
+          <li>⚠ High estimate</li>
+          <li>⚠ Ownership mismatch</li>
+        </ul>
+        <button class="mt-6 w-full bg-yellow-400 text-black font-black py-3 rounded-xl">
+          Request Human Review
+        </button>
+      </div>
+
+      <div class="glass rounded-2xl p-6 border border-red-500/40">
+        <h4 class="text-red-400 font-bold mb-3">RED &gt; 70</h4>
+        <ul class="text-sm text-gray-300 space-y-2">
+          <li>✖ Fraud indicators</li>
+          <li>✖ Inflated bills</li>
+          <li>✖ Policy abuse</li>
+        </ul>
+        <button class="mt-6 w-full bg-red-500 text-white font-black py-3 rounded-xl">
+          Claim Rejected
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+</section>
+
+<script>
+const observer = new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting) e.target.classList.add('active');
+  })
+},{threshold:.2});
+
+document.querySelectorAll('.reveal').forEach(el=>observer.observe(el));
+</script>
+
+</body>
+</html>

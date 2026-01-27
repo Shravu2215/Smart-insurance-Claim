@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neural Locker | First-Time Setup</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root { --bg: #080a0f; --accent: #38bdf8; --glass: rgba(255, 255, 255, 0.02); }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: var(--bg); color: white; min-height: 100vh; overflow-x: hidden; }
+        .glass-panel { background: var(--glass); backdrop-filter: blur(40px) saturate(180%); border: 1px solid rgba(255, 255, 255, 0.08); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); transition: 0.3s; }
+        .glass-panel:hover { border-color: var(--accent); transform: translateY(-5px); }
+        .ai-terminal { font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--accent); opacity: 0.7; }
+        .status-pill { font-size: 9px; font-weight: 800; text-transform: uppercase; padding: 2px 8px; border-radius: 99px; }
+        .upload-input { display: none; }
+        .primary-upload { cursor: pointer; background: #38bdf8; color: black; padding: 12px; border-radius: 12px; font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; transition: 0.2s; width: 100%; text-align: center; display: block; }
+        .primary-upload:hover { background: #7dd3fc; transform: scale(1.02); }
+    </style>
+</head>
+<body>
+
+    <div class="fixed inset-0 pointer-events-none z-[-1] opacity-20">
+        <div class="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-sky-500 rounded-full blur-[120px]"></div>
+    </div>
+
+    <nav class="border-b border-white/5 backdrop-blur-xl sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-8 py-5 flex justify-between items-center">
+            <div class="text-xl font-black italic uppercase">SmartClaim<span class="text-sky-400 not-italic">.Pro</span></div>
+            <div class="flex items-center gap-8 text-[10px] font-extrabold uppercase tracking-widest text-gray-400">
+                <a href="home.html" class="hover:text-white transition">Home</a>
+                <a href="locker.html" class="text-sky-400">Setup Locker</a>
+                <a href="submit-claim.html" class="hover:text-white transition">File Claim</a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto px-8 py-16">
+        <div class="mb-16">
+            <h1 class="text-5xl font-black uppercase italic tracking-tighter">Initialize <span class="text-sky-400 not-italic">Locker.</span></h1>
+            <p class="text-gray-500 mt-2 font-medium italic">Secure your assets in the neural ledger for instant claim approvals.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            
+            <div class="glass-panel p-8 rounded-[35px]">
+                <div class="flex justify-between items-start mb-8">
+                    <div class="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center text-xl">🚗</div>
+                    <span class="status-pill bg-white/5 text-gray-500" id="status-rc">Pending Upload</span>
+                </div>
+                <h3 class="font-black uppercase italic text-sm mb-1 tracking-tight">Vehicle RC</h3>
+                <div class="p-4 bg-black/40 rounded-2xl border border-white/5 mb-6 ai-terminal">
+                    > SYSTEM READY<br>> AWAITING SCAN<br>> 15-YR EXPIRY TRACKER
+                </div>
+                <input type="file" id="up-rc" class="upload-input" onchange="processFirstUpload('rc')">
+                <label for="up-rc" class="primary-upload">Upload & AI Scan</label>
+            </div>
+
+            <div class="glass-panel p-8 rounded-[35px]">
+                <div class="flex justify-between items-start mb-8">
+                    <div class="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center text-xl">🪪</div>
+                    <span class="status-pill bg-white/5 text-gray-500" id="status-dl">Pending Upload</span>
+                </div>
+                <h3 class="font-black uppercase italic text-sm mb-1 tracking-tight">Driver License</h3>
+                <div class="p-4 bg-black/40 rounded-2xl border border-white/5 mb-6 ai-terminal">
+                    > SYSTEM READY<br>> AWAITING IDENTITY MAPPING<br>> VALIDITY MONITOR
+                </div>
+                <input type="file" id="up-dl" class="upload-input" onchange="processFirstUpload('dl')">
+                <label for="up-dl" class="primary-upload">Upload & AI Scan</label>
+            </div>
+
+            <div class="glass-panel p-8 rounded-[35px]">
+                <div class="flex justify-between items-start mb-8">
+                    <div class="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center text-xl">📄</div>
+                    <span class="status-pill bg-white/5 text-gray-500" id="status-policy">Pending Upload</span>
+                </div>
+                <h3 class="font-black uppercase italic text-sm mb-1 tracking-tight">Policy Document</h3>
+                <div class="p-4 bg-black/40 rounded-2xl border border-white/5 mb-6 ai-terminal">
+                    > SYSTEM READY<br>> AWAITING POLICY ATTESTATION<br>> RENEWAL ALERTS
+                </div>
+                <input type="file" id="up-policy" class="upload-input" onchange="processFirstUpload('policy')">
+                <label for="up-policy" class="primary-upload">Upload & AI Scan</label>
+            </div>
+
+            <div class="glass-panel p-8 rounded-[35px]">
+                <div class="flex justify-between items-start mb-8">
+                    <div class="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center text-xl">👤</div>
+                    <span class="status-pill bg-white/5 text-gray-500" id="status-aadhar">Pending Upload</span>
+                </div>
+                <h3 class="font-black uppercase italic text-sm mb-1 tracking-tight">Aadhar Card</h3>
+                <div class="p-4 bg-black/40 rounded-2xl border border-white/5 mb-6 ai-terminal">
+                    > SYSTEM READY<br>> AWAITING BIOMETRIC LINK<br>> KYC LEDGER
+                </div>
+                <input type="file" id="up-aadhar" class="upload-input" onchange="processFirstUpload('aadhar')">
+                <label for="up-aadhar" class="primary-upload">Upload & AI Scan</label>
+            </div>
+
+            <div class="glass-panel p-8 rounded-[35px]">
+                <div class="flex justify-between items-start mb-8">
+                    <div class="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center text-xl">🗂️</div>
+                    <span class="status-pill bg-white/5 text-gray-500" id="status-id">Pending Upload</span>
+                </div>
+                <h3 class="font-black uppercase italic text-sm mb-1 tracking-tight">PAN / Voter ID</h3>
+                <div class="p-4 bg-black/40 rounded-2xl border border-white/5 mb-6 ai-terminal">
+                    > SYSTEM READY<br>> AWAITING TAX/VOTER LINK<br>> PACKET VERIFICATION
+                </div>
+                <input type="file" id="up-id" class="upload-input" onchange="processFirstUpload('id')">
+                <label for="up-id" class="primary-upload">Upload & AI Scan</label>
+            </div>
+
+            <div class="glass-panel p-8 rounded-[35px]">
+                <div class="flex justify-between items-start mb-8">
+                    <div class="w-10 h-10 bg-white/5 rounded-xl flex items-center justify-center text-xl">💨</div>
+                    <span class="status-pill bg-white/5 text-gray-500" id="status-puc">Pending Upload</span>
+                </div>
+                <h3 class="font-black uppercase italic text-sm mb-1 tracking-tight">PUC Certificate</h3>
+                <div class="p-4 bg-black/40 rounded-2xl border border-white/5 mb-6 ai-terminal">
+                    > SYSTEM READY<br>> AWAITING EMISSION SCAN<br>> 6-MONTH MONITOR
+                </div>
+                <input type="file" id="up-puc" class="upload-input" onchange="processFirstUpload('puc')">
+                <label for="up-puc" class="primary-upload">Upload & AI Scan</label>
+            </div>
+
+        </div>
+
+        <div class="mt-16 glass-panel p-10 rounded-[50px] border-sky-500/10">
+            <p class="text-[10px] text-gray-500 font-bold uppercase tracking-widest text-center mb-0">
+                AI Vault ensures zero claim rejections. Save money—don't spend on stupid penalty fees for expired documents. 
+            </p>
+        </div>
+    </main>
+
+    <script>
+        function processFirstUpload(type) {
+            const status = document.getElementById(`status-${type}`);
+            const btn = document.querySelector(`label[for="up-${type}"]`);
+            
+            if(status) {
+                btn.innerText = "Scanning File...";
+                status.innerText = "In Progress";
+                status.className = "status-pill bg-sky-500/10 text-sky-400 animate-pulse";
+                
+                setTimeout(() => {
+                    status.innerText = "Neural Verified ✓";
+                    status.className = "status-pill bg-green-500/20 text-green-400";
+                    btn.innerText = "File Secured";
+                    btn.style.background = "#22c55e";
+                    btn.style.color = "white";
+                    btn.style.pointerEvents = "none";
+                }, 2500);
+            }
+        }
+    </script>
+</body>
+</html>

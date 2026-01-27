@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Incident Intelligence | SmartClaim.Pro</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+body {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  background: radial-gradient(1200px 600px at 15% -10%, #0ea5e9, #020617 55%);
+  color: #f8fafc;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+.navbar {
+  backdrop-filter: blur(12px);
+  background: rgba(0,0,0,0.6);
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+.glass {
+  background: rgba(255,255,255,0.04);
+  backdrop-filter: blur(30px) saturate(180%);
+  border: 1px solid rgba(255,255,255,0.08);
+  box-shadow: 0 20px 60px -10px rgba(0,0,0,0.5);
+}
+
+input, select, textarea {
+  background: rgba(0,0,0,0.3) !important;
+  border: 1px solid rgba(255,255,255,0.1) !important;
+  color: white !important;
+}
+
+.step-pill {
+  padding: 0.5rem 1.5rem;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  background: rgba(255,255,255,0.05);
+  color: #4b5563;
+  text-transform: uppercase;
+}
+
+.step-pill.active {
+  background: #38bdf8;
+  color: white;
+}
+
+.inline-ai-hint {
+  font-size: 10px;
+  color: #a5b4fc;
+  margin-top: 0.25rem;
+  transition: color 0.3s;
+}
+
+button.primary {
+  background: linear-gradient(90deg,#38bdf8,#0ea5e9);
+  color: black;
+  font-weight: 900;
+  padding: 1rem 2rem;
+  border-radius: 24px;
+  width: 100%;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  box-shadow: 0 15px 40px rgba(56,189,248,0.35);
+  transition: all 0.3s ease;
+}
+button.primary:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 50px rgba(56,189,248,0.45);
+}
+
+.ambient-bg {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background: radial-gradient(circle at 20% 30%, rgba(56,189,248,0.08) 0%, transparent 40%),
+              radial-gradient(circle at 80% 70%, rgba(139,92,246,0.08) 0%, transparent 40%);
+}
+
+</style>
+</head>
+<body>
+
+<div class="ambient-bg"></div>
+
+<nav class="sticky top-0 z-50 bg-black/40 backdrop-blur-xl border-b border-white/10">
+  <div class="max-w-7xl mx-auto px-6 h-14 flex items-center justify-between">
+    <div class="font-extrabold text-xl">
+      SmartClaim<span class="text-sky-400">.Pro</span>
+    </div>
+    <div class="hidden md:flex gap-8 text-sm font-bold text-gray-300">
+      <a href="home.html">Home</a>
+      <a href="how-it-works.html">Process</a>
+      <a href="submit-claim.html" class="text-white">File Claim</a>
+      <a href="history.html">History</a>
+    </div>
+  </div>
+</nav>
+
+<header class="max-w-6xl mx-auto px-8 pt-16 pb-14 text-center">
+  <h1 class="text-5xl font-extrabold leading-tight">
+    On-the-Spot Claim <span class="text-sky-400 italic">Filing</span>
+  </h1>
+  <p class="text-gray-300 max-w-2xl mx-auto mt-4">
+    Instantly capture incident details, upload media, and let AI estimate costs and fraud risk in real-time.  
+    Approved claims are auto-directed to UPI payout and nearest garage collection.
+  </p>
+</header>
+
+<div class="max-w-6xl mx-auto px-8 mb-16 flex justify-between">
+  <div class="step-pill active">1. Incident</div>
+  <div class="step-pill">2. Upload Docs</div>
+  <div class="step-pill">3. AI Analysis</div>
+  <div class="step-pill">4. Track & Payout</div>
+</div>
+
+<main class="max-w-6xl mx-auto px-8">
+  <div class="glass rounded-[36px] p-10 space-y-10">
+
+    <h2 class="text-3xl font-extrabold">Incident Intelligence Input</h2>
+
+    <div class="grid md:grid-cols-2 gap-6">
+      <div>
+        <label class="text-[11px] font-bold text-gray-400 uppercase">Vehicle Type</label>
+        <select id="vehicleType" class="w-full p-4 rounded-2xl mt-2">
+          <option>Car</option>
+          <option>Bike</option>
+        </select>
+        <div class="inline-ai-hint">AI uses type for repair estimate & risk calculation</div>
+      </div>
+      <div>
+        <label class="text-[11px] font-bold text-gray-400 uppercase">Registration Number</label>
+        <input type="text" id="regNumber" class="w-full p-4 rounded-2xl mt-2" placeholder="MH-12-AB-1234">
+        <div class="inline-ai-hint">Cross-checked against policy & fraud history</div>
+      </div>
+    </div>
+
+    <div class="grid md:grid-cols-2 gap-6">
+      <div>
+        <label class="text-[11px] font-bold text-gray-400 uppercase">Incident Type</label>
+        <select id="incidentType" class="w-full p-4 rounded-2xl mt-2">
+          <option>Road Accident</option>
+          <option>Vehicle Theft</option>
+          <option>Natural Disaster</option>
+        </select>
+        <div class="inline-ai-hint">High-risk types flagged instantly</div>
+      </div>
+      <div>
+        <label class="text-[11px] font-bold text-gray-400 uppercase">Incident Date</label>
+        <input type="date" id="incidentDate" class="w-full p-4 rounded-2xl mt-2">
+      </div>
+    </div>
+
+    <div class="grid md:grid-cols-2 gap-6">
+      <div>
+        <label class="text-[11px] font-bold text-gray-400 uppercase">Driver is Policy Owner?</label>
+        <select id="isOwner" class="w-full p-4 rounded-2xl mt-2">
+          <option>Yes</option>
+          <option>No</option>
+        </select>
+        <div class="inline-ai-hint">Ownership mismatch triggers yellow review</div>
+      </div>
+      <div>
+        <label class="text-[11px] font-bold text-gray-400 uppercase">Driver Name</label>
+        <input type="text" id="driverName" class="w-full p-4 rounded-2xl mt-2" placeholder="Full Name">
+      </div>
+    </div>
+
+    <div>
+      <label class="text-[11px] font-bold text-gray-400 uppercase">Incident Location </label>
+      <input type="text" id="location" class="w-full p-4 rounded-2xl mt-2" placeholder="Enter Location">
+      <div class="inline-ai-hint">AI validates location for fraud & nearby garage allocation</div>
+    </div>
+
+    <div>
+      <label class="text-[11px] font-bold text-gray-400 uppercase">Description </label>
+      <textarea id="description" class="w-full p-4 rounded-2xl mt-2 h-28 resize-none"
+        placeholder="Describe incident."></textarea>
+      <div class="inline-ai-hint">On-the-spot AI will estimate cost and assign fraud score</div>
+    </div>
+
+    <button class="primary mt-6" onclick="window.location.href='document.html'">
+      CONTINUE TO EVIDENCE VAULT
+    </button>
+
+  </div>
+</main>
+
+<script>
+  // Select all inputs, selects, and textareas
+  const inputs = document.querySelectorAll('input, select, textarea');
+
+  // Load saved data from localStorage on page load
+  window.addEventListener('load', () => {
+    inputs.forEach(input => {
+      const savedValue = localStorage.getItem(input.id);
+      if (savedValue) {
+        input.value = savedValue;
+      }
+    });
+  });
+
+  // Save data to localStorage whenever a user changes a value
+  inputs.forEach(input => {
+    input.addEventListener('input', () => {
+      localStorage.setItem(input.id, input.value);
+    });
+  });
+</script>
+
+</body>
+</html>

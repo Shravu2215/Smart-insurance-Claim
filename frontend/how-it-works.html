@@ -1,0 +1,258 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claim Intelligence Flow | SmartClaim.Pro</title>
+
+<script src="https://unpkg.com/lucide@latest"></script>
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+<style>
+body {
+  font-family: 'Inter', sans-serif;
+  background: radial-gradient(1200px 600px at 10% -10%, #1e3a8a, #020617 60%);
+  color: #f8fafc;
+}
+
+.glass {
+  background: rgba(255,255,255,0.04);
+  backdrop-filter: blur(18px);
+  border: 1px solid rgba(255,255,255,0.08);
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: all 0.8s cubic-bezier(.22,1,.36,1);
+}
+.reveal.active {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.flow-card {
+  transition: transform .5s ease, box-shadow .5s ease;
+}
+.flow-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 40px 120px rgba(56,189,248,.25);
+}
+
+.icon-float {
+  animation: float 4s ease-in-out infinite;
+  filter: drop-shadow(0 0 30px rgba(56,189,248,0.45));
+}
+
+@keyframes float {
+  0%,100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.status-green { border-color: rgba(34,197,94,.4); }
+.status-yellow { border-color: rgba(250,204,21,.4); }
+.status-red { border-color: rgba(239,68,68,.4); }
+
+.badge {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .25em;
+}
+</style>
+</head>
+
+<body class="pb-40">
+
+<!-- NAV -->
+<nav class="sticky top-0 z-50 bg-black/40 backdrop-blur-xl border-b border-white/10">
+  <div class="max-w-7xl mx-auto px-6 h-14 flex items-center justify-between">
+    <div class="font-extrabold tracking-tight text-xl">
+      SmartClaim<span class="text-sky-400">.Pro</span>
+    </div>
+    <div class="hidden md:flex gap-8 text-sm font-semibold text-gray-300">
+      <a href="home.html" class="hover:text-white">Home</a>
+      <a href="how-it-works.html" class="text-white">Process</a>
+      <a href="submit-claim.html" class="hover:text-white">File Claim</a>
+      <a href="history.html" class="hover:text-white">History</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<header class="max-w-6xl mx-auto px-6 pt-20 pb-24 text-center">
+  <h1 class="text-5xl md:text-6xl font-extrabold mb-6">
+    One Accident.<br>
+    <span class="text-sky-400">One Intelligent Flow.</span>
+  </h1>
+  <p class="text-gray-300 max-w-2xl mx-auto text-lg">
+    From roadside crash to verified payout, every step is automated,
+    scored, and transparently tracked.
+  </p>
+</header>
+
+<!-- FLOW -->
+<main class="space-y-28 max-w-6xl mx-auto px-6">
+
+<!-- STEP 1 -->
+<section class="reveal">
+  <div class="glass flow-card rounded-3xl p-10 grid md:grid-cols-2 gap-10 items-center">
+    <div>
+      <span class="badge text-sky-400">STEP 01</span>
+      <h2 class="text-3xl font-bold mt-4 mb-4">Incident Details</h2>
+      <p class="text-gray-300">
+        Claim filed directly at the accident spot with vehicle details,
+        crash context, driver identity, and precise location.
+      </p>
+    </div>
+    <div class="flex justify-center">
+      <i data-lucide="map-pin" class="w-24 h-24 text-sky-400 icon-float"></i>
+    </div>
+  </div>
+</section>
+
+<!-- STEP 2 -->
+<section class="reveal">
+  <div class="glass flow-card rounded-3xl p-10 grid md:grid-cols-2 gap-10 items-center">
+    <div class="order-2 md:order-1 flex justify-center">
+      <i data-lucide="file-check" class="w-24 h-24 text-sky-400 icon-float"></i>
+    </div>
+    <div class="order-1 md:order-2 text-right">
+      <span class="badge text-sky-400">STEP 02</span>
+      <h2 class="text-3xl font-bold mt-4 mb-4">Document Upload</h2>
+      <p class="text-gray-300">
+        RC, DL, policy documents, bills, and expected claim amount
+        verified instantly using OCR.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- STEP 3 -->
+<section class="reveal">
+  <div class="glass flow-card rounded-3xl p-10 grid md:grid-cols-2 gap-10 items-center">
+    <div>
+      <span class="badge text-sky-400">STEP 03</span>
+      <h2 class="text-3xl font-bold mt-4 mb-4">AI Damage & Cost Analysis</h2>
+      <p class="text-gray-300">
+        AI analyzes on-spot photos and videos, estimates repair cost,
+        checks policy limits, and generates fraud score.
+      </p>
+    </div>
+    <div class="flex justify-center">
+      <i data-lucide="brain-circuit" class="w-24 h-24 text-sky-400 icon-float"></i>
+    </div>
+  </div>
+</section>
+
+<!-- STEP 4 -->
+<section class="reveal">
+  <div class="glass rounded-3xl p-10 space-y-10">
+
+    <div class="text-center">
+      <span class="badge text-sky-400">STEP 04</span>
+      <h2 class="text-4xl font-bold mt-4">Fraud Intelligence Engine</h2>
+      <p class="text-gray-400 mt-3">
+        Claims auto-routed based on AI risk score.
+      </p>
+    </div>
+
+    <div class="grid md:grid-cols-3 gap-8">
+
+      <!-- GREEN -->
+      <div class="glass status-green rounded-2xl p-6">
+        <i data-lucide="shield-check" class="w-10 h-10 text-green-400 mb-4"></i>
+        <h3 class="font-bold text-green-400 mb-3">GREEN (Score &lt; 30)</h3>
+        <ul class="text-sm text-gray-300 space-y-2">
+          <li>✔ Documents verified</li>
+          <li>✔ Driver matches policy</li>
+          <li>✔ Within limits</li>
+        </ul>
+        <button class="mt-5 w-full bg-green-500 text-black font-bold py-3 rounded-xl">
+          Proceed to UPI Payout
+        </button>
+      </div>
+
+      <!-- YELLOW -->
+      <div class="glass status-yellow rounded-2xl p-6">
+        <i data-lucide="alert-triangle" class="w-10 h-10 text-yellow-400 mb-4"></i>
+        <h3 class="font-bold text-yellow-400 mb-3">YELLOW (30–70)</h3>
+        <ul class="text-sm text-gray-300 space-y-2">
+          <li>⚠ Unknown garage bill</li>
+          <li>⚠ Late reporting</li>
+          <li>⚠ Driver mismatch</li>
+        </ul>
+        <button class="mt-5 w-full bg-yellow-400 text-black font-bold py-3 rounded-xl">
+          Request Human Review
+        </button>
+      </div>
+
+      <!-- RED -->
+      <div class="glass status-red rounded-2xl p-6">
+        <i data-lucide="shield-x" class="w-10 h-10 text-red-400 mb-4"></i>
+        <h3 class="font-bold text-red-400 mb-3">RED (&gt; 70)</h3>
+        <ul class="text-sm text-gray-300 space-y-2">
+          <li>✖ High fraud risk</li>
+          <li>✖ Policy mismatch</li>
+          <li>✖ Inflated cost</li>
+        </ul>
+        <button class="mt-5 w-full bg-red-500 text-white font-bold py-3 rounded-xl">
+          Claim Rejected
+        </button>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- STEP 5 -->
+<section class="reveal">
+  <div class="glass flow-card rounded-3xl p-10 grid md:grid-cols-2 gap-10 items-center">
+    <div>
+      <span class="badge text-sky-400">STEP 05</span>
+      <h2 class="text-3xl font-bold mt-4 mb-4">Claim Tracking & History</h2>
+      <p class="text-gray-300">
+        Real-time status tracking, fraud score visibility,
+        payouts, and full claim history.
+      </p>
+    </div>
+    <div class="flex justify-center">
+      <i data-lucide="activity" class="w-24 h-24 text-sky-400 icon-float"></i>
+    </div>
+  </div>
+</section>
+
+<!-- STEP 6 -->
+<section class="reveal">
+  <div class="glass flow-card rounded-3xl p-10 grid md:grid-cols-2 gap-10 items-center">
+    <div class="order-2 md:order-1 flex justify-center">
+      <i data-lucide="layout-dashboard" class="w-24 h-24 text-sky-400 icon-float"></i>
+    </div>
+    <div class="order-1 md:order-2 text-right">
+      <span class="badge text-sky-400">STEP 06</span>
+      <h2 class="text-3xl font-bold mt-4 mb-4">Insurer Dashboard</h2>
+      <p class="text-gray-300">
+        Insurers monitor daily, weekly, monthly claims,
+        approvals, pending reviews, and fraud rejections.
+      </p>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script>
+lucide.createIcons();
+
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) e.target.classList.add('active');
+  });
+}, { threshold: 0.2 });
+
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>

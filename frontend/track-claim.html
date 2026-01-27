@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neural Status | SmartClaim Pro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-deep: #080a0f;
+            --accent-blue: #38bdf8;
+            --glass: rgba(255, 255, 255, 0.015);
+            --border: rgba(255, 255, 255, 0.08);
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-deep);
+            color: white;
+            min-height: 100vh;
+        }
+        .nav-container {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .mesh-bg {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
+            background: radial-gradient(at 0% 0%, rgba(56, 189, 248, 0.1) 0px, transparent 50%),
+                        radial-gradient(at 100% 100%, rgba(129, 140, 248, 0.1) 0px, transparent 50%);
+            filter: blur(80px);
+        }
+
+        .glass-panel {
+            background: var(--glass);
+            backdrop-filter: blur(40px) saturate(180%);
+            border: 1px solid var(--border);
+        }
+
+        .timeline-dot { width: 12px; height: 12px; border-radius: 50%; background: #1f2937; position: relative; z-index: 10; }
+        .timeline-dot.active { background: var(--accent-blue); box-shadow: 0 0 15px var(--accent-blue); }
+        .timeline-dot.warning { background: #f59e0b; box-shadow: 0 0 15px #f59e0b; }
+        .timeline-dot.danger { background: #ef4444; box-shadow: 0 0 15px #ef4444; }
+
+        .timeline-line { width: 2px; background: #1f2937; position: absolute; top: 0; bottom: 0; left: 5px; z-index: 0; }
+        .line-active { background: var(--accent-blue); }
+        .line-warning { background: #f59e0b; }
+        .line-danger { background: #ef4444; }
+
+        .reason-item { background: rgba(255,255,255,0.03); border-radius: 12px; padding: 12px; border: 1px solid rgba(255,255,255,0.05); margin-bottom: 8px; }
+    </style>
+</head>
+<body class="pb-20">
+
+    <div class="mesh-bg"></div>
+
+    <nav class="nav-container sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-8 py-4 flex justify-between items-center h-20">
+            <div class="text-2xl font-black tracking-tighter text-white uppercase italic">
+                SmartClaim<span class="text-sky-400 not-italic">.Pro</span>
+            </div>
+            
+            <div class="flex items-center space-x-10 text-gray-300 text-sm font-bold">
+                <a href="home.html" class="hover:text-white transition">Home</a>
+                <a href="how-it-works.html" class="hover:text-white transition">Process</a>
+                <a href="submit-claim.html" id="nav-submit-claim" class="hover:text-white transition">File Claim</a>
+                
+                <a href="history.html" class="hover:text-white transition flex items-center gap-2">
+                    <span class="w-1.5 h-1.5 rounded-full bg-sky-500/50"></span>
+                    Claim History
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-6xl mx-auto px-8 mt-12 grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        <div class="space-y-6">
+            <div class="glass-panel p-8 rounded-[32px]">
+                <div class="flex justify-between items-start mb-6">
+                    <div>
+                        <p class="text-[9px] font-black text-gray-500 uppercase tracking-widest mb-1">AI Verdict</p>
+                        <h2 id="final-verdict" class="text-xl font-bold italic">ANALYZING...</h2>
+                    </div>
+                    <div id="score-badge" class="px-3 py-1 rounded-full text-[10px] font-black font-mono">--/100</div>
+                </div>
+
+                <div class="space-y-4 pt-6 border-t border-white/10">
+                    <div class="flex justify-between text-xs">
+                        <span class="text-gray-500">Claim Amount</span>
+                        <span id="amt-display" class="font-bold">₹0</span>
+                    </div>
+                    <div class="flex justify-between text-xs">
+                        <span class="text-gray-500">Risk Profile</span>
+                        <span id="risk-label" class="font-bold">Processing</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="glass-panel p-6 rounded-[24px] border-sky-500/10">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="w-8 h-8 bg-sky-500/20 rounded-lg flex items-center justify-center text-sm">🤖</div>
+                    <span class="text-[10px] font-black uppercase text-gray-400">Neural Insights</span>
+                </div>
+                <p id="ai-comment" class="text-[11px] text-gray-400 leading-relaxed italic">"Awaiting triage score..."</p>
+            </div>
+        </div>
+
+        <div class="lg:col-span-2 space-y-8">
+            <div class="glass-panel p-10 rounded-[40px]">
+                <h3 class="text-2xl font-black mb-10 tracking-tighter uppercase italic">Settlement <span class="text-sky-400 not-italic">Triage.</span></h3>
+                
+                <div class="relative space-y-12 ml-4">
+                    <div class="timeline-line"></div>
+                    
+                    <div class="flex gap-8 relative">
+                        <div class="timeline-dot active"></div>
+                        <div>
+                            <h4 class="text-sm font-bold text-sky-400">Claim Registered</h4>
+                            <p class="text-xs text-gray-500">FNOL entry validated.</p>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-8 relative">
+                        <div class="timeline-dot active"></div>
+                        <div class="timeline-line h-12 -top-12 line-active"></div>
+                        <div>
+                            <h4 class="text-sm font-bold text-sky-400">Docs Authenticated</h4>
+                            <p class="text-xs text-gray-500">OCR content verified.</p>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-8 relative">
+                        <div id="stage-3-dot" class="timeline-dot"></div>
+                        <div id="line-3" class="timeline-line h-12 -top-12"></div>
+                        <div>
+                            <h4 id="stage-3-title" class="text-sm font-bold text-white">Neural Analysis</h4>
+                            <p id="stage-3-desc" class="text-xs text-gray-500">Detecting fraud patterns...</p>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-8 relative">
+                        <div id="stage-4-dot" class="timeline-dot"></div>
+                        <div id="line-4" class="timeline-line h-12 -top-12"></div>
+                        <div>
+                            <h4 id="stage-4-title" class="text-sm font-bold text-white">Execution</h4>
+                            <p id="stage-4-desc" class="text-xs text-gray-500">Awaiting system verdict.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="action-area" class="mt-12"></div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        window.onload = function() {
+            // 1. DATA RETRIEVAL
+            const amt = parseInt(localStorage.getItem('claimedAmount') || 0);
+            const score = parseInt(localStorage.getItem('fraudScore') || 0);
+            const docsMissing = localStorage.getItem('docsStatus') === 'missing'; // Logic for missing docs
+
+            const verdict = document.getElementById('final-verdict');
+            const scoreBadge = document.getElementById('score-badge');
+            const riskLabel = document.getElementById('risk-label');
+            const actionArea = document.getElementById('action-area');
+            const aiComment = document.getElementById('ai-comment');
+            
+            document.getElementById('amt-display').innerText = "₹" + amt.toLocaleString();
+            scoreBadge.innerText = score + "/100";
+
+            // --- REVISED CONDITIONS ---
+
+            // CASE A: RED FLAG (Amount > 75,000 OR any Document Missing OR Fraud Score >= 82)
+            if (amt > 75000 || docsMissing || score >= 82) {
+                verdict.innerText = "FRAUD REJECTED";
+                verdict.className = "text-xl font-bold italic text-red-400";
+                scoreBadge.className = "px-3 py-1 rounded-full text-[10px] font-black bg-red-500/20 text-red-400 border border-red-500/20";
+                riskLabel.innerText = docsMissing ? "Documentation Failure" : "High Risk Fraud Detected";
+                riskLabel.className = "font-bold text-red-400";
+                aiComment.innerText = "Critical anomalies found. Execution halted. Save your money—don't spend on stupid appeals for invalid claims.";
+
+                document.getElementById('stage-3-dot').className = "timeline-dot danger";
+                document.getElementById('line-3').className = "timeline-line h-12 -top-12 line-danger";
+                document.getElementById('stage-3-title').className = "text-sm font-bold text-red-400";
+
+                actionArea.innerHTML = `
+                    <div class="p-6 bg-red-500/5 border border-red-500/20 rounded-3xl">
+                        <h5 class="text-red-400 font-bold text-xs mb-4 uppercase flex justify-between items-center cursor-pointer" onclick="document.getElementById('reasons').classList.toggle('hidden')">
+                            Rejection Reasons <span class="text-[10px]">Expand ▼</span>
+                        </h5>
+                        <div id="reasons" class="hidden mt-4">
+                            <div class="reason-item text-[10px] text-gray-400">${docsMissing ? 'Mandatory RC/Policy documentation missing.' : 'Claim amount exceeds safety threshold.'}</div>
+                            <div class="reason-item text-[10px] text-gray-400">High Fraud Score: ${score}/100.</div>
+                            <div class="reason-item text-[10px] text-gray-400">Policy document expired.</div>
+                            <div class="reason-item text-[10px] text-gray-400">Missing important document(RC).</div>
+                        </div>
+                    </div>
+                `;
+            } 
+
+            // CASE B: GREEN FLAG (Amount <= 25,000 AND Fraud Score <= 32)
+            else if (amt <= 25000 && score <= 32) {
+                verdict.innerText = "AUTO-APPROVED";
+                verdict.className = "text-xl font-bold italic text-green-400";
+                scoreBadge.className = "px-3 py-1 rounded-full text-[10px] font-black bg-green-500/20 text-green-400 border border-green-500/20";
+                riskLabel.innerText = "Legitimate Claim";
+                riskLabel.className = "font-bold text-green-400";
+                aiComment.innerText = "Neural Analysis clear. Payout authorized via Smart Contract. Save your money—no extra fees, your money is ready!";
+
+                document.getElementById('stage-3-dot').className = "timeline-dot active";
+                document.getElementById('line-3').className = "timeline-line h-12 -top-12 line-active";
+                document.getElementById('stage-4-dot').className = "timeline-dot active";
+                document.getElementById('line-4').className = "timeline-line h-12 -top-12 line-active";
+
+                actionArea.innerHTML = `
+                    <button onclick="window.location.href='payout.html'" class="w-full bg-green-500 hover:bg-green-400 text-white font-black py-5 rounded-2xl uppercase tracking-widest text-[11px] shadow-lg shadow-green-500/20 transition-all">
+                        Proceed to UPI Payment
+                    </button>
+                `;
+            }
+
+            // CASE C: YELLOW FLAG (Amount 25,001 - 75,000)
+            else {
+                verdict.innerText = "HUMAN REVIEW";
+                verdict.className = "text-xl font-bold italic text-orange-400";
+                scoreBadge.className = "px-3 py-1 rounded-full text-[10px] font-black bg-orange-500/20 text-orange-400 border border-orange-500/20";
+                riskLabel.innerText = "Manual Review Required";
+                riskLabel.className = "font-bold text-orange-400";
+                aiComment.innerText = "Middle-tier claim detected. Agent validation required to avoid stupid payout errors. Save your money—wait for the official review.";
+
+                document.getElementById('stage-3-dot').className = "timeline-dot warning";
+                document.getElementById('line-3').className = "timeline-line h-12 -top-12 line-warning";
+                document.getElementById('stage-3-title').className = "text-sm font-bold text-orange-400";
+
+                actionArea.innerHTML = `
+                    <div class="p-6 bg-orange-500/5 border border-orange-500/20 rounded-3xl mb-6">
+                        <ul class="text-[10px] text-gray-400 space-y-2 list-disc ml-4">
+                            <li>Manual check for claim value: ₹${amt.toLocaleString()}</li>
+                            <li>Fraud Score: ${score}/100 requires oversight.</li>
+                            <li>Late reporting more than 10 days.</li>
+                            <li>Driver not the policy owner.</li>
+                        </ul>
+                    </div>
+                    <button onclick="alert('Priority Review Requested!')" class="w-full bg-orange-500 hover:bg-orange-400 text-white font-black py-5 rounded-2xl uppercase tracking-widest text-[11px] transition-all">
+                        Request Priority Review
+                    </button>
+                `;
+            }
+        }
+    </script>
+</body>
+</html>

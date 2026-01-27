@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Claim Receipt | SmartClaim Pro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-deep: #080a0f;
+            --accent-blue: #38bdf8;
+            --glass: rgba(255, 255, 255, 0.015);
+            --border: rgba(255, 255, 255, 0.08);
+        }
+
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: var(--bg-deep); color: white; min-height: 100vh; display: flex; align-items: center; justify-content: center; }
+        .mesh-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; background: radial-gradient(at 0% 0%, rgba(56, 189, 248, 0.15) 0px, transparent 50%), radial-gradient(at 100% 100%, rgba(139, 92, 246, 0.1) 0px, transparent 50%); filter: blur(80px); }
+        .receipt-card { background: var(--glass); backdrop-filter: blur(40px) saturate(180%); border: 1px solid var(--border); border-radius: 40px; width: 100%; max-width: 500px; padding: 3rem; position: relative; box-shadow: 0 25px 50px rgba(0,0,0,0.5); }
+        .hash-tag { font-family: 'JetBrains Mono', monospace; font-size: 8px; color: var(--accent-blue); opacity: 0.6; word-break: break-all; }
+        @media print { .no-print { display: none; } body { background: white; color: black; } .receipt-card { border: 1px solid #ddd; box-shadow: none; } }
+    </style>
+</head>
+<body>
+
+    <div class="mesh-bg"></div>
+
+    <div class="receipt-card">
+        <div class="text-center mb-10">
+            <div class="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                <svg class="w-8 h-8 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+            </div>
+            <h2 class="text-2xl font-black italic uppercase tracking-tighter">Settlement <span class="text-sky-400">Attestation.</span></h2>
+            <p class="text-[10px] font-bold text-gray-500 uppercase tracking-widest mt-2">Neural Link Confirmed</p>
+        </div>
+
+        <div class="space-y-6 border-y border-white/5 py-8 mb-8">
+            <div class="flex justify-between items-center">
+                <span class="text-[10px] font-black text-gray-500 uppercase tracking-widest">Claim ID</span>
+                <span id="receipt-id" class="text-sm font-bold font-mono">SC-XXXX</span>
+            </div>
+            <div class="flex justify-between items-center">
+                <span class="text-[10px] font-black text-gray-500 uppercase tracking-widest">Status</span>
+                <span class="px-3 py-1 bg-green-500/10 text-green-400 rounded-lg text-[9px] font-black uppercase">Approved</span>
+            </div>
+            <div class="flex justify-between items-center">
+                <span class="text-[10px] font-black text-gray-500 uppercase tracking-widest">Disbursed Amount</span>
+                <span id="receipt-amount" class="text-xl font-black text-white italic">₹0.00</span>
+            </div>
+            <div class="flex justify-between items-center pt-4 border-t border-white/5">
+                <span class="text-[10px] font-black text-gray-500 uppercase tracking-widest">Trust Reward</span>
+                <span class="text-xs font-bold text-sky-400">+50 XP Earned</span>
+            </div>
+        </div>
+
+        <div class="mb-10">
+            <p class="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-2">Neural Hash Verification</p>
+            <div class="hash-tag p-4 bg-black/40 rounded-xl">
+                0x71C91B151535261530d1D16073306B2a4A0182E9_VERIFIED_LEDGER
+            </div>
+        </div>
+
+        <div class="space-y-4 no-print">
+            <button onclick="window.print()" class="w-full bg-white/5 border border-white/10 hover:bg-white/10 text-white font-black py-4 rounded-2xl uppercase tracking-widest text-[10px] transition-all">
+                Download PDF Proof
+            </button>
+            <button onclick="window.location.href='history.html'" class="w-full bg-sky-500 hover:bg-sky-400 text-white font-black py-4 rounded-2xl uppercase tracking-widest text-[10px] shadow-xl shadow-sky-500/20 transition-all">
+                Return to Dashboard
+            </button>
+        </div>
+
+        <p class="mt-8 text-[8px] text-gray-600 text-center uppercase tracking-tighter">
+            SmartClaim Neural Protocol v2.1. Save your money—honest users get lower premiums!
+        </p>
+    </div>
+
+    <script>
+        window.onload = function() {
+            const amt = localStorage.getItem('claimedAmount') || "24,500";
+            const claimData = JSON.parse(localStorage.getItem('activeClaim') || "{}");
+            
+            document.getElementById('receipt-amount').innerText = "₹" + parseInt(amt).toLocaleString();
+            document.getElementById('receipt-id').innerText = claimData.id || "SC-8219";
+        }
+    </script>
+</body>
+</html>
