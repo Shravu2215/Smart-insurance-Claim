@@ -17,12 +17,6 @@ body {
   overflow-x: hidden;
 }
 
-.navbar {
-  backdrop-filter: blur(12px);
-  background: rgba(0,0,0,0.6);
-  border-bottom: 1px solid rgba(255,255,255,0.08);
-}
-
 .glass {
   background: rgba(255,255,255,0.04);
   backdrop-filter: blur(30px) saturate(180%);
@@ -46,17 +40,9 @@ input, select, textarea {
   text-transform: uppercase;
 }
 
-.step-pill.active {
-  background: #38bdf8;
-  color: white;
-}
+.step-pill.active { background: #38bdf8; color: white; }
 
-.inline-ai-hint {
-  font-size: 10px;
-  color: #a5b4fc;
-  margin-top: 0.25rem;
-  transition: color 0.3s;
-}
+.inline-ai-hint { font-size: 10px; color: #a5b4fc; margin-top: 0.25rem; }
 
 button.primary {
   background: linear-gradient(90deg,#38bdf8,#0ea5e9);
@@ -70,33 +56,46 @@ button.primary {
   box-shadow: 0 15px 40px rgba(56,189,248,0.35);
   transition: all 0.3s ease;
 }
-button.primary:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 20px 50px rgba(56,189,248,0.45);
-}
 
-.ambient-bg {
+/* RED MIC BUTTON */
+#voice-trigger {
   position: fixed;
-  inset: 0;
-  z-index: -1;
-  background: radial-gradient(circle at 20% 30%, rgba(56,189,248,0.08) 0%, transparent 40%),
-              radial-gradient(circle at 80% 70%, rgba(139,92,246,0.08) 0%, transparent 40%);
+  bottom: 30px;
+  right: 30px;
+  background: #ef4444;
+  color: white;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4);
+  z-index: 1000;
+  transition: all 0.3s;
 }
 
+#voice-trigger.listening { animation: pulse-red 1.5s infinite; transform: scale(1.1); }
+@keyframes pulse-red {
+  0% { box-shadow: 0 0 0 0px rgba(239, 68, 68, 0.7); }
+  100% { box-shadow: 0 0 0 15px rgba(239, 68, 68, 0); }
+}
+
+.hidden-panel { display: none; }
 </style>
 </head>
 <body>
 
-<div class="ambient-bg"></div>
+<div id="voice-trigger" title="Voice Input">
+  <span id="mic-icon" style="font-size: 24px;">🎤</span>
+</div>
 
 <nav class="sticky top-0 z-50 bg-black/40 backdrop-blur-xl border-b border-white/10">
   <div class="max-w-7xl mx-auto px-6 h-14 flex items-center justify-between">
-    <div class="font-extrabold text-xl">
-      SmartClaim<span class="text-sky-400">.Pro</span>
-    </div>
+    <div class="font-extrabold text-xl">SmartClaim<span class="text-sky-400">.Pro</span></div>
     <div class="hidden md:flex gap-8 text-sm font-bold text-gray-300">
       <a href="home.html">Home</a>
-      <a href="how-it-works.html">Process</a>
       <a href="submit-claim.html" class="text-white">File Claim</a>
       <a href="history.html">History</a>
     </div>
@@ -107,112 +106,126 @@ button.primary:hover {
   <h1 class="text-5xl font-extrabold leading-tight">
     On-the-Spot Claim <span class="text-sky-400 italic">Filing</span>
   </h1>
-  <p class="text-gray-300 max-w-2xl mx-auto mt-4">
-    Instantly capture incident details, upload media, and let AI estimate costs and fraud risk in real-time.  
-    Approved claims are auto-directed to UPI payout and nearest garage collection.
-  </p>
 </header>
-
-<div class="max-w-6xl mx-auto px-8 mb-16 flex justify-between">
-  <div class="step-pill active">1. Incident</div>
-  <div class="step-pill">2. Upload Docs</div>
-  <div class="step-pill">3. AI Analysis</div>
-  <div class="step-pill">4. Track & Payout</div>
-</div>
 
 <main class="max-w-6xl mx-auto px-8">
   <div class="glass rounded-[36px] p-10 space-y-10">
-
     <h2 class="text-3xl font-extrabold">Incident Intelligence Input</h2>
 
     <div class="grid md:grid-cols-2 gap-6">
       <div>
         <label class="text-[11px] font-bold text-gray-400 uppercase">Vehicle Type</label>
-        <select id="vehicleType" class="w-full p-4 rounded-2xl mt-2">
+        <select class="w-full p-4 rounded-2xl mt-2">
           <option>Car</option>
           <option>Bike</option>
         </select>
-        <div class="inline-ai-hint">AI uses type for repair estimate & risk calculation</div>
       </div>
       <div>
         <label class="text-[11px] font-bold text-gray-400 uppercase">Registration Number</label>
-        <input type="text" id="regNumber" class="w-full p-4 rounded-2xl mt-2" placeholder="MH-12-AB-1234">
-        <div class="inline-ai-hint">Cross-checked against policy & fraud history</div>
-      </div>
-    </div>
-
-    <div class="grid md:grid-cols-2 gap-6">
-      <div>
-        <label class="text-[11px] font-bold text-gray-400 uppercase">Incident Type</label>
-        <select id="incidentType" class="w-full p-4 rounded-2xl mt-2">
-          <option>Road Accident</option>
-          <option>Vehicle Theft</option>
-          <option>Natural Disaster</option>
-        </select>
-        <div class="inline-ai-hint">High-risk types flagged instantly</div>
-      </div>
-      <div>
-        <label class="text-[11px] font-bold text-gray-400 uppercase">Incident Date</label>
-        <input type="date" id="incidentDate" class="w-full p-4 rounded-2xl mt-2">
+        <input type="text" class="w-full p-4 rounded-2xl mt-2" placeholder="MH-12-AB-1234">
       </div>
     </div>
 
     <div class="grid md:grid-cols-2 gap-6">
       <div>
         <label class="text-[11px] font-bold text-gray-400 uppercase">Driver is Policy Owner?</label>
-        <select id="isOwner" class="w-full p-4 rounded-2xl mt-2">
-          <option>Yes</option>
-          <option>No</option>
+        <select id="policyOwnerSelect" class="w-full p-4 rounded-2xl mt-2" onchange="toggleDriverPanel()">
+          <option value="yes">Yes</option>
+          <option value="no">No</option>
         </select>
         <div class="inline-ai-hint">Ownership mismatch triggers yellow review</div>
       </div>
       <div>
         <label class="text-[11px] font-bold text-gray-400 uppercase">Driver Name</label>
-        <input type="text" id="driverName" class="w-full p-4 rounded-2xl mt-2" placeholder="Full Name">
+        <input id="driverNameInput" type="text" class="w-full p-4 rounded-2xl mt-2" placeholder="Full Name">
       </div>
     </div>
 
-    <div>
-      <label class="text-[11px] font-bold text-gray-400 uppercase">Incident Location </label>
-      <input type="text" id="location" class="w-full p-4 rounded-2xl mt-2" placeholder="Enter Location">
-      <div class="inline-ai-hint">AI validates location for fraud & nearby garage allocation</div>
+    <div id="relatedDriverPanel" class="hidden-panel space-y-4 bg-white/5 p-6 rounded-2xl border border-white/10">
+      <label class="text-[11px] font-bold text-sky-400 uppercase">Relation to Policy Owner</label>
+      <select class="w-full p-3 rounded-xl">
+        <option>Spouse</option>
+        <option>Child (Above 18)</option>
+        <option>Parent</option>
+        <option>Friend / Third Party</option>
+      </select>
     </div>
 
     <div>
-      <label class="text-[11px] font-bold text-gray-400 uppercase">Description </label>
-      <textarea id="description" class="w-full p-4 rounded-2xl mt-2 h-28 resize-none"
-        placeholder="Describe incident."></textarea>
-      <div class="inline-ai-hint">On-the-spot AI will estimate cost and assign fraud score</div>
+      <label class="text-[11px] font-bold text-gray-400 uppercase">Incident Location</label>
+      <input id="locationInput" type="text" class="w-full p-4 rounded-2xl mt-2" placeholder="Enter Location">
+    </div>
+
+    <div>
+      <label class="text-[11px] font-bold text-gray-400 uppercase">Description</label>
+      <textarea id="descriptionInput" class="w-full p-4 rounded-2xl mt-2 h-28 resize-none" placeholder="Describe incident... (Real-time voice enabled)"></textarea>
+      <div id="voiceStatus" class="text-[10px] text-sky-400 mt-2 font-bold italic"></div>
     </div>
 
     <button class="primary mt-6" onclick="window.location.href='document.html'">
       CONTINUE TO EVIDENCE VAULT
     </button>
-
   </div>
 </main>
 
 <script>
-  // Select all inputs, selects, and textareas
-  const inputs = document.querySelectorAll('input, select, textarea');
+// 1. CONDITIONAL DRIVER PANEL LOGIC
+function toggleDriverPanel() {
+  const select = document.getElementById('policyOwnerSelect');
+  const panel = document.getElementById('relatedDriverPanel');
+  panel.style.display = (select.value === 'no') ? 'block' : 'none';
+}
 
-  // Load saved data from localStorage on page load
-  window.addEventListener('load', () => {
-    inputs.forEach(input => {
-      const savedValue = localStorage.getItem(input.id);
-      if (savedValue) {
-        input.value = savedValue;
+// 2. SIMULTANEOUS REAL-TIME VOICE RECOGNITION
+const micBtn = document.getElementById('voice-trigger');
+const descriptionBox = document.getElementById('descriptionInput');
+const voiceStatus = document.getElementById('voiceStatus');
+const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+if (SpeechRecognition) {
+  const recognition = new SpeechRecognition();
+  recognition.continuous = true;
+  recognition.interimResults = true;
+  recognition.lang = 'en-US';
+
+  let isListening = false;
+
+  micBtn.addEventListener('click', () => {
+    if (!isListening) {
+      recognition.start();
+      micBtn.classList.add('listening');
+      voiceStatus.innerText = "Listening... Text will appear as you speak.";
+      isListening = true;
+    } else {
+      recognition.stop();
+      micBtn.classList.remove('listening');
+      voiceStatus.innerText = "";
+      isListening = false;
+    }
+  });
+
+  recognition.onresult = (event) => {
+    let interimTranscript = '';
+    let finalTranscript = '';
+
+    for (let i = event.resultIndex; i < event.results.length; ++i) {
+      if (event.results[i].isFinal) {
+        finalTranscript += event.results[i][0].transcript;
+      } else {
+        interimTranscript += event.results[i][0].transcript;
       }
-    });
-  });
+    }
+    // Update text box simultaneously
+    descriptionBox.value = finalTranscript + interimTranscript;
+  };
 
-  // Save data to localStorage whenever a user changes a value
-  inputs.forEach(input => {
-    input.addEventListener('input', () => {
-      localStorage.setItem(input.id, input.value);
-    });
-  });
+  recognition.onerror = () => {
+    micBtn.classList.remove('listening');
+    isListening = false;
+  };
+} else {
+  voiceStatus.innerText = "Voice recognition not supported in this browser.";
+}
 </script>
-
 </body>
 </html>

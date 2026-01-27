@@ -214,7 +214,6 @@ input {
 </main>
 
 <script>
-// YOUR API KEY
 const API_KEY = 'AIzaSyBkgxPWoa870LvoL80KjDEbJjKWamtKB4Q';
 
 function chooseUpload(){
@@ -238,14 +237,12 @@ function chooseLocker(){
         label.innerHTML='✓ Retrieved';
         label.style.background='#22c55e';
         logs.innerHTML=`[LOCKER] ${doc.toUpperCase()} auto-linked<br>`+logs.innerHTML;
-        // Mark document as verified in storage
         localStorage.setItem(`has${doc.toUpperCase()}`, 'true');
       },1500);
     },i*800);
   });
 }
 
-// UPDATED: Now uses your Google Vision API key
 async function startScan(type, input){
   const file = input.files[0];
   if (!file) return;
@@ -279,7 +276,6 @@ async function startScan(type, input){
 
       slot.classList.remove('scanning');
       
-      // Match check for RC Card
       if (type === 'rc' && detectedText.length > 0 && !detectedText.includes(userReg)) {
         label.innerHTML = '✘ Mismatch';
         label.style.background = '#ef4444';
@@ -295,38 +291,61 @@ async function startScan(type, input){
     } catch (error) {
       console.error(error);
       slot.classList.remove('scanning');
-      label.innerHTML = '✓ Verified'; // Fallback
+      label.innerHTML = '✓ Verified';
     }
   };
   reader.readAsDataURL(file);
 }
 
+// ═══════════════════════════════════════════════════════
+// 🧠 NEW TRIAGE LOGIC: COMPARISON SCAN
+// ═══════════════════════════════════════════════════════
 function startNeuralAnalysis(){
-  const cost=document.getElementById('expectedCost').value;
+  const userCost = parseInt(document.getElementById('expectedCost').value);
   const btn = document.getElementById('analyseBtn');
-  if(!cost){ alert('Enter amount'); return; }
+  if(!userCost){ alert('Enter amount'); return; }
   
-  const logs=document.getElementById('logs');
+  const logs = document.getElementById('logs');
   btn.disabled = true;
   btn.innerHTML = "Thinking...";
   
-  // Save to localStorage for the track-claim.html page
-  localStorage.setItem('claimedAmount', cost);
+  // Save user input for the next page
+  localStorage.setItem('claimedAmount', userCost);
   
-  logs.innerHTML='[AI] INITIALIZING NEURAL SCAN...<br>'+logs.innerHTML;
+  // SIMULATED AI DETECTION (Case Benchmark: ₹15,000)
+  const aiDetectedCost = 15000; 
+  localStorage.setItem('aiDetectedAmount', aiDetectedCost);
+  
+  logs.innerHTML = '[AI] INITIALIZING DAMAGE SCAN...<br>' + logs.innerHTML;
 
-  setTimeout(()=>{
-    // Using your logic: <25k Green, <75k Yellow, >75k Red
-    const score = cost <= 25000 ? 22 : cost <= 75000 ? 55 : 82;
+  setTimeout(() => {
+    let score = 0;
+    const diff = (userCost - aiDetectedCost) / aiDetectedCost;
+
+    // CASE 4: USER LOWER (Bonus) 
+    if (userCost <= aiDetectedCost) {
+      score = 10; 
+    } 
+    // CASE 1: CLOSE MATCH (Within 15%)
+    else if (diff <= 0.15) {
+      score = 25; 
+    } 
+    // CASE 2: USER HIGHER (15% to 100% higher)
+    else if (diff <= 1.0) {
+      score = 55; 
+    } 
+    // CASE 3: USER MUCH HIGHER (2x+ Block)
+    else {
+      score = 85; 
+    }
+
     localStorage.setItem('fraudScore', score);
-    
-    logs.innerHTML=`[AI] SCAN COMPLETE. FRAUD PROBABILITY: ${score}%<br>`+logs.innerHTML;
-    logs.innerHTML=`[SYSTEM] Redirecting to tracking hub...<br>`+logs.innerHTML;
+    logs.innerHTML = `[AI] SCAN COMPLETE. BENCHMARK: ₹${aiDetectedCost}<br>` + logs.innerHTML;
+    logs.innerHTML = `[AI] DEVIANCE DETECTED: ${(diff*100).toFixed(1)}%<br>` + logs.innerHTML;
 
-    setTimeout(()=>{
-      window.location.href='track-claim.html';
+    setTimeout(() => {
+      window.location.href = 'track-claim.html';
     }, 1500);
-    
   }, 2000);
 }
 </script>
