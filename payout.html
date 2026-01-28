@@ -20,7 +20,6 @@
             color: white;
             min-height: 100vh;
         }
-        .nav-container { background: rgba(255, 255, 255, 0.03); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(255, 255, 255, 0.05); }
         .dynamic-bg {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             pointer-events: none; z-index: -1;
@@ -33,7 +32,6 @@
         .smart-input { background: rgba(0, 0, 0, 0.4) !important; border: 1px solid rgba(255, 255, 255, 0.1) !important; color: white !important; transition: 0.3s; }
         .smart-input:focus { border-color: var(--accent-blue) !important; box-shadow: 0 0 15px rgba(56, 189, 248, 0.1); outline: none; }
         .hidden-panel { display: none; }
-        
         .option-container { border: 1px solid var(--border-white); border-radius: 20px; padding: 20px; margin-bottom: 12px; cursor: pointer; transition: 0.2s; position: relative; overflow: hidden; }
         .option-container:hover { border-color: rgba(255,255,255,0.2); background: rgba(255,255,255,0.02); }
         .option-container.selected { border-color: var(--accent-blue); background: rgba(56, 189, 248, 0.05); }
@@ -43,14 +41,15 @@
 
     <div class="dynamic-bg"></div>
 
-    <nav class="nav-container sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-8 py-4 flex justify-between items-center h-16">
-            <div class="text-xl font-black italic uppercase tracking-tighter text-white">SmartClaim<span class="text-sky-400">.Pro</span></div>
-            <div class="flex items-center space-x-8 text-gray-400 text-[10px] font-black uppercase tracking-widest">
-                <span class="flex items-center gap-2"><span class="w-2 h-2 bg-green-500 rounded-full animate-ping"></span> AI Engine Active</span>
-                <a href="index.html" class="text-white hover:text-sky-400 transition">Exit Portal</a>
-            </div>
+    <nav class="sticky top-0 z-50 bg-black/40 backdrop-blur-xl border-b border-white/10">
+      <div class="max-w-7xl mx-auto px-6 h-14 flex items-center justify-between">
+        <div class="font-extrabold text-xl">SmartClaim<span class="text-sky-400">.Pro</span></div>
+        <div class="hidden md:flex gap-8 text-sm font-bold text-gray-300">
+          <a href="home.html">Home</a>
+          <a href="submit-claim.html" class="text-white">File Claim</a>
+          <a href="history.html">History</a>
         </div>
+      </div>
     </nav>
 
     <main class="max-w-6xl mx-auto px-8 grid grid-cols-1 lg:grid-cols-12 gap-12 mt-12">
@@ -80,10 +79,7 @@
             </div>
 
             <div id="panel-cashless" class="glass-card p-10 rounded-[40px] space-y-6">
-                <div>
-                    <h4 class="text-white font-black text-sm uppercase tracking-widest">Network Garage Assignment</h4>
-                    <p class="text-xs text-gray-500 mt-1">AI matched you with high-rated service hubs based on your damage profile.</p>
-                </div>
+                <h4 class="text-white font-black text-sm uppercase tracking-widest">Network Garage Assignment</h4>
                 <div class="bg-white/5 border border-white/10 p-5 rounded-2xl flex justify-between items-center">
                     <div>
                         <p class="text-sm font-bold">Vertex Premium Autohaus</p>
@@ -107,11 +103,8 @@
                         </div>
                     </div>
                     <div id="form-bank" class="mt-6 space-y-4 hidden border-t border-white/5 pt-4">
-                        <div class="grid grid-cols-2 gap-4">
-                            <input type="text" placeholder="Account Number" class="smart-input w-full p-4 rounded-xl text-sm font-mono tracking-widest">
-                            <input type="text" placeholder="IFSC Code" class="smart-input w-full p-4 rounded-xl text-sm font-mono tracking-widest">
-                        </div>
-                        <input type="text" placeholder="Beneficiary Name" class="smart-input w-full p-4 rounded-xl text-sm">
+                        <input type="text" placeholder="Account Number" class="smart-input w-full p-4 rounded-xl text-sm font-mono tracking-widest">
+                        <input type="text" placeholder="IFSC Code" class="smart-input w-full p-4 rounded-xl text-sm font-mono tracking-widest">
                     </div>
                 </div>
 
@@ -125,14 +118,8 @@
                             <p class="text-[9px] text-sky-400 uppercase tracking-wider font-black italic">Atomic Settlement • T+0 Minutes</p>
                         </div>
                     </div>
-                    
                     <div id="form-upi" class="mt-6 space-y-4 hidden border-t border-white/5 pt-4">
-                        <div class="flex gap-2">
-                            <button onclick="setUpiProvider('gpay')" class="flex-1 bg-white/5 border border-white/10 p-3 rounded-xl hover:bg-sky-500/10 hover:border-sky-500/30 text-[9px] font-black uppercase transition-all">Google Pay</button>
-                            <button onclick="setUpiProvider('phonepe')" class="flex-1 bg-white/5 border border-white/10 p-3 rounded-xl hover:bg-sky-500/10 hover:border-sky-500/30 text-[9px] font-black uppercase transition-all">PhonePe</button>
-                            <button onclick="setUpiProvider('paytm')" class="flex-1 bg-white/5 border border-white/10 p-3 rounded-xl hover:bg-sky-500/10 hover:border-sky-500/30 text-[9px] font-black uppercase transition-all">Paytm</button>
-                        </div>
-                        <input id="upiID" type="text" placeholder="Enter UPI ID (e.g., name@bank)" class="smart-input w-full p-5 rounded-2xl text-xl font-black tracking-tight">
+                        <input id="upiID" type="text" placeholder="Enter UPI ID (e.g., shravu@ybl)" class="smart-input w-full p-5 rounded-2xl text-xl font-black tracking-tight">
                     </div>
                 </div>
 
@@ -143,7 +130,7 @@
             </div>
 
             <button id="finalizeBtn" onclick="processFinalPayout()" class="w-full bg-sky-500 hover:bg-sky-400 text-black font-black py-6 rounded-[32px] uppercase tracking-[0.4em] flex items-center justify-center gap-4 transition-all text-xs">
-                <span id="btnText">Execute Settlement</span>
+                <span id="btnText">Execute AI Payout</span>
                 <div id="btnLoader" class="hidden w-5 h-5 border-2 border-black/30 border-t-black rounded-full animate-spin"></div>
             </button>
         </div>
@@ -169,20 +156,14 @@
         let subMethod = '';
         let globalAmount = "0.00";
 
-        // Logic to retrieve amount from previous page
         function retrieveClaimData() {
-            // Get amount from localStorage (sent from assessment page)
-            const storedAmount = localStorage.getItem('smartClaimAmount') || "0"; 
-            globalAmount = parseFloat(storedAmount).toLocaleString('en-IN', {
-                maximumFractionDigits: 2,
-                style: 'currency',
-                currency: 'INR'
-            });
+            const finalApprovedAmt = localStorage.getItem('smartClaimAmount') || "15000"; 
+            globalAmount = "₹" + parseInt(finalApprovedAmt).toLocaleString('en-IN');
 
-            // Update UI after a brief "AI Analysis" delay
             setTimeout(() => {
                 document.getElementById('displayAmount').innerText = globalAmount;
                 log(`Neural audit complete. Final Liability: ${globalAmount}`);
+                log(`Status: Case analysis applied.`);
             }, 800);
         }
 
@@ -190,10 +171,8 @@
             mainMethod = method;
             document.querySelectorAll('.method-tile').forEach(t => t.classList.remove('active'));
             document.getElementById('btn-' + method).classList.add('active');
-            
             document.getElementById('panel-cashless').style.display = (method === 'cashless') ? 'block' : 'none';
             document.getElementById('panel-instant').style.display = (method === 'instant') ? 'block' : 'none';
-            
             log(`Routing to ${method === 'instant' ? 'Atomic Liquidation' : 'Direct Garage Hub'}.`);
             updateBtnText();
         }
@@ -207,14 +186,6 @@
             document.querySelectorAll('.option-container').forEach(el => el.classList.remove('selected'));
             event.currentTarget.classList.add('selected');
             log(`Channel set: ${type.toUpperCase()}. Validation successful.`);
-        }
-
-        function setUpiProvider(provider) {
-            const upiInput = document.getElementById('upiID');
-            const suffixes = { gpay: '@okaxis', phonepe: '@ybl', paytm: '@paytm' };
-            upiInput.value = suffixes[provider] || '';
-            upiInput.focus();
-            log(`Linking with ${provider} secure nodes...`);
         }
 
         function log(msg) {
@@ -234,19 +205,16 @@
                 alert("Please select a disbursement channel.");
                 return;
             }
-
             const btn = document.getElementById('finalizeBtn');
             const loader = document.getElementById('btnLoader');
-            const text = document.getElementById('btnText');
-
             btn.disabled = true;
             loader.classList.remove('hidden');
-            text.innerText = "Signing Transaction...";
+            document.getElementById('btnText').innerText = "Signing Transaction...";
 
             setTimeout(() => {
                 log("Disbursement Packet Encrypted.");
                 setTimeout(() => {
-                    alert(`Claim Executed Successfully!\nAmount: ${globalAmount}\nStatus: Funds Dispatched.`);
+                    alert(`Claim Executed Successfully!\nApproved Amount: ${globalAmount}\nStatus: Funds Dispatched.`);
                     btn.disabled = false;
                     loader.classList.add('hidden');
                     updateBtnText();

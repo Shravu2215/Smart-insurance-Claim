@@ -5,240 +5,126 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Neural Status | SmartClaim Pro</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --bg-deep: #080a0f;
-            --accent-blue: #38bdf8;
-            --glass: rgba(255, 255, 255, 0.015);
-            --border: rgba(255, 255, 255, 0.08);
-        }
-
-        body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: var(--bg-deep);
-            color: white;
-            min-height: 100vh;
-        }
-        .nav-container {
-            background: rgba(255, 255, 255, 0.03);
-            backdrop-filter: blur(12px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
-        .mesh-bg {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
-            background: radial-gradient(at 0% 0%, rgba(56, 189, 248, 0.1) 0px, transparent 50%),
-                        radial-gradient(at 100% 100%, rgba(129, 140, 248, 0.1) 0px, transparent 50%);
-            filter: blur(80px);
-        }
-
-        .glass-panel {
-            background: var(--glass);
-            backdrop-filter: blur(40px) saturate(180%);
-            border: 1px solid var(--border);
-        }
-
+        :root { --bg-deep: #080a0f; --accent-blue: #38bdf8; --glass: rgba(255, 255, 255, 0.015); --border: rgba(255, 255, 255, 0.08); }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: var(--bg-deep); color: white; min-height: 100vh; }
+        .glass-panel { background: var(--glass); backdrop-filter: blur(40px) saturate(180%); border: 1px solid var(--border); }
         .timeline-dot { width: 12px; height: 12px; border-radius: 50%; background: #1f2937; position: relative; z-index: 10; }
         .timeline-dot.active { background: var(--accent-blue); box-shadow: 0 0 15px var(--accent-blue); }
-        .timeline-dot.warning { background: #f59e0b; box-shadow: 0 0 15px #f59e0b; }
-        .timeline-dot.danger { background: #ef4444; box-shadow: 0 0 15px #ef4444; }
-
         .timeline-line { width: 2px; background: #1f2937; position: absolute; top: 0; bottom: 0; left: 5px; z-index: 0; }
         .line-active { background: var(--accent-blue); }
         .line-warning { background: #f59e0b; }
         .line-danger { background: #ef4444; }
-
-        .reason-item { background: rgba(255,255,255,0.03); border-radius: 12px; padding: 12px; border: 1px solid rgba(255,255,255,0.05); margin-bottom: 8px; }
     </style>
 </head>
 <body class="pb-20">
-
-    <div class="mesh-bg"></div>
-
-    <nav class="nav-container sticky top-0 z-50">
+    <nav class="sticky top-0 z-50 bg-black/40 backdrop-blur-xl border-b border-white/5">
         <div class="max-w-7xl mx-auto px-8 py-4 flex justify-between items-center h-20">
-            <div class="text-2xl font-black tracking-tighter text-white uppercase italic">
-                SmartClaim<span class="text-sky-400 not-italic">.Pro</span>
-            </div>
-            
-            <div class="flex items-center space-x-10 text-gray-300 text-sm font-bold">
-                <a href="home.html" class="hover:text-white transition">Home</a>
-                <a href="submit-claim.html" id="nav-submit-claim" class="hover:text-white transition">File Claim</a>
-                <a href="history.html" class="hover:text-white transition">Claim History</a>
-            </div>
+            <div class="text-2xl font-black italic uppercase">SmartClaim<span class="text-sky-400 not-italic">.Pro</span></div>
         </div>
     </nav>
 
     <main class="max-w-6xl mx-auto px-8 mt-12 grid grid-cols-1 lg:grid-cols-3 gap-8">
-        
-        <div class="space-y-6">
-            <div class="glass-panel p-8 rounded-[32px]">
-                <div class="flex justify-between items-start mb-6">
-                    <div>
-                        <p class="text-[9px] font-black text-gray-500 uppercase tracking-widest mb-1">Neural Verdict</p>
-                        <h2 id="final-verdict" class="text-xl font-bold italic uppercase">ANALYZING...</h2>
-                    </div>
-                    <div id="score-badge" class="px-3 py-1 rounded-full text-[10px] font-black font-mono">--/100</div>
-                </div>
-
-                <div class="space-y-4 pt-6 border-t border-white/10">
-                    <div class="flex justify-between text-xs">
-                        <span class="text-gray-500">Your Estimate</span>
-                        <span id="user-amt-display" class="font-bold">₹0</span>
-                    </div>
-                    <div class="flex justify-between text-xs">
-                        <span class="text-gray-500">AI Detection</span>
-                        <span id="ai-amt-display" class="font-bold text-sky-400">₹0</span>
-                    </div>
-                    <div class="flex justify-between text-xs">
-                        <span class="text-gray-500">Risk Profile</span>
-                        <span id="risk-label" class="font-bold">Processing</span>
-                    </div>
-                </div>
-            </div>
-
-            <div class="glass-panel p-6 rounded-[24px] border-sky-500/10">
-                <div class="flex items-center gap-3 mb-4">
-                    <div class="w-8 h-8 bg-sky-500/20 rounded-lg flex items-center justify-center text-sm">🤖</div>
-                    <span class="text-[10px] font-black uppercase text-gray-400">Triage Insight</span>
-                </div>
-                <p id="ai-comment" class="text-[11px] text-gray-400 leading-relaxed italic">"Awaiting comparison analysis..."</p>
+        <div class="glass-panel p-8 rounded-[32px] h-fit">
+            <p class="text-[9px] font-black text-gray-500 uppercase tracking-widest mb-1">Neural Verdict</p>
+            <h2 id="final-verdict" class="text-xl font-bold italic uppercase">ANALYZING...</h2>
+            <div id="score-badge" class="mt-2 px-3 py-1 rounded-full text-[10px] font-black inline-block">--/100</div>
+            
+            <div class="space-y-4 pt-6 mt-6 border-t border-white/10 text-xs">
+                <div class="flex justify-between"><span class="text-gray-500">Your Estimate</span><span id="user-amt-display" class="font-bold">₹0</span></div>
+                <div class="flex justify-between"><span class="text-gray-500">AI Detection</span><span id="ai-amt-display" class="font-bold text-sky-400">₹0</span></div>
+                <div class="flex justify-between"><span class="text-gray-500">Risk Profile</span><span id="risk-label" class="font-bold">Processing</span></div>
             </div>
         </div>
 
-        <div class="lg:col-span-2 space-y-8">
-            <div class="glass-panel p-10 rounded-[40px]">
-                <h3 class="text-2xl font-black mb-10 tracking-tighter uppercase italic">Settlement <span class="text-sky-400 not-italic">Triage.</span></h3>
-                
-                <div class="relative space-y-12 ml-4">
-                    <div class="timeline-line"></div>
-                    
-                    <div class="flex gap-8 relative">
-                        <div class="timeline-dot active"></div>
-                        <div>
-                            <h4 class="text-sm font-bold text-sky-400 uppercase">Input Received</h4>
-                            <p class="text-xs text-gray-500">Claim data ingested.</p>
-                        </div>
-                    </div>
-
-                    <div class="flex gap-8 relative">
-                        <div class="timeline-dot active"></div>
-                        <div class="timeline-line h-12 -top-12 line-active"></div>
-                        <div>
-                            <h4 class="text-sm font-bold text-sky-400 uppercase">Neural Cross-Check</h4>
-                            <p class="text-xs text-gray-500">Comparing user estimate with AI benchmarks.</p>
-                        </div>
-                    </div>
-
-                    <div class="flex gap-8 relative">
-                        <div id="stage-3-dot" class="timeline-dot"></div>
-                        <div id="line-3" class="timeline-line h-12 -top-12"></div>
-                        <div>
-                            <h4 id="stage-3-title" class="text-sm font-bold text-white uppercase">Disbursement Status</h4>
-                            <p id="stage-3-desc" class="text-xs text-gray-500">Finalizing system verdict...</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div id="action-area" class="mt-12"></div>
+        <div class="lg:col-span-2 glass-panel p-10 rounded-[40px]">
+            <h3 class="text-2xl font-black mb-10 uppercase italic tracking-tighter">Settlement <span class="text-sky-400 not-italic">Triage.</span></h3>
+            <div class="relative space-y-12 ml-4">
+                <div class="timeline-line"></div>
+                <div class="flex gap-8 relative"><div class="timeline-dot active"></div><div><h4 class="text-sm font-bold text-sky-400 uppercase">Input Received</h4></div></div>
+                <div class="flex gap-8 relative"><div class="timeline-dot active"></div><div class="timeline-line h-12 -top-12 line-active"></div><div><h4 class="text-sm font-bold text-sky-400 uppercase">Neural Cross-Check</h4></div></div>
+                <div class="flex gap-8 relative"><div id="stage-3-dot" class="timeline-dot"></div><div id="line-3" class="timeline-line h-12 -top-12"></div><div><h4 class="text-sm font-bold text-white uppercase tracking-wider">Disbursement Status</h4></div></div>
             </div>
+            <div id="ai-comment" class="mt-8 text-[11px] text-gray-400 italic">"Awaiting analysis..."</div>
+            <div id="action-area" class="mt-12"></div>
         </div>
     </main>
 
     <script>
         window.onload = function() {
-            // 1. DATA RETRIEVAL
-            const userAmt = parseInt(localStorage.getItem('claimedAmount') || 0);
-            const aiAmt = parseInt(localStorage.getItem('aiDetectedAmount') || 15000);
-            const score = parseInt(localStorage.getItem('fraudScore') || 0);
-            const docsMissing = localStorage.getItem('docsStatus') === 'missing';
-
+            // Simulated Data (Pulled from previous steps in project)
+            const userAmt = parseInt(localStorage.getItem('claimedAmount') || 16000); 
+            const aiAmt = 15000; 
+            
             const verdict = document.getElementById('final-verdict');
-            const scoreBadge = document.getElementById('score-badge');
             const riskLabel = document.getElementById('risk-label');
             const actionArea = document.getElementById('action-area');
             const aiComment = document.getElementById('ai-comment');
             
             document.getElementById('user-amt-display').innerText = "₹" + userAmt.toLocaleString();
             document.getElementById('ai-amt-display').innerText = "₹" + aiAmt.toLocaleString();
-            scoreBadge.innerText = score + "/100";
 
             // ═══════════════════════════════════════════════════════
-            // 🧠 IMPLEMENTING THE 4-CASE PLAN
+            // 🧠 UPDATED 4-CASE LOGIC
             // ═══════════════════════════════════════════════════════
 
             // CASE 3: USER MUCH HIGHER (Block) ❌
-            if (userAmt > (aiAmt * 2) || docsMissing) {
-                verdict.innerText = "FRAUD BLOCK";
-                verdict.className = "text-xl font-bold italic text-red-400";
-                scoreBadge.className = "px-3 py-1 rounded-full text-[10px] font-black bg-red-500/20 text-red-400 border border-red-500/20";
-                riskLabel.innerText = "High Deviance / Fraud Risk";
-                riskLabel.className = "font-bold text-red-400";
-                aiComment.innerText = "CASE 3: 2x+ mismatch detected. AI detected ₹15K vs User ₹" + (userAmt/1000).toFixed(0) + "K. Manual investigation triggered.";
-
+            if (userAmt >= (aiAmt * 2)) {
+                verdict.innerText = "RED FLAG"; 
+                verdict.className = "text-xl font-bold italic text-red-500";
+                riskLabel.innerText = "Fraud Risk Detected"; 
+                riskLabel.className = "font-bold text-red-500";
+                aiComment.innerText = "CASE 3: 2x+ mismatch = Fraud risk. Human review required.";
+                
                 document.getElementById('stage-3-dot').className = "timeline-dot danger";
                 document.getElementById('line-3').className = "timeline-line h-12 -top-12 line-danger";
-                
-                actionArea.innerHTML = `
-                    <div class="p-6 bg-red-500/5 border border-red-500/20 rounded-3xl text-center">
-                        <p class="text-red-400 font-bold text-xs uppercase mb-2">Claim Halted</p>
-                        <p class="text-[10px] text-gray-500">Human review required for 2x+ mismatch.</p>
-                    </div>`;
+                actionArea.innerHTML = `<div class="p-6 bg-red-500/10 border border-red-500/20 rounded-2xl text-red-500 text-center font-bold uppercase text-[10px]">Manual Human Review Required</div>`;
             } 
-
+            
             // CASE 2: USER HIGHER (Warning) ⚠️
             else if (userAmt > (aiAmt * 1.15)) {
-                verdict.innerText = "ESTIMATE WARNING";
-                verdict.className = "text-xl font-bold italic text-yellow-400";
-                scoreBadge.className = "px-3 py-1 rounded-full text-[10px] font-black bg-yellow-500/20 text-yellow-400 border border-yellow-500/20";
-                riskLabel.innerText = "Audit Required";
-                riskLabel.className = "font-bold text-yellow-400";
-                aiComment.innerText = "CASE 2: Your estimate is 15%+ higher than AI detection (₹15K). Please upload repair receipts to justify the variance.";
-
+                verdict.innerText = "YELLOW FLAG"; 
+                verdict.className = "text-xl font-bold italic text-yellow-500";
+                riskLabel.innerText = "Audit Warning"; 
+                riskLabel.className = "font-bold text-yellow-500";
+                aiComment.innerText = "CASE 2: Your estimate is double higher. AI detected ₹15K. Upload receipts?";
+                
                 document.getElementById('stage-3-dot').className = "timeline-dot warning";
                 document.getElementById('line-3').className = "timeline-line h-12 -top-12 line-warning";
-
-                actionArea.innerHTML = `
-                    <button class="w-full bg-yellow-500 text-black font-black py-5 rounded-2xl uppercase tracking-widest text-[11px] transition-all">
-                        Upload Repair Receipts
-                    </button>`;
+                actionArea.innerHTML = `<button class="w-full bg-yellow-500 text-black font-black py-5 rounded-2xl uppercase tracking-widest text-[11px] hover:bg-yellow-400 transition">Upload Repair Receipts</button>`;
             }
-
+            
             // CASE 4: USER LOWER (Bonus) ✅
             else if (userAmt < aiAmt) {
-                verdict.innerText = "HONESTY PASS";
-                verdict.className = "text-xl font-bold italic text-green-400";
-                scoreBadge.className = "px-3 py-1 rounded-full text-[10px] font-black bg-green-500/20 text-green-400 border border-green-500/20";
-                riskLabel.innerText = "Honesty Bonus Applied";
-                riskLabel.className = "font-bold text-green-400";
-                aiComment.innerText = "CASE 4: Honest user detected. AI detected ₹15K, but we are paying your lower request of ₹" + userAmt.toLocaleString() + " instantly.";
-
+                verdict.innerText = "USER WINS"; 
+                verdict.className = "text-xl font-bold italic text-green-500";
+                riskLabel.innerText = "Honest User Detected"; 
+                riskLabel.className = "font-bold text-green-500";
+                aiComment.innerText = "CASE 4: Honest user! Paying your ₹15K request.";
+                
+                // LINKING LOGIC: AI pays the benchmark amount
+                localStorage.setItem('smartClaimAmount', aiAmt); 
+                
                 document.getElementById('stage-3-dot').className = "timeline-dot active";
                 document.getElementById('line-3').className = "timeline-line h-12 -top-12 line-active";
-
-                actionArea.innerHTML = `
-                    <button onclick="window.location.href='payout.html'" class="w-full bg-green-500 text-white font-black py-5 rounded-2xl uppercase tracking-widest text-[11px]">
-                        Collect Bonus Payout
-                    </button>`;
+                actionArea.innerHTML = `<button onclick="window.location.href='payout.html'" class="w-full bg-green-500 text-white font-black py-5 rounded-2xl uppercase tracking-widest text-[11px] hover:shadow-[0_0_20px_rgba(34,197,94,0.4)] transition">Collect Bonus Payout</button>`;
             }
-
+            
             // CASE 1: CLOSE MATCH (OK) ✅
             else {
-                verdict.innerText = "GOOD FAITH PASS";
-                verdict.className = "text-xl font-bold italic text-green-400";
-                scoreBadge.className = "px-3 py-1 rounded-full text-[10px] font-black bg-green-500/20 text-green-400 border border-green-500/20";
-                riskLabel.innerText = "Verified Estimate";
-                riskLabel.className = "font-bold text-green-400";
-                aiComment.innerText = "CASE 1: Estimate within 15% tolerance. AI detection (₹15K) matches your good faith estimate.";
+                verdict.innerText = "GREEN CHECK"; 
+                verdict.className = "text-xl font-bold italic text-green-500";
+                riskLabel.innerText = "Good Faith Estimate"; 
+                riskLabel.className = "font-bold text-green-500";
+                aiComment.innerText = "CASE 1: Within ±15% = Good faith estimate. Proceeding to Payout.";
+                
+                // LINKING LOGIC: Proceed with the AI benchmark
+                localStorage.setItem('smartClaimAmount', aiAmt); 
 
                 document.getElementById('stage-3-dot').className = "timeline-dot active";
                 document.getElementById('line-3').className = "timeline-line h-12 -top-12 line-active";
-
-                actionArea.innerHTML = `
-                    <button onclick="window.location.href='payout.html'" class="w-full bg-green-500 text-white font-black py-5 rounded-2xl uppercase tracking-widest text-[11px]">
-                        Proceed to Payout
-                    </button>`;
+                actionArea.innerHTML = `<button onclick="window.location.href='payout.html'" class="w-full bg-green-500 text-white font-black py-5 rounded-2xl uppercase tracking-widest text-[11px] hover:shadow-[0_0_20px_rgba(34,197,94,0.4)] transition">Proceed to Payout</button>`;
             }
         }
     </script>
