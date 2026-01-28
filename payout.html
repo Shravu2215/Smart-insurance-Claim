@@ -8,33 +8,22 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     
     <style>
-        :root {
-            --bg-deep: #05070a;
-            --accent-blue: #38bdf8;
-            --glass-white: rgba(255, 255, 255, 0.03);
-            --border-white: rgba(255, 255, 255, 0.08);
-        }
-        body {
-            font-family: 'Plus Jakarta Sans', sans-serif;
-            background-color: var(--bg-deep);
-            color: white;
-            min-height: 100vh;
-        }
-        .dynamic-bg {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none; z-index: -1;
-            background: radial-gradient(circle at 10% 20%, rgba(56, 189, 248, 0.1) 0%, transparent 50%), radial-gradient(circle at 90% 80%, rgba(139, 92, 246, 0.08) 0%, transparent 50%);
-            filter: blur(80px);
-        }
+        :root { --bg-deep: #05070a; --accent-blue: #38bdf8; --glass-white: rgba(255, 255, 255, 0.03); --border-white: rgba(255, 255, 255, 0.08); }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: var(--bg-deep); color: white; min-height: 100vh; }
+        .dynamic-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: -1; background: radial-gradient(circle at 10% 20%, rgba(56, 189, 248, 0.1) 0%, transparent 50%), radial-gradient(circle at 90% 80%, rgba(139, 92, 246, 0.08) 0%, transparent 50%); filter: blur(80px); }
         .glass-card { background: var(--glass-white); backdrop-filter: blur(40px) saturate(180%); border: 1px solid var(--border-white); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); }
         .method-tile { cursor: pointer; border: 1px solid var(--border-white); background: rgba(255, 255, 255, 0.01); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
         .method-tile.active { border-color: var(--accent-blue); background: rgba(56, 189, 248, 0.1); box-shadow: 0 0 30px rgba(56, 189, 248, 0.2); }
         .smart-input { background: rgba(0, 0, 0, 0.4) !important; border: 1px solid rgba(255, 255, 255, 0.1) !important; color: white !important; transition: 0.3s; }
-        .smart-input:focus { border-color: var(--accent-blue) !important; box-shadow: 0 0 15px rgba(56, 189, 248, 0.1); outline: none; }
+        .smart-input:focus { border-color: var(--accent-blue) !important; outline: none; }
         .hidden-panel { display: none; }
-        .option-container { border: 1px solid var(--border-white); border-radius: 20px; padding: 20px; margin-bottom: 12px; cursor: pointer; transition: 0.2s; position: relative; overflow: hidden; }
-        .option-container:hover { border-color: rgba(255,255,255,0.2); background: rgba(255,255,255,0.02); }
+        .option-container { border: 1px solid var(--border-white); border-radius: 20px; padding: 20px; margin-bottom: 12px; cursor: pointer; transition: 0.2s; position: relative; }
         .option-container.selected { border-color: var(--accent-blue); background: rgba(56, 189, 248, 0.05); }
+        
+        /* New App Icon Styles */
+        .app-pill { border: 1px solid rgba(255,255,255,0.1); padding: 8px 16px; border-radius: 12px; font-size: 10px; font-weight: 800; text-transform: uppercase; cursor: pointer; transition: 0.2s; }
+        .app-pill:hover { background: rgba(255,255,255,0.05); }
+        .app-pill.selected { border-color: #38bdf8; color: #38bdf8; background: rgba(56, 189, 248, 0.1); }
     </style>
 </head>
 <body class="pb-20" onload="retrieveClaimData()">
@@ -45,7 +34,7 @@
       <div class="max-w-7xl mx-auto px-6 h-14 flex items-center justify-between">
         <div class="font-extrabold text-xl">SmartClaim<span class="text-sky-400">.Pro</span></div>
         <div class="hidden md:flex gap-8 text-sm font-bold text-gray-300">
-          <a href="home.html">Home</a>
+          <a href="index.html">Home</a>
           <a href="submit-claim.html" class="text-white">File Claim</a>
           <a href="history.html">History</a>
         </div>
@@ -99,7 +88,7 @@
                         </div>
                         <div class="flex-1">
                             <p class="text-sm font-extrabold text-white">Direct-to-Bank (RTGS/IMPS)</p>
-                            <p class="text-[9px] text-gray-500 uppercase tracking-wider">AI Node Verification • 2-4 Hours Average</p>
+                            <p class="text-[9px] text-gray-500 uppercase tracking-wider">AI Node Verification • 2-4 Hours</p>
                         </div>
                     </div>
                     <div id="form-bank" class="mt-6 space-y-4 hidden border-t border-white/5 pt-4">
@@ -118,8 +107,13 @@
                             <p class="text-[9px] text-sky-400 uppercase tracking-wider font-black italic">Atomic Settlement • T+0 Minutes</p>
                         </div>
                     </div>
-                    <div id="form-upi" class="mt-6 space-y-4 hidden border-t border-white/5 pt-4">
-                        <input id="upiID" type="text" placeholder="Enter UPI ID (e.g., shravu@ybl)" class="smart-input w-full p-5 rounded-2xl text-xl font-black tracking-tight">
+                    <div id="form-upi" class="mt-6 space-y-6 hidden border-t border-white/5 pt-4">
+                        <div class="flex gap-3 justify-center">
+                            <div class="app-pill" onclick="event.stopPropagation(); this.parentElement.querySelectorAll('.app-pill').forEach(p=>p.classList.remove('selected')); this.classList.add('selected')">Google Pay</div>
+                            <div class="app-pill" onclick="event.stopPropagation(); this.parentElement.querySelectorAll('.app-pill').forEach(p=>p.classList.remove('selected')); this.classList.add('selected')">PhonePe</div>
+                            <div class="app-pill" onclick="event.stopPropagation(); this.parentElement.querySelectorAll('.app-pill').forEach(p=>p.classList.remove('selected')); this.classList.add('selected')">Paytm</div>
+                        </div>
+                        <input id="upiID" type="text" placeholder="Enter UPI ID (e.g., shravu@ybl)" class="smart-input w-full p-5 rounded-2xl text-xl font-black tracking-tight text-center">
                     </div>
                 </div>
 
@@ -130,7 +124,7 @@
             </div>
 
             <button id="finalizeBtn" onclick="processFinalPayout()" class="w-full bg-sky-500 hover:bg-sky-400 text-black font-black py-6 rounded-[32px] uppercase tracking-[0.4em] flex items-center justify-center gap-4 transition-all text-xs">
-                <span id="btnText">Execute AI Payout</span>
+                <span id="btnText">Finalize Garage Dispatch</span>
                 <div id="btnLoader" class="hidden w-5 h-5 border-2 border-black/30 border-t-black rounded-full animate-spin"></div>
             </button>
         </div>
@@ -157,13 +151,11 @@
         let globalAmount = "0.00";
 
         function retrieveClaimData() {
-            const finalApprovedAmt = localStorage.getItem('smartClaimAmount') || "15000"; 
+            const finalApprovedAmt = localStorage.getItem('claimedAmount') || "15000"; 
             globalAmount = "₹" + parseInt(finalApprovedAmt).toLocaleString('en-IN');
-
             setTimeout(() => {
                 document.getElementById('displayAmount').innerText = globalAmount;
                 log(`Neural audit complete. Final Liability: ${globalAmount}`);
-                log(`Status: Case analysis applied.`);
             }, 800);
         }
 
@@ -173,7 +165,6 @@
             document.getElementById('btn-' + method).classList.add('active');
             document.getElementById('panel-cashless').style.display = (method === 'cashless') ? 'block' : 'none';
             document.getElementById('panel-instant').style.display = (method === 'instant') ? 'block' : 'none';
-            log(`Routing to ${method === 'instant' ? 'Atomic Liquidation' : 'Direct Garage Hub'}.`);
             updateBtnText();
         }
 
@@ -183,9 +174,7 @@
             document.querySelector('#circle-upi div').classList.toggle('hidden', type !== 'upi');
             document.getElementById('form-bank').classList.toggle('hidden', type !== 'bank');
             document.getElementById('form-upi').classList.toggle('hidden', type !== 'upi');
-            document.querySelectorAll('.option-container').forEach(el => el.classList.remove('selected'));
-            event.currentTarget.classList.add('selected');
-            log(`Channel set: ${type.toUpperCase()}. Validation successful.`);
+            log(`Channel set: ${type.toUpperCase()}.`);
         }
 
         function log(msg) {
@@ -200,6 +189,7 @@
             btnText.innerText = mainMethod === 'cashless' ? "Finalize Garage Dispatch" : "Execute AI Payout";
         }
 
+        // Final Payout Logic with Redirection
         function processFinalPayout() {
             if (mainMethod === 'instant' && !subMethod) {
                 alert("Please select a disbursement channel.");
@@ -212,12 +202,10 @@
             document.getElementById('btnText').innerText = "Signing Transaction...";
 
             setTimeout(() => {
-                log("Disbursement Packet Encrypted.");
+                log("Transaction Hash Generated: 0x4e...9a2");
                 setTimeout(() => {
-                    alert(`Claim Executed Successfully!\nApproved Amount: ${globalAmount}\nStatus: Funds Dispatched.`);
-                    btn.disabled = false;
-                    loader.classList.add('hidden');
-                    updateBtnText();
+                    // Takes you to receipt.html after success
+                    window.location.href = "receipt.html"; 
                 }, 1000);
             }, 1500);
         }
