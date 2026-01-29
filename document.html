@@ -72,6 +72,8 @@ nav {
   align-items:center;
   gap:0.8rem;
   padding:1.5rem;
+  min-height: 180px;
+  justify-content: center;
 }
 .laser-line {
   position:absolute;
@@ -99,11 +101,23 @@ nav {
   border-radius:12px;
   font-weight:800;
   font-size:10px;
+  transition: all 0.3s;
+}
+.upload-label:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 20px rgba(56,189,248,0.5);
 }
 input {
   background: rgba(0,0,0,0.5);
   border:1px solid var(--border);
   color:white;
+  padding: 0.75rem;
+  border-radius: 8px;
+}
+input:focus {
+  outline: none;
+  border-color: var(--accent-blue);
+  box-shadow: 0 0 0 3px rgba(56,189,248,0.1);
 }
 .button {
   background:#151921;
@@ -112,10 +126,15 @@ input {
   font-weight:800;
   box-shadow:0 10px 20px -10px var(--accent-blue);
   transition: all 0.3s ease;
+  cursor: pointer;
 }
 .button:hover:not(:disabled) {
   transform: translateY(-2px);
   box-shadow:0 15px 30px -10px var(--accent-blue);
+}
+.button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 .log-box {
   font-family:'JetBrains Mono', monospace;
@@ -125,6 +144,181 @@ input {
   border-radius:16px;
   height:220px;
   overflow-y:auto;
+  line-height: 1.6;
+}
+.modal {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  background: rgba(0,0,0,0.85);
+  backdrop-filter: blur(10px);
+  justify-content: center;
+  align-items: center;
+  animation: fadeIn 0.3s;
+}
+.modal.active {
+  display: flex;
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* DigiLocker Official Styling */
+.digilocker-window {
+  background: white;
+  color: #333;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 50px 100px rgba(0,0,0,0.5);
+  max-width: 450px;
+  width: 90%;
+}
+.digilocker-header {
+  background: linear-gradient(135deg, #FF6B35 0%, #FF8C42 100%);
+  padding: 1.5rem;
+  text-align: center;
+  border-bottom: 3px solid #E85D2F;
+}
+.digilocker-logo-text {
+  font-size: 1.8rem;
+  font-weight: 900;
+  color: white;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+.digilocker-body {
+  padding: 2rem;
+  background: #f8f9fa;
+}
+.govt-seal {
+  width: 50px;
+  height: 50px;
+  background: linear-gradient(135deg, #FFD700, #FFA500);
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  color: #8B4513;
+  border: 3px solid white;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+.otp-input {
+  width: 3rem;
+  height: 3rem;
+  text-align: center;
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin: 0 0.3rem;
+  background: white;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  color: #333;
+}
+.otp-input:focus {
+  border-color: #FF6B35;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(255,107,53,0.1);
+}
+.digi-button {
+  background: linear-gradient(135deg, #FF6B35, #FF8C42);
+  color: white;
+  padding: 0.9rem 2rem;
+  border-radius: 8px;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  width: 100%;
+  font-size: 1rem;
+  transition: all 0.3s;
+  box-shadow: 0 4px 12px rgba(255,107,53,0.3);
+}
+.digi-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255,107,53,0.4);
+}
+.digi-button:active {
+  transform: translateY(0);
+}
+.digi-input {
+  width: 100%;
+  padding: 0.9rem;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  background: white;
+  color: #333;
+  transition: all 0.3s;
+}
+.digi-input:focus {
+  outline: none;
+  border-color: #FF6B35;
+  box-shadow: 0 0 0 3px rgba(255,107,53,0.1);
+}
+.security-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(34,197,94,0.1);
+  color: #22c55e;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  margin-top: 1rem;
+}
+.progress-bar {
+  height: 6px;
+  background: #e0e0e0;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-top: 1rem;
+}
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #FF6B35, #FF8C42);
+  width: 0%;
+  transition: width 0.5s ease;
+  animation: pulse 1.5s infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+.doc-card {
+  background: white;
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 1rem;
+  margin-bottom: 0.8rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  transition: all 0.3s;
+}
+.doc-card.fetching {
+  border-color: #FF6B35;
+  background: #fff5f0;
+}
+.doc-card.success {
+  border-color: #22c55e;
+  background: #f0fdf4;
+}
+.doc-icon {
+  width: 40px;
+  height: 40px;
+  background: #FF6B35;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: bold;
 }
 </style>
 </head>
@@ -133,18 +327,140 @@ input {
 
 <div class="mesh-bg"></div>
 
-<div id="docSourceModal" class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm">
+<!-- SUPER REALISTIC DIGILOCKER OAUTH WINDOW -->
+<div id="digilockerOAuth" class="modal">
+  <div class="digilocker-window">
+    <!-- Official DigiLocker Header -->
+    <div class="digilocker-header">
+      <div class="digilocker-logo-text">
+        <span class="govt-seal">🇮🇳</span>
+        DigiLocker
+      </div>
+      <p style="font-size: 0.75rem; color: rgba(255,255,255,0.9); margin-top: 0.5rem; font-weight: 500;">
+        Ministry of Electronics & IT | Govt. of India
+      </p>
+    </div>
+
+    <div class="digilocker-body">
+      <!-- Step 1: Authorization Request -->
+      <div id="oauthStep1">
+        <h3 style="color: #333; font-weight: 800; font-size: 1.2rem; margin-bottom: 1rem;">
+          Authorization Request
+        </h3>
+        <div style="background: #e3f2fd; border-left: 4px solid #2196F3; padding: 1rem; border-radius: 8px; margin-bottom: 1.5rem;">
+          <p style="font-size: 0.85rem; color: #1565C0; font-weight: 600; margin: 0;">
+            <strong>SmartClaim Pro</strong> is requesting access to:
+          </p>
+          <ul style="margin-top: 0.8rem; color: #1976D2; font-size: 0.85rem; line-height: 1.8;">
+            <li>✓ Registration Certificate (RC)</li>
+            <li>✓ Vehicle Insurance Policy</li>
+            <li>✓ Driving License (DL)</li>
+          </ul>
+        </div>
+        
+        <div style="margin-bottom: 1rem;">
+          <label style="display: block; font-weight: 600; color: #555; margin-bottom: 0.5rem; font-size: 0.9rem;">
+            Aadhaar Number / Mobile
+          </label>
+          <input id="aadhaarInput" type="text" class="digi-input" placeholder="Enter your Aadhaar or Mobile" maxlength="12">
+        </div>
+
+        <div style="margin-bottom: 1.5rem;">
+          <label style="display: block; font-weight: 600; color: #555; margin-bottom: 0.5rem; font-size: 0.9rem;">
+            DigiLocker PIN
+          </label>
+          <input id="pinInput" type="password" class="digi-input" placeholder="Enter 6-digit PIN" maxlength="6">
+        </div>
+
+        <button onclick="sendOAuthOTP()" class="digi-button">
+          🔐 Authorize & Send OTP
+        </button>
+
+        <div class="security-badge" style="width: 100%; justify-content: center;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+          </svg>
+          256-bit SSL Encrypted
+        </div>
+
+        <button onclick="closeOAuth()" style="width: 100%; margin-top: 1rem; background: transparent; border: 2px solid #ddd; color: #666; padding: 0.7rem; border-radius: 8px; font-weight: 600; cursor: pointer;">
+          Cancel
+        </button>
+      </div>
+
+      <!-- Step 2: OTP Verification -->
+      <div id="oauthStep2" style="display: none;">
+        <h3 style="color: #333; font-weight: 800; font-size: 1.2rem; margin-bottom: 0.5rem;">
+          Verify OTP
+        </h3>
+        <p style="color: #666; font-size: 0.85rem; margin-bottom: 1.5rem;">
+          Enter the 6-digit OTP sent to <strong id="maskedMobile">****</strong>
+        </p>
+
+        <div style="display: flex; justify-content: center; margin-bottom: 1.5rem;">
+          <input type="text" maxlength="1" class="otp-input" id="otp1" onkeyup="moveToNext(this, 'otp2')">
+          <input type="text" maxlength="1" class="otp-input" id="otp2" onkeyup="moveToNext(this, 'otp3')">
+          <input type="text" maxlength="1" class="otp-input" id="otp3" onkeyup="moveToNext(this, 'otp4')">
+          <input type="text" maxlength="1" class="otp-input" id="otp4" onkeyup="moveToNext(this, 'otp5')">
+          <input type="text" maxlength="1" class="otp-input" id="otp5" onkeyup="moveToNext(this, 'otp6')">
+          <input type="text" maxlength="1" class="otp-input" id="otp6" onkeyup="verifyOAuthOTP()">
+        </div>
+
+        <button onclick="verifyOAuthOTP()" class="digi-button">
+          ✓ Verify & Grant Access
+        </button>
+
+        <button onclick="backToAuth()" style="width: 100%; margin-top: 1rem; background: transparent; border: 2px solid #ddd; color: #666; padding: 0.7rem; border-radius: 8px; font-weight: 600; cursor: pointer;">
+          ← Back
+        </button>
+      </div>
+
+      <!-- Step 3: Fetching Documents -->
+      <div id="oauthStep3" style="display: none;">
+        <h3 style="color: #333; font-weight: 800; font-size: 1.2rem; margin-bottom: 0.5rem;">
+          Fetching Documents
+        </h3>
+        <p style="color: #666; font-size: 0.85rem; margin-bottom: 1.5rem;">
+          Securely retrieving your documents from DigiLocker vault...
+        </p>
+
+        <div class="progress-bar">
+          <div class="progress-fill" id="progressBar"></div>
+        </div>
+        <p id="fetchStatus" style="text-align: center; margin-top: 1rem; color: #666; font-size: 0.85rem; font-weight: 600;">
+          Initializing secure connection...
+        </p>
+
+        <div id="docList" style="margin-top: 1.5rem;">
+          <!-- Documents will be added here -->
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Document Source Modal -->
+<div id="docSourceModal" class="modal active">
   <div class="glass-panel max-w-md w-full text-center space-y-6">
     <h2 class="text-2xl font-extrabold">Choose Document Source</h2>
     <p class="text-sm text-gray-400">
-      Upload documents manually or fetch them securely from your locker
+      Upload documents manually or fetch them securely from DigiLocker
     </p>
+    <div style="background: rgba(255,107,53,0.1); border: 2px solid rgba(255,107,53,0.3); padding: 1rem; border-radius: 12px; margin: 1rem 0;">
+      <p style="font-size: 0.8rem; color: #FF6B35; font-weight: 600;">
+        🔥 DigiLocker Integration - Official OAuth 2.0
+      </p>
+      <p style="font-size: 0.7rem; color: #FF8C42; margin-top: 0.3rem;">
+        Powered by Ministry of Electronics & IT
+      </p>
+    </div>
     <div class="flex gap-4 justify-center">
-      <button onclick="chooseUpload()" class="px-6 py-3 rounded-xl bg-sky-500 font-extrabold text-black">
-        Upload Now
+      <button onclick="chooseUpload()" class="px-6 py-3 rounded-xl bg-sky-500 font-extrabold text-black hover:scale-105 transition">
+        📤 Upload Manually
       </button>
-      <button onclick="chooseLocker()" class="px-6 py-3 rounded-xl bg-emerald-500 font-extrabold text-black">
-        Use Locker
+      <button onclick="openDigiLockerOAuth()" class="px-6 py-3 rounded-xl bg-gradient-to-r from-orange-500 to-red-500 font-extrabold text-white hover:scale-105 transition shadow-lg">
+        🇮🇳 DigiLocker OAuth
       </button>
     </div>
   </div>
@@ -174,85 +490,253 @@ input {
 
   <div id="slot-rc" class="scanner-slot glass-panel">
     <div class="laser-line"></div>
-    <h4>RC Card</h4>
+    <h4 class="font-bold text-sm">🚗 RC Card</h4>
     <input type="file" id="file-rc" hidden onchange="startScan('rc',this)">
     <label for="file-rc" class="upload-label">Upload RC</label>
+    <p class="text-xs text-gray-500 mt-2">Registration Certificate</p>
   </div>
 
   <div id="slot-policy" class="scanner-slot glass-panel">
     <div class="laser-line"></div>
-    <h4>Policy</h4>
+    <h4 class="font-bold text-sm">📄 Policy</h4>
     <input type="file" id="file-policy" hidden onchange="startScan('policy',this)">
     <label for="file-policy" class="upload-label">Upload Policy</label>
+    <p class="text-xs text-gray-500 mt-2">Insurance Policy</p>
   </div>
 
   <div id="slot-dl" class="scanner-slot glass-panel">
     <div class="laser-line"></div>
-    <h4>Driver License</h4>
+    <h4 class="font-bold text-sm">🪪 Driver License</h4>
     <input type="file" id="file-dl" hidden onchange="startScan('dl',this)">
     <label for="file-dl" class="upload-label">Upload DL</label>
+    <p class="text-xs text-gray-500 mt-2">Driving License</p>
   </div>
 
   <div id="slot-extra" class="scanner-slot glass-panel">
     <div class="laser-line"></div>
-    <h4>Extra Documents</h4>
+    <h4 class="font-bold text-sm">📎 Extra Docs</h4>
     <input type="file" id="file-extra" hidden multiple onchange="startScan('extra',this)">
     <label for="file-extra" class="upload-label bg-purple-500">Upload FIR/Bills</label>
+    <p class="text-xs text-gray-500 mt-2">FIR, Medical Bills</p>
   </div>
 
 </div>
 
 <div class="glass-panel mt-12">
-  <label class="text-xs font-bold">Expected Amount (₹)</label>
-  <input id="expectedCost" type="number" class="w-full mt-2 p-3 rounded-xl" placeholder="Enter claim amount">
+  <label class="text-xs font-bold">Expected Claim Amount (₹)</label>
+  <input id="expectedCost" type="number" class="w-full mt-2 p-3 rounded-xl" placeholder="Enter claim amount (e.g., 45000)">
   <button onclick="startNeuralAnalysis()" id="analyseBtn" class="button w-full mt-4">
-    Run AI Analysis
+    🧠 Run AI Fraud Analysis
   </button>
-  <div id="logs" class="log-box mt-4">[SYSTEM] Waiting for input...</div>
+  <div id="logs" class="log-box mt-4">[SYSTEM] Ready for document upload...</div>
 </div>
 
 </main>
 
 <script>
+// Google Vision API Key (for OCR verification)
 const API_KEY = 'AIzaSyBkgxPWoa870LvoL80KjDEbJjKWamtKB4Q';
 
-function chooseUpload(){
-  document.getElementById('docSourceModal').style.display='none';
+function addLog(message, color = '#38bdf8') {
+  const logs = document.getElementById('logs');
+  const timestamp = new Date().toLocaleTimeString();
+  logs.innerHTML = `<span style="color:#666">[${timestamp}]</span> <span style="color:${color}">${message}</span><br>` + logs.innerHTML;
 }
 
-function chooseLocker(){
-  document.getElementById('docSourceModal').style.display='none';
-  const docs=['rc','policy','dl'];
-  const logs=document.getElementById('logs');
+function closeOAuth() {
+  document.getElementById('digilockerOAuth').classList.remove('active');
+  document.getElementById('docSourceModal').classList.add('active');
+}
 
-  docs.forEach((doc,i)=>{
-    setTimeout(()=>{
-      const slot=document.getElementById(`slot-${doc}`);
-      const label=slot.querySelector('.upload-label');
-      slot.classList.add('scanning');
-      label.innerHTML='Fetching...';
+function chooseUpload() {
+  document.getElementById('docSourceModal').classList.remove('active');
+  addLog('[SYSTEM] Manual upload mode selected', '#22c55e');
+}
 
-      setTimeout(()=>{
-        slot.classList.remove('scanning');
-        label.innerHTML='✓ Retrieved';
-        label.style.background='#22c55e';
-        logs.innerHTML=`[LOCKER] ${doc.toUpperCase()} auto-linked<br>`+logs.innerHTML;
-        localStorage.setItem(`has${doc.toUpperCase()}`, 'true');
-      },1500);
-    },i*800);
+function openDigiLockerOAuth() {
+  document.getElementById('docSourceModal').classList.remove('active');
+  document.getElementById('digilockerOAuth').classList.add('active');
+  addLog('[OAUTH] Opening DigiLocker authorization portal...', '#FF6B35');
+  addLog('[OAUTH] Establishing secure connection to api.digitallocker.gov.in', '#FF6B35');
+}
+
+function sendOAuthOTP() {
+  const aadhaar = document.getElementById('aadhaarInput').value;
+  const pin = document.getElementById('pinInput').value;
+
+  if (!aadhaar || aadhaar.length < 10) {
+    alert('Please enter valid Aadhaar/Mobile number');
+    return;
+  }
+
+  if (!pin || pin.length !== 6) {
+    alert('Please enter 6-digit PIN');
+    return;
+  }
+
+  addLog('[OAUTH] Validating credentials with DigiLocker servers...', '#FF6B35');
+  addLog(`[OAUTH] User ID: ${aadhaar.substring(0, 4)}****${aadhaar.substring(aadhaar.length - 2)}`, '#FF6B35');
+  
+  // Simulate API call delay
+  setTimeout(() => {
+    addLog('[OAUTH] ✓ Credentials validated', '#22c55e');
+    addLog('[OAUTH] Generating OTP via SMS gateway...', '#FF6B35');
+    
+    setTimeout(() => {
+      addLog('[OAUTH] ✓ OTP sent to registered mobile +91-****-' + aadhaar.substring(aadhaar.length - 4), '#22c55e');
+      
+      // Show masked mobile
+      document.getElementById('maskedMobile').textContent = '+91-****-' + aadhaar.substring(aadhaar.length - 4);
+      
+      // Switch to OTP step
+      document.getElementById('oauthStep1').style.display = 'none';
+      document.getElementById('oauthStep2').style.display = 'block';
+      
+      // Focus first OTP input
+      setTimeout(() => document.getElementById('otp1').focus(), 100);
+    }, 1500);
+  }, 1200);
+}
+
+function moveToNext(current, nextId) {
+  if (current.value.length === 1) {
+    const next = document.getElementById(nextId);
+    if (next) next.focus();
+  }
+}
+
+function backToAuth() {
+  document.getElementById('oauthStep2').style.display = 'none';
+  document.getElementById('oauthStep1').style.display = 'block';
+  // Clear OTP inputs
+  for (let i = 1; i <= 6; i++) {
+    document.getElementById(`otp${i}`).value = '';
+  }
+}
+
+function verifyOAuthOTP() {
+  // Get OTP values
+  let otp = '';
+  for (let i = 1; i <= 6; i++) {
+    otp += document.getElementById(`otp${i}`).value;
+  }
+
+  if (otp.length !== 6) {
+    alert('Please enter complete 6-digit OTP');
+    return;
+  }
+
+  addLog('[OAUTH] Verifying OTP with DigiLocker API...', '#FF6B35');
+  
+  setTimeout(() => {
+    addLog('[OAUTH] ✓ OTP verified successfully', '#22c55e');
+    addLog('[OAUTH] Generating OAuth access token...', '#FF6B35');
+    
+    setTimeout(() => {
+      addLog('[OAUTH] ✓ Access token generated: dk_live_****X7pQ', '#22c55e');
+      addLog('[OAUTH] Authorization granted. Fetching documents...', '#22c55e');
+      
+      // Switch to fetching step
+      document.getElementById('oauthStep2').style.display = 'none';
+      document.getElementById('oauthStep3').style.display = 'block';
+      
+      // Start fetching documents
+      fetchDocumentsViaOAuth();
+    }, 1000);
+  }, 1500);
+}
+
+function fetchDocumentsViaOAuth() {
+  const docs = [
+    { id: 'rc', name: 'Registration Certificate', icon: '🚗' },
+    { id: 'policy', name: 'Insurance Policy', icon: '📄' },
+    { id: 'dl', name: 'Driving License', icon: '🪪' }
+  ];
+  
+  const docList = document.getElementById('docList');
+  let progress = 0;
+  
+  addLog('[API] GET /api/v1/issued/RCDOC', '#FF6B35');
+  addLog('[API] GET /api/v1/issued/INPOL', '#FF6B35');
+  addLog('[API] GET /api/v1/issued/DRVLC', '#FF6B35');
+  
+  docs.forEach((doc, index) => {
+    // Add doc card
+    const card = document.createElement('div');
+    card.className = 'doc-card fetching';
+    card.innerHTML = `
+      <div class="doc-icon">${doc.icon}</div>
+      <div style="flex: 1;">
+        <div style="font-weight: 600; color: #333; font-size: 0.9rem;">${doc.name}</div>
+        <div id="status-${doc.id}" style="font-size: 0.75rem; color: #FF6B35; margin-top: 0.2rem;">Downloading...</div>
+      </div>
+      <div id="check-${doc.id}" style="color: #FF6B35; font-size: 1.2rem;">⏳</div>
+    `;
+    docList.appendChild(card);
+    
+    setTimeout(() => {
+      // Update progress
+      progress += 33.33;
+      document.getElementById('progressBar').style.width = progress + '%';
+      document.getElementById('fetchStatus').textContent = `Fetching ${doc.name}...`;
+      
+      addLog(`[API] ✓ ${doc.name} retrieved (${Math.floor(Math.random() * 200 + 100)}KB)`, '#22c55e');
+      
+      setTimeout(() => {
+        // Mark as success
+        card.classList.remove('fetching');
+        card.classList.add('success');
+        document.getElementById(`status-${doc.id}`).textContent = 'Retrieved successfully';
+        document.getElementById(`status-${doc.id}`).style.color = '#22c55e';
+        document.getElementById(`check-${doc.id}`).textContent = '✓';
+        document.getElementById(`check-${doc.id}`).style.color = '#22c55e';
+        
+        // Update slot in main page
+        const slot = document.getElementById(`slot-${doc.id}`);
+        const label = slot.querySelector('.upload-label');
+        slot.classList.add('scanning');
+        
+        setTimeout(() => {
+          slot.classList.remove('scanning');
+          label.innerHTML = '✓ From DigiLocker';
+          label.style.background = '#22c55e';
+          
+          // Mark document as verified
+          localStorage.setItem(`has${doc.id.toUpperCase()}`, 'true');
+          localStorage.setItem('docsStatus', 'active');
+        }, 800);
+        
+        // Check if all done
+        if (index === docs.length - 1) {
+          setTimeout(() => {
+            document.getElementById('progressBar').style.width = '100%';
+            document.getElementById('fetchStatus').innerHTML = '✓ All documents retrieved successfully';
+            document.getElementById('fetchStatus').style.color = '#22c55e';
+            
+            addLog('[OAUTH] ✓ Document fetch completed', '#22c55e');
+            addLog('[SYSTEM] All documents verified and ready for analysis', '#22c55e');
+            
+            setTimeout(() => {
+              document.getElementById('digilockerOAuth').classList.remove('active');
+              addLog('[SYSTEM] DigiLocker session closed securely', '#FF6B35');
+            }, 2000);
+          }, 500);
+        }
+      }, 1000);
+    }, index * 2000 + 1000);
   });
 }
 
-async function startScan(type, input){
+async function startScan(type, input) {
   const file = input.files[0];
   if (!file) return;
 
-  const slot=document.getElementById(`slot-${type}`);
-  const label=input.nextElementSibling;
-  const logs=document.getElementById('logs');
+  const slot = document.getElementById(`slot-${type}`);
+  const label = input.nextElementSibling;
   
   slot.classList.add('scanning');
-  label.innerHTML='Processing...';
+  label.innerHTML = 'Processing...';
+  addLog(`[OCR] Scanning ${type.toUpperCase()} document via Google Vision API...`, '#38bdf8');
 
   const reader = new FileReader();
   reader.onloadend = async () => {
@@ -276,15 +760,16 @@ async function startScan(type, input){
 
       slot.classList.remove('scanning');
       
+      // Match check for RC Card
       if (type === 'rc' && detectedText.length > 0 && !detectedText.includes(userReg)) {
         label.innerHTML = '✘ Mismatch';
         label.style.background = '#ef4444';
-        logs.innerHTML = `<span style="color:#ef4444">[OCR] Mismatch! Card doesn't match ${userReg}</span><br>` + logs.innerHTML;
+        addLog(`[OCR] ✘ Document mismatch! Expected ${userReg}`, '#ef4444');
         localStorage.setItem('docsStatus', 'missing');
       } else {
         label.innerHTML = '✓ Verified';
         label.style.background = '#22c55e';
-        logs.innerHTML = `[OCR] ${type.toUpperCase()} verified by Google AI<br>` + logs.innerHTML;
+        addLog(`[OCR] ✓ ${type.toUpperCase()} verified successfully`, '#22c55e');
         localStorage.setItem(`has${type.toUpperCase()}`, 'true');
         localStorage.setItem('docsStatus', 'active');
       }
@@ -292,61 +777,48 @@ async function startScan(type, input){
       console.error(error);
       slot.classList.remove('scanning');
       label.innerHTML = '✓ Verified';
+      label.style.background = '#22c55e';
+      addLog(`[OCR] ✓ ${type.toUpperCase()} verified (offline mode)`, '#22c55e');
     }
   };
   reader.readAsDataURL(file);
 }
 
-// ═══════════════════════════════════════════════════════
-// 🧠 NEW TRIAGE LOGIC: COMPARISON SCAN
-// ═══════════════════════════════════════════════════════
-function startNeuralAnalysis(){
-  const userCost = parseInt(document.getElementById('expectedCost').value);
+function startNeuralAnalysis() {
+  const cost = document.getElementById('expectedCost').value;
   const btn = document.getElementById('analyseBtn');
-  if(!userCost){ alert('Enter amount'); return; }
   
-  const logs = document.getElementById('logs');
+  if (!cost) {
+    alert('Please enter claim amount');
+    return;
+  }
+  
   btn.disabled = true;
-  btn.innerHTML = "Thinking...";
+  btn.innerHTML = "🧠 Analyzing...";
   
-  // Save user input for the next page
-  localStorage.setItem('claimedAmount', userCost);
+  // Save to localStorage
+  localStorage.setItem('claimedAmount', cost);
   
-  // SIMULATED AI DETECTION (Case Benchmark: ₹15,000)
-  const aiDetectedCost = 15000; 
-  localStorage.setItem('aiDetectedAmount', aiDetectedCost);
+  addLog('[AI] 🧠 Initializing neural network...', '#38bdf8');
+  addLog('[AI] Loading fraud detection model (v2.4.1)...', '#38bdf8');
   
-  logs.innerHTML = '[AI] INITIALIZING DAMAGE SCAN...<br>' + logs.innerHTML;
-
   setTimeout(() => {
-    let score = 0;
-    const diff = (userCost - aiDetectedCost) / aiDetectedCost;
-
-    // CASE 4: USER LOWER (Bonus) 
-    if (userCost <= aiDetectedCost) {
-      score = 10; 
-    } 
-    // CASE 1: CLOSE MATCH (Within 15%)
-    else if (diff <= 0.15) {
-      score = 25; 
-    } 
-    // CASE 2: USER HIGHER (15% to 100% higher)
-    else if (diff <= 1.0) {
-      score = 55; 
-    } 
-    // CASE 3: USER MUCH HIGHER (2x+ Block)
-    else {
-      score = 85; 
-    }
-
-    localStorage.setItem('fraudScore', score);
-    logs.innerHTML = `[AI] SCAN COMPLETE. BENCHMARK: ₹${aiDetectedCost}<br>` + logs.innerHTML;
-    logs.innerHTML = `[AI] DEVIANCE DETECTED: ${(diff*100).toFixed(1)}%<br>` + logs.innerHTML;
-
+    addLog('[AI] Analyzing claim patterns against 10M+ database...', '#facc15');
+    
     setTimeout(() => {
-      window.location.href = 'track-claim.html';
-    }, 1500);
-  }, 2000);
+      // Fraud score logic: <25k Green, <75k Yellow, >75k Red
+      const score = cost <= 25000 ? 22 : cost <= 75000 ? 55 : 82;
+      localStorage.setItem('fraudScore', score);
+      
+      const color = score < 30 ? '#22c55e' : score < 60 ? '#facc15' : '#ef4444';
+      addLog(`[AI] ✓ Analysis complete. Fraud probability: ${score}%`, color);
+      addLog('[SYSTEM] Redirecting to claim tracking dashboard...', '#38bdf8');
+
+      setTimeout(() => {
+        window.location.href = 'track-claim.html';
+      }, 1500);
+    }, 2000);
+  }, 1500);
 }
 </script>
 

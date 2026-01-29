@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Officer Dashboard - Real-time Claims Management</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .officer-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 1.1rem;
+        }
+
+        .live-indicator {
+            width: 12px;
+            height: 12px;
+            background: #00ff00;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            padding: 30px;
+            background: #f8f9fa;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .stat-card h3 {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .stat-card .number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .claims-section {
+            padding: 30px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .section-header h2 {
+            font-size: 1.5rem;
+            color: #333;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .refresh-btn, .clear-all-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .refresh-btn {
+            background: #667eea;
+            color: white;
+        }
+
+        .refresh-btn:hover {
+            background: #5568d3;
+        }
+
+        .clear-all-btn {
+            background: #dc3545;
+            color: white;
+        }
+
+        .clear-all-btn:hover {
+            background: #c82333;
+        }
+
+        .claims-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .claims-table thead {
+            background: #667eea;
+            color: white;
+        }
+
+        .claims-table th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .claims-table td {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .claims-table tbody tr:hover {
+            background: #f8f9fa;
+        }
+
+        .badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .badge-green {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .badge-yellow {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .badge-red {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .badge-pending {
+            background: #cce5ff;
+            color: #004085;
+        }
+
+        .badge-approved {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .badge-rejected {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .btn-view {
+            background: #17a2b8;
+            color: white;
+        }
+
+        .btn-view:hover {
+            background: #138496;
+        }
+
+        .btn-approve {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-approve:hover {
+            background: #218838;
+        }
+
+        .btn-reject {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-reject:hover {
+            background: #c82333;
+        }
+
+        .btn-review {
+            background: #ffc107;
+            color: #000;
+        }
+
+        .btn-review:hover {
+            background: #e0a800;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+
+        .empty-state svg {
+            width: 100px;
+            height: 100px;
+            margin-bottom: 20px;
+            opacity: 0.3;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            max-width: 350px;
+            transform: translateX(400px);
+            transition: transform 0.3s;
+            z-index: 1000;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .notification-title {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .notification-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #999;
+        }
+
+        .notification-body {
+            color: #666;
+            font-size: 0.95rem;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #eee;
+        }
+
+        .modal-header h2 {
+            color: #333;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 2rem;
+            cursor: pointer;
+            color: #999;
+        }
+
+        .detail-row {
+            display: flex;
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .detail-label {
+            font-weight: 600;
+            color: #666;
+            width: 180px;
+        }
+
+        .detail-value {
+            color: #333;
+            flex: 1;
+        }
+
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+
+            .claims-table {
+                font-size: 0.85rem;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>
+                🏥 Officer Dashboard
+            </h1>
+            <div class="officer-info">
+                <span>👤 Officer: Shravani Kalupure</span>
+                <div class="live-indicator"></div>
+                <span>LIVE</span>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>Total Claims</h3>
+                <div class="number" id="totalClaims">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Green (Auto-Approve)</h3>
+                <div class="number" id="greenClaims" style="color: #28a745;">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Yellow (Review)</h3>
+                <div class="number" id="yellowClaims" style="color: #ffc107;">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Red (Flagged)</h3>
+                <div class="number" id="redClaims" style="color: #dc3545;">0</div>
+            </div>
+        </div>
+
+        <div class="claims-section">
+            <div class="section-header">
+                <h2>📋 Claims Queue</h2>
+                <div class="button-group">
+                    <button class="refresh-btn" onclick="refreshDashboard()">
+                        🔄 Refresh
+                    </button>
+                    <button class="clear-all-btn" onclick="confirmClearAll()">
+                        🗑️ Clear All
+                    </button>
+                </div>
+            </div>
+
+            <table class="claims-table">
+                <thead>
+                    <tr>
+                        <th>Claim ID</th>
+                        <th>Policy Holder</th>
+                        <th>Amount</th>
+                        <th>AI Triage</th>
+                        <th>Payment Type</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="claimsTableBody">
+                    <tr>
+                        <td colspan="7" class="empty-state">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
+                            </svg>
+                            <h3>Waiting for Claims...</h3>
+                            <p>New claims will appear here automatically</p>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Notification -->
+    <div class="notification" id="notification">
+        <div class="notification-header">
+            <span class="notification-title" id="notificationTitle">New Notification</span>
+            <button class="notification-close" onclick="closeNotification()">×</button>
+        </div>
+        <div class="notification-body" id="notificationBody">
+            Notification message
+        </div>
+    </div>
+
+    <!-- View Details Modal -->
+    <div class="modal" id="detailsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Claim Details</h2>
+                <button class="modal-close" onclick="closeModal()">×</button>
+            </div>
+            <div id="modalBody">
+                <!-- Details will be populated here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+
+    <script>
+        // Firebase Configuration - REPLACE WITH YOUR ACTUAL CONFIG
+        const firebaseConfig = {
+            apiKey: "AIzaSyDsM-gjH1yNu7_LVINa6AHC-I4OHNY-704",
+            authDomain: "claim-6d8b0.firebaseapp.com",
+            databaseURL: "https://claim-6d8b0-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "claim-6d8b0",
+            storageBucket: "claim-6d8b0.firebasestorage.app",
+            messagingSenderId: "524689855079",
+            appId: "1:524689855079:web:37974db792e49b131fbac2"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
+        // Global variables
+        let claims = {};
+        let notificationSound = null;
+
+        // Initialize notification sound
+        function initSound() {
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            notificationSound = () => {
+                const osc = audioContext.createOscillator();
+                const gain = audioContext.createGain();
+                
+                osc.connect(gain);
+                gain.connect(audioContext.destination);
+                
+                osc.frequency.value = 800;
+                gain.gain.value = 0.3;
+                
+                osc.start();
+                gain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+                osc.stop(audioContext.currentTime + 0.5);
+            };
+        }
+
+        // Show notification
+        function showNotification(title, message) {
+            const notification = document.getElementById('notification');
+            document.getElementById('notificationTitle').textContent = title;
+            document.getElementById('notificationBody').textContent = message;
+            notification.classList.add('show');
+            
+            if (notificationSound) {
+                notificationSound();
+            }
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 5000);
+        }
+
+        function closeNotification() {
+            document.getElementById('notification').classList.remove('show');
+        }
+
+        // Get payment type display based on triage and payment info
+        function getPaymentTypeDisplay(claim) {
+            if (claim.aiTriage === 'red' || claim.aiTriage === 'yellow') {
+                return '-';
+            }
+            
+            if (claim.aiTriage === 'green') {
+                // If cashless payment is selected, show "To Garage"
+                if (claim.paymentMethod && claim.paymentMethod.toLowerCase().includes('cashless')) {
+                    return 'To Garage';
+                }
+                // If UPI payment is selected, show "To User"
+                if (claim.paymentMethod && (
+                    claim.paymentMethod.toLowerCase().includes('upi') ||
+                    claim.paymentMethod.toLowerCase().includes('google') ||
+                    claim.paymentMethod.toLowerCase().includes('phone') ||
+                    claim.paymentMethod.toLowerCase().includes('paytm')
+                )) {
+                    return 'To User';
+                }
+                // Fallback based on paymentType if provided
+                if (claim.paymentType) {
+                    return claim.paymentType === 'toGarage' ? 'To Garage' : 'To User';
+                }
+            }
+            
+            return '-';
+        }
+
+        // Get action buttons based on AI triage status
+        function getActionButtons(claimId, claim) {
+            const viewBtn = `<button class="btn btn-view" onclick="viewDetails('${claimId}')">👁️ View</button>`;
+            
+            if (claim.status === 'approved' || claim.status === 'rejected') {
+                return viewBtn; // Only show view button for completed claims
+            }
+            
+            if (claim.aiTriage === 'red') {
+                // RED: Only Reject button
+                return `
+                    ${viewBtn}
+                    <button class="btn btn-reject" onclick="rejectClaim('${claimId}')">❌ Reject</button>
+                `;
+            } else if (claim.aiTriage === 'yellow') {
+                // YELLOW: Under Review button
+                return `
+                    ${viewBtn}
+                    <button class="btn btn-review" onclick="reviewClaim('${claimId}')">⚠️ Under Review</button>
+                `;
+            } else if (claim.aiTriage === 'green') {
+                // GREEN: Approve and Reject buttons
+                return `
+                    ${viewBtn}
+                    <button class="btn btn-approve" onclick="approveClaim('${claimId}')">✅ Approve</button>
+                    <button class="btn btn-reject" onclick="rejectClaim('${claimId}')">❌ Reject</button>
+                `;
+            }
+            
+            return viewBtn;
+        }
+
+        // Update dashboard
+        function updateDashboard() {
+            const tableBody = document.getElementById('claimsTableBody');
+            const claimKeys = Object.keys(claims);
+            
+            if (claimKeys.length === 0) {
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="7" class="empty-state">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
+                            </svg>
+                            <h3>Waiting for Claims...</h3>
+                            <p>New claims will appear here automatically</p>
+                        </td>
+                    </tr>
+                `;
+            } else {
+                tableBody.innerHTML = claimKeys.map(claimId => {
+                    const claim = claims[claimId];
+                    const triageBadge = claim.aiTriage === 'green' ? 'badge-green' : 
+                                       claim.aiTriage === 'yellow' ? 'badge-yellow' : 'badge-red';
+                    const statusBadge = claim.status === 'approved' ? 'badge-approved' : 
+                                       claim.status === 'rejected' ? 'badge-rejected' : 'badge-pending';
+                    
+                    const paymentTypeDisplay = getPaymentTypeDisplay(claim);
+                    
+                    return `
+                        <tr>
+                            <td><strong>${claim.claimId}</strong></td>
+                            <td>${claim.policyHolder}</td>
+                            <td><strong>₹${claim.amount.toLocaleString()}</strong></td>
+                            <td><span class="badge ${triageBadge}">${claim.aiTriage.toUpperCase()}</span></td>
+                            <td>${paymentTypeDisplay}</td>
+                            <td><span class="badge ${statusBadge}">${claim.status.toUpperCase()}</span></td>
+                            <td>
+                                <div class="action-buttons">
+                                    ${getActionButtons(claimId, claim)}
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+            }
+            
+            // Update statistics
+            const greenCount = claimKeys.filter(id => claims[id].aiTriage === 'green').length;
+            const yellowCount = claimKeys.filter(id => claims[id].aiTriage === 'yellow').length;
+            const redCount = claimKeys.filter(id => claims[id].aiTriage === 'red').length;
+            
+            document.getElementById('totalClaims').textContent = claimKeys.length;
+            document.getElementById('greenClaims').textContent = greenCount;
+            document.getElementById('yellowClaims').textContent = yellowCount;
+            document.getElementById('redClaims').textContent = redCount;
+        }
+
+        // View claim details
+        function viewDetails(claimId) {
+            const claim = claims[claimId];
+            const paymentTypeDisplay = getPaymentTypeDisplay(claim);
+            
+            const modalBody = document.getElementById('modalBody');
+            modalBody.innerHTML = `
+                <div class="detail-row">
+                    <div class="detail-label">Claim ID:</div>
+                    <div class="detail-value"><strong>${claim.claimId}</strong></div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Policy Holder:</div>
+                    <div class="detail-value">${claim.policyHolder}</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Amount:</div>
+                    <div class="detail-value"><strong>₹${claim.amount.toLocaleString()}</strong></div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">AI Triage:</div>
+                    <div class="detail-value">
+                        <span class="badge ${claim.aiTriage === 'green' ? 'badge-green' : 
+                                           claim.aiTriage === 'yellow' ? 'badge-yellow' : 'badge-red'}">
+                            ${claim.aiTriage.toUpperCase()}
+                        </span>
+                    </div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Payment Type:</div>
+                    <div class="detail-value">${paymentTypeDisplay}</div>
+                </div>
+                ${claim.paymentMethod ? `
+                <div class="detail-row">
+                    <div class="detail-label">Payment Method:</div>
+                    <div class="detail-value">${claim.paymentMethod}</div>
+                </div>
+                ` : ''}
+                ${claim.upiId ? `
+                <div class="detail-row">
+                    <div class="detail-label">UPI ID:</div>
+                    <div class="detail-value">${claim.upiId}</div>
+                </div>
+                ` : ''}
+                <div class="detail-row">
+                    <div class="detail-label">Status:</div>
+                    <div class="detail-value">
+                        <span class="badge ${claim.status === 'approved' ? 'badge-approved' : 
+                                           claim.status === 'rejected' ? 'badge-rejected' : 'badge-pending'}">
+                            ${claim.status.toUpperCase()}
+                        </span>
+                    </div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Submitted:</div>
+                    <div class="detail-value">${new Date(claim.timestamp).toLocaleString()}</div>
+                </div>
+            `;
+            
+            document.getElementById('detailsModal').classList.add('show');
+        }
+
+        function closeModal() {
+            document.getElementById('detailsModal').classList.remove('show');
+        }
+
+        // Approve claim
+        function approveClaim(claimId) {
+            if (confirm('Are you sure you want to approve this claim?')) {
+                database.ref('claims/' + claimId).update({
+                    status: 'approved',
+                    approvedBy: 'Officer Shravani Kalupure',
+                    approvedAt: Date.now()
+                }).then(() => {
+                    showNotification('✅ Claim Approved', `Claim ${claimId} has been approved successfully!`);
+                }).catch(error => {
+                    alert('Error approving claim: ' + error.message);
+                });
+            }
+        }
+
+        // Reject claim
+        function rejectClaim(claimId) {
+            const reason = prompt('Please enter rejection reason:');
+            if (reason) {
+                database.ref('claims/' + claimId).update({
+                    status: 'rejected',
+                    rejectedBy: 'Officer Shravani Kalupure',
+                    rejectedAt: Date.now(),
+                    rejectionReason: reason
+                }).then(() => {
+                    showNotification('❌ Claim Rejected', `Claim ${claimId} has been rejected.`);
+                }).catch(error => {
+                    alert('Error rejecting claim: ' + error.message);
+                });
+            }
+        }
+
+        // Review claim (for yellow cases)
+        function reviewClaim(claimId) {
+            const claim = claims[claimId];
+            if (confirm(`This claim is under review.\n\nClaim ID: ${claim.claimId}\nAmount: ₹${claim.amount}\n\nDo you want to approve it?`)) {
+                approveClaim(claimId);
+            } else {
+                const reject = confirm('Do you want to reject this claim instead?');
+                if (reject) {
+                    rejectClaim(claimId);
+                }
+            }
+        }
+
+        // Refresh dashboard
+        function refreshDashboard() {
+            showNotification('🔄 Refreshing', 'Dashboard data is being refreshed...');
+            // Data automatically updates via Firebase listeners
+        }
+
+        // Clear all claims
+        function confirmClearAll() {
+            if (confirm('⚠️ Are you sure you want to clear ALL claims?\n\nThis action cannot be undone!')) {
+                if (confirm('⚠️ FINAL CONFIRMATION\n\nThis will permanently delete all claims from the database. Continue?')) {
+                    clearAllClaims();
+                }
+            }
+        }
+
+        function clearAllClaims() {
+            database.ref('claims').remove()
+                .then(() => {
+                    showNotification('🗑️ All Claims Cleared', 'All claims have been removed from the database.');
+                    claims = {};
+                    updateDashboard();
+                })
+                .catch(error => {
+                    alert('Error clearing claims: ' + error.message);
+                });
+        }
+
+        // Listen for real-time updates
+        database.ref('claims').on('value', (snapshot) => {
+            const data = snapshot.val();
+            const previousCount = Object.keys(claims).length;
+            
+            if (data) {
+                claims = data;
+                
+                // Show notification for new claims
+                const newCount = Object.keys(claims).length;
+                if (newCount > previousCount) {
+                    const newClaimId = Object.keys(claims)[newCount - 1];
+                    const newClaim = claims[newClaimId];
+                    showNotification(
+                        '🔔 New Claim Received!',
+                        `Claim ${newClaim.claimId} from ${newClaim.policyHolder} - ₹${newClaim.amount.toLocaleString()}`
+                    );
+                }
+            } else {
+                claims = {};
+            }
+            
+            updateDashboard();
+        });
+
+        // Initialize
+        window.addEventListener('load', () => {
+            initSound();
+            showNotification('✅ Dashboard Active', 'Connected and listening for new claims...');
+        });
+
+        // Handle clicks outside modal
+        document.getElementById('detailsModal').addEventListener('click', (e) => {
+            if (e.target.id === 'detailsModal') {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>

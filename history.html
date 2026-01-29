@@ -4,99 +4,28 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Claim History | SmartClaim Pro</title>
-
-<!-- Google Analytics 4 -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
-<script>
-window.dataLayer=window.dataLayer||[];
-function gtag(){dataLayer.push(arguments);}
-gtag('js',new Date());
-gtag('config','G-XXXXXXXXXX');
-</script>
-
 <script src="https://cdn.tailwindcss.com"></script>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-
 <style>
-:root{
-  --bg:#07090f;
-  --glass:rgba(255,255,255,.035);
-  --border:rgba(255,255,255,.08);
-}
-body{
-  font-family:'Plus Jakarta Sans',sans-serif;
-  background:
-    radial-gradient(circle at 15% 15%,rgba(56,189,248,.14),transparent 45%),
-    radial-gradient(circle at 85% 85%,rgba(168,85,247,.12),transparent 45%),
-    var(--bg);
-  color:white;
-  min-height:100vh;
-}
-.glass{
-  background:var(--glass);
-  backdrop-filter:blur(40px) saturate(160%);
-  border:1px solid var(--border);
-}
-.row{
-  position:relative;
-  transition:all .4s cubic-bezier(.2,.8,.2,1);
-  cursor:pointer;
-}
-.row:hover{
-  transform:translateX(6px);
-  background:linear-gradient(90deg,rgba(255,255,255,.06),transparent);
-}
-.row::before{
-  content:'';
-  position:absolute;
-  left:0;top:0;height:100%;width:4px;
-  border-radius:0 6px 6px 0;
-}
+:root{ --bg:#07090f; --glass:rgba(255,255,255,.035); --border:rgba(255,255,255,.08); }
+body{ font-family:'Plus Jakarta Sans',sans-serif; background: radial-gradient(circle at 15% 15%,rgba(56,189,248,.14),transparent 45%), radial-gradient(circle at 85% 85%,rgba(168,85,247,.12),transparent 45%), var(--bg); color:white; min-height:100vh; }
+.glass{ background:var(--glass); backdrop-filter:blur(40px) saturate(160%); border:1px solid var(--border); }
+.row{ position:relative; transition:all .4s cubic-bezier(.2,.8,.2,1); cursor:pointer; }
+.row:hover{ transform:translateX(6px); background:linear-gradient(90deg,rgba(255,255,255,.06),transparent); }
+.row::before{ content:''; position:absolute; left:0;top:0;height:100%;width:4px; border-radius:0 6px 6px 0; }
 .green::before{background:#22c55e;box-shadow:0 0 18px #22c55e}
 .red::before{background:#ef4444;box-shadow:0 0 18px #ef4444}
 .yellow::before{background:#facc15;box-shadow:0 0 18px #facc15}
-
-.badge{
-  padding:.35rem .9rem;
-  border-radius:999px;
-  font-size:10px;
-  font-weight:900;
-  letter-spacing:1px;
-}
+.badge{ padding:.35rem .9rem; border-radius:999px; font-size:10px; font-weight:900; letter-spacing:1px; }
 .badge.green{background:#22c55e;color:#052e16}
 .badge.red{background:#ef4444;color:#450a0a}
 .badge.yellow{background:#facc15;color:#422006}
-
-.analytics-pill{
-  position:fixed;
-  bottom:24px;
-  right:24px;
-  padding:12px 24px;
-  background:rgba(14,165,233,.15);
-  border:1px solid rgba(14,165,233,.4);
-  border-radius:999px;
-  font-size:11px;
-  font-weight:700;
-  color:#0ea5e9;
-  backdrop-filter:blur(20px);
-  animation:pulse-glow 2s infinite;
-  z-index:100;
-}
-@keyframes pulse-glow{
-  0%,100%{box-shadow:0 0 20px rgba(14,165,233,.4)}
-  50%{box-shadow:0 0 30px rgba(14,165,233,.6)}
-}
 </style>
 </head>
-
 <body class="pb-24">
-
-<!-- NAV -->
 <nav class="sticky top-0 z-50 bg-black/40 backdrop-blur-xl border-b border-white/10">
   <div class="max-w-7xl mx-auto px-8 h-14 flex items-center justify-between">
-    <div class="font-extrabold tracking-tight text-xl">
-      SmartClaim<span class="text-sky-400">.Pro</span>
-    </div>
+    <div class="font-extrabold tracking-tight text-xl">SmartClaim<span class="text-sky-400">.Pro</span></div>
     <div class="hidden md:flex gap-8 text-sm font-semibold text-gray-300">
       <a href="index.html" class="hover:text-white">Home</a>
       <a href="submit-claim.html" class="hover:text-white">Claims</a>
@@ -107,293 +36,92 @@ body{
 </nav>
 
 <main class="max-w-7xl mx-auto px-10 mt-14">
-
-<!-- HEADER -->
 <div class="flex flex-wrap justify-between items-end gap-6 mb-12">
   <div>
-    <h1 class="text-5xl font-black tracking-tight">
-      Claim <span class="text-sky-400">History</span>
-    </h1>
-    <p class="text-gray-400 mt-2 text-sm">
-      A trust-ledger of every decision your profile has faced.
-    </p>
+    <h1 class="text-5xl font-black tracking-tight">Claim <span class="text-sky-400">History</span></h1>
+    <p class="text-gray-400 mt-2 text-sm">A trust-ledger of every decision your profile has faced.</p>
   </div>
-
-  <div class="flex gap-3">
-    <span class="badge green">Approved</span>
-    <span class="badge yellow">Review</span>
-    <span class="badge red">Rejected</span>
-  </div>
+  <button onclick="localStorage.clear(); location.reload();" class="text-[10px] font-bold text-red-400 border border-red-400/30 px-4 py-2 rounded-lg hover:bg-red-400 transition uppercase tracking-widest hover:text-white">Clear All Data</button>
 </div>
 
-<!-- ANALYTICS SUMMARY -->
-<div class="glass rounded-3xl p-6 mb-8 grid grid-cols-2 md:grid-cols-4 gap-6">
-  <div>
-    <div class="text-gray-400 text-xs uppercase font-bold mb-1">Total Claims</div>
-    <div class="text-3xl font-black" id="total-claims">2</div>
-  </div>
-  <div>
-    <div class="text-gray-400 text-xs uppercase font-bold mb-1">Approval Rate</div>
-    <div class="text-3xl font-black text-green-400" id="approval-rate">50%</div>
-  </div>
-  <div>
-    <div class="text-gray-400 text-xs uppercase font-bold mb-1">Total Amount</div>
-    <div class="text-3xl font-black text-sky-400" id="total-amount">₹23K</div>
-  </div>
-  <div>
-    <div class="text-gray-400 text-xs uppercase font-bold mb-1">Honesty Score</div>
-    <div class="text-3xl font-black text-purple-400" id="honesty-display">420</div>
-  </div>
+<div class="glass rounded-3xl p-6 mb-8 grid grid-cols-2 md:grid-cols-3 gap-6">
+  <div><div class="text-gray-400 text-xs uppercase font-bold mb-1">Total Claims</div><div class="text-3xl font-black" id="total-claims">0</div></div>
+  <div><div class="text-gray-400 text-xs uppercase font-bold mb-1">Approval Rate</div><div class="text-3xl font-black text-green-400" id="approval-rate">0%</div></div>
+  <div><div class="text-gray-400 text-xs uppercase font-bold mb-1">Total Amount</div><div class="text-3xl font-black text-sky-400" id="total-amount">₹0</div></div>
 </div>
 
-<!-- TABLE -->
 <div class="glass rounded-[36px] overflow-hidden">
 <table class="w-full text-sm">
 <thead class="bg-black/40 text-gray-400 uppercase text-xs">
-<tr>
-<th class="p-6 text-left">Claim</th>
-<th>Date</th>
-<th>Type</th>
-<th>Amount</th>
-<th>XP</th>
-<th>Status</th>
-</tr>
+<tr><th class="p-6 text-left">Claim</th><th>Date</th><th>Type</th><th>Amount</th><th>Status</th><th>Action</th></tr>
 </thead>
-<tbody id="history-body">
-
-<tr class="row green border-t border-white/5" 
-    onclick="trackClaimClick('SC-9902','approved','Accident',23222,100)">
-<td class="p-6 font-mono text-sky-400">SC-9902</td>
-<td>Jan 05, 2026</td>
-<td class="font-bold uppercase">Accident</td>
-<td>₹23,222</td>
-<td class="text-green-400 font-black">+100</td>
-<td><span class="badge green">Approved</span></td>
-</tr>
-
-<tr class="row red border-t border-white/5"
-    onclick="trackClaimClick('SC-8172','rejected','Theft',350000,-50)">
-<td class="p-6 font-mono text-sky-400">SC-8172</td>
-<td>Dec 20, 2025</td>
-<td class="font-bold uppercase text-red-400">Theft</td>
-<td>₹350,000</td>
-<td class="text-red-400 font-black">-50</td>
-<td><span class="badge red">Rejected</span></td>
-</tr>
-
-</tbody>
+<tbody id="history-body"></tbody>
 </table>
 </div>
-
-<!-- FOOTER CARD -->
-<div class="mt-14 glass rounded-[30px] p-8 flex justify-between items-center gap-8">
-  <div class="flex items-center gap-6">
-    <div class="w-14 h-14 rounded-2xl bg-sky-500/10 flex items-center justify-center text-2xl">
-      🧠
-    </div>
-    <div>
-      <h3 class="font-black uppercase text-sm">Neural Integrity Active</h3>
-      <p class="text-xs text-gray-400 mt-1">
-        Your claim history directly influences approval speed & premiums.
-      </p>
-    </div>
-  </div>
-
-  <button onclick="location.href='honesty.html'"
-    class="px-8 py-3 rounded-xl bg-sky-500 text-black font-black text-xs uppercase tracking-widest hover:bg-sky-400 transition">
-    View Honesty Score
-  </button>
-</div>
-
 </main>
 
-<!-- ANALYTICS INDICATOR -->
-<div class="analytics-pill">
-  📊 GA4 Tracking Active
-</div>
-
 <script>
-// ═══════════════════════════════════════════════════════
-// 🎯 GOOGLE ANALYTICS 4 - TRACKING FUNCTIONS
-// ═══════════════════════════════════════════════════════
-
-// Track individual claim row clicks
-function trackClaimClick(claimId, status, type, amount, xp) {
-  gtag('event', 'claim_history_clicked', {
-    claim_id: claimId,
-    status: status,
-    claim_type: type,
-    amount: amount,
-    xp_change: xp,
-    action: 'view_details'
-  });
-  
-  console.log('📊 GA4 EVENT: claim_history_clicked');
-  console.log('   ├─ Claim ID:', claimId);
-  console.log('   ├─ Status:', status);
-  console.log('   ├─ Type:', type);
-  console.log('   ├─ Amount: ₹' + amount.toLocaleString());
-  console.log('   └─ XP Change:', xp);
-}
-
-// Calculate and update analytics summary
-function updateAnalyticsSummary() {
-  const rows = document.querySelectorAll('#history-body tr');
-  const totalClaims = rows.length;
-  
-  let approvedCount = 0;
-  let totalAmount = 0;
-  
-  rows.forEach(row => {
-    const badge = row.querySelector('.badge');
-    if (badge && badge.classList.contains('green')) {
-      approvedCount++;
-    }
-    
-    // Extract amount from row
-    const amountText = row.cells[3].textContent.replace(/[₹,]/g, '');
-    const amount = parseInt(amountText);
-    if (badge && badge.classList.contains('green')) {
-      totalAmount += amount;
-    }
-  });
-  
-  const approvalRate = Math.round((approvedCount / totalClaims) * 100);
-  const honestyScore = localStorage.getItem('honestyScore') || '420';
-  
-  // Update display
-  document.getElementById('total-claims').textContent = totalClaims;
-  document.getElementById('approval-rate').textContent = approvalRate + '%';
-  document.getElementById('total-amount').textContent = '₹' + (totalAmount/1000).toFixed(0) + 'K';
-  document.getElementById('honesty-display').textContent = honestyScore;
-  
-  return {
-    totalClaims,
-    approvedCount,
-    approvalRate,
-    totalAmount,
-    honestyScore: parseInt(honestyScore)
-  };
-}
-
-// ═══════════════════════════════════════════════════════
-// 🚀 PAGE LOAD TRACKING
-// ═══════════════════════════════════════════════════════
-
 window.onload = () => {
-  // Get analytics summary
-  const analytics = updateAnalyticsSummary();
-  
-  // Track history page view with comprehensive metrics
-  gtag('event', 'history_viewed', {
-    total_claims: analytics.totalClaims,
-    approved_count: analytics.approvedCount,
-    rejected_count: analytics.totalClaims - analytics.approvedCount,
-    approval_rate: analytics.approvalRate,
-    honesty_score: analytics.honestyScore,
-    fast_lane_status: analytics.honestyScore >= 400 ? 'unlocked' : 'locked',
-    user_segment: analytics.honestyScore >= 400 ? 'premium' : 'standard',
-    total_approved_amount: analytics.totalAmount
-  });
-  
-  console.log('═══════════════════════════════════════════');
-  console.log('📊 GA4 EVENT: history_viewed');
-  console.log('═══════════════════════════════════════════');
-  console.log('Total Claims:', analytics.totalClaims);
-  console.log('Approved:', analytics.approvedCount);
-  console.log('Approval Rate:', analytics.approvalRate + '%');
-  console.log('Total Amount: ₹' + analytics.totalAmount.toLocaleString());
-  console.log('Honesty Score:', analytics.honestyScore);
-  console.log('Fast Lane:', analytics.honestyScore >= 400 ? '🟢 UNLOCKED' : '🔴 LOCKED');
-  console.log('User Segment:', analytics.honestyScore >= 400 ? 'PREMIUM' : 'STANDARD');
-  console.log('═══════════════════════════════════════════');
-  
-  // Check for live claim from localStorage
-  const amt = localStorage.getItem('claimedAmount');
-  const score = localStorage.getItem('fraudScore');
-  
-  if (amt) {
-    const green = score <= 22;
-    const amount = parseInt(amt);
+    const table = document.getElementById('history-body');
+    let allClaims = JSON.parse(localStorage.getItem('allClaims')) || [];
     
-    // Create live claim row
-    const row = `
-    <tr class="row ${green ? 'green' : 'red'} border-t border-white/5" 
-        onclick="trackClaimClick('SC-LIVE','${green ? 'approved' : 'rejected'}','Recent',${amount},${green ? 50 : -100})">
-      <td class="p-6 font-mono text-sky-400">SC-LIVE</td>
-      <td>Today</td>
-      <td class="font-bold uppercase">Recent</td>
-      <td>₹${amount.toLocaleString()}</td>
-      <td class="${green ? 'text-green-400' : 'text-red-400'} font-black">
-        ${green ? '+50' : '-100'}
-      </td>
-      <td>
-        <span class="badge ${green ? 'green' : 'red'}">
-          ${green ? 'Approved' : 'Rejected'}
-        </span>
-      </td>
-    </tr>`;
     
-    document.getElementById('history-body').innerHTML = row + document.getElementById('history-body').innerHTML;
     
-    // Track live claim addition
-    gtag('event', 'live_claim_added', {
-      claim_id: 'SC-LIVE',
-      status: green ? 'approved' : 'rejected',
-      amount: amount,
-      fraud_score: parseFloat(score),
-      auto_decision: true,
-      decision_time: 'instant'
+    
+    table.innerHTML = "";
+    
+    // Add all stored claims (most recent first - they're already sorted in allClaims array)
+    allClaims.forEach((claim, i) => {
+        // Get data from track-claim.html saved object
+        let aiAmt = parseInt(claim.amount); // AI generated amount
+        let userAmt = claim.userAmount || 0; // User's original amount
+        let incidentDate = claim.date || "Jan 28, 2026";
+        let incidentType = claim.type || "Road Accident";
+        let status = claim.status || "green";
+        
+        // Determine display values based on status
+        let statusText = "";
+        let actionButton = "";
+        
+        if (status === "red") {
+            statusText = "Rejected";
+            actionButton = `<button onclick="window.location.href='submit-claim.html'" class="bg-red-500 text-white px-4 py-2 rounded-xl text-[10px] font-black uppercase hover:bg-red-600 transition">File Again</button>`;
+        } else if (status === "yellow") {
+            statusText = "Under Review";
+            actionButton = `<button onclick="localStorage.setItem('claimedAmount', ${userAmt}); window.location.href='track-claim.html'" class="bg-yellow-500 text-black px-4 py-2 rounded-xl text-[10px] font-black uppercase hover:bg-yellow-600 transition">Incomplete</button>`;
+        } else {
+            statusText = "Approved";
+            actionButton = `<span class="text-green-500 text-2xl">✓</span>`;
+        }
+
+        table.innerHTML += `
+        <tr class="row ${status} border-t border-white/5">
+            <td class="p-6 font-mono text-sky-400">SC-${1000 + i}</td>
+            <td>${incidentDate}</td>
+            <td class="font-bold uppercase">${incidentType}</td>
+            <td>₹${aiAmt.toLocaleString()}</td>
+            <td><span class="badge ${status}">${statusText}</span></td>
+            <td class="text-center">${actionButton}</td>
+        </tr>`;
     });
     
-    console.log('');
-    console.log('📊 GA4 EVENT: live_claim_added');
-    console.log('   ├─ Claim ID: SC-LIVE');
-    console.log('   ├─ Status:', green ? '✅ APPROVED' : '❌ REJECTED');
-    console.log('   ├─ Amount: ₹' + amount.toLocaleString());
-    console.log('   ├─ Fraud Score:', score + '%');
-    console.log('   └─ Auto Decision: YES');
+    // Add default rows at the end (older claims)
+    table.innerHTML += defaultRows;
     
-    // Update analytics after adding live claim
-    setTimeout(() => {
-      updateAnalyticsSummary();
-    }, 100);
-  }
+    // Update stats
+    const totalClaimsCount = allClaims.length + 2; // +2 for default rows
+    document.getElementById('total-claims').innerText = totalClaimsCount;
+    
+    // Calculate approval rate (green claims / total claims * 100)
+    const greenCount = allClaims.filter(c => c.status === 'green').length + 2; // +2 for default green rows
+    const approvalRate = totalClaimsCount > 0 ? Math.round((greenCount / totalClaimsCount) * 100) : 0;
+    document.getElementById('approval-rate').innerText = approvalRate + "%";
+    
+    // Calculate total AI amount from saved claims
+    let totalAiAmt = allClaims.reduce((sum, c) => sum + parseInt(c.amount), 373222); // 373222 = sum of default amounts (358222 + 15000)
+    
+    document.getElementById('total-amount').innerText = "₹" + totalAiAmt.toLocaleString();
 };
-
-// ═══════════════════════════════════════════════════════
-// 🎯 ADDITIONAL TRACKING
-// ═══════════════════════════════════════════════════════
-
-// Track when user navigates to honesty score
-document.addEventListener('DOMContentLoaded', () => {
-  const honestyBtn = document.querySelector('button[onclick*="honesty.html"]');
-  if (honestyBtn) {
-    honestyBtn.addEventListener('click', () => {
-      gtag('event', 'navigate_to_honesty', {
-        source: 'history_page',
-        action: 'button_click'
-      });
-      console.log('📊 GA4 EVENT: navigate_to_honesty');
-    });
-  }
-});
-
-// Track page visibility (how long users stay on history)
-let pageViewStart = Date.now();
-document.addEventListener('visibilitychange', () => {
-  if (document.hidden) {
-    const timeSpent = Math.round((Date.now() - pageViewStart) / 1000);
-    gtag('event', 'history_time_spent', {
-      seconds: timeSpent,
-      engagement_level: timeSpent > 30 ? 'high' : timeSpent > 10 ? 'medium' : 'low'
-    });
-    console.log('📊 GA4 EVENT: history_time_spent -', timeSpent, 'seconds');
-  } else {
-    pageViewStart = Date.now();
-  }
-});
 </script>
-
 </body>
 </html>

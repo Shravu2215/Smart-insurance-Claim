@@ -34,9 +34,10 @@
         <div class="max-w-7xl mx-auto px-8 py-5 flex justify-between items-center">
             <div class="text-xl font-black italic uppercase">SmartClaim<span class="text-sky-400 not-italic">.Pro</span></div>
             <div class="flex items-center gap-8 text-[10px] font-extrabold uppercase tracking-widest text-gray-400">
-                <a href="index.html" class="hover:text-white transition">Home</a>
+                <a href="home.html" class="hover:text-white transition">Home</a>
                 <a href="locker.html" class="text-sky-400">Track claim</a>
                 <a href="submit-claim.html" class="hover:text-white transition">File Claim</a>
+                <a href="history.html" class="hover:text-white transition">History</a>
             </div>
         </div>
     </nav>
@@ -60,26 +61,48 @@
                 <div class="flex gap-10 relative"><div id="stage-3-dot" class="timeline-dot"></div><div id="line-3" class="timeline-line h-14 -top-14"></div><div><h4 class="text-xs font-black text-white uppercase tracking-widest opacity-40">03. Disbursement Decision</h4></div></div>
             </div>
             <div id="ai-comment" class="mt-10 p-4 bg-white/5 rounded-2xl text-[11px] text-gray-400 font-medium italic border-l-2 border-sky-400"></div>
+            
+            <!-- Firebase Status Indicator -->
+            <div id="firebase-status" class="mt-6 p-3 bg-green-500/10 border border-green-500/30 rounded-xl text-[10px] text-green-400 font-bold text-center hidden">
+                ✅ Claim sent to Officer Dashboard in real-time!
+            </div>
+            
             <div id="action-area" class="mt-14"></div>
         </div>
     </main>
 
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+
     <script>
+        // 🔥 Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDsM-gjH1yNu7_LVINa6AHC-I4OHNY-704",
+            authDomain: "claim-6d8b0.firebaseapp.com",
+            databaseURL: "https://claim-6d8b0-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "claim-6d8b0",
+            storageBucket: "claim-6d8b0.firebasestorage.app",
+            messagingSenderId: "524689855079",
+            appId: "1:524689855079:web:37974db792e49b131fbac2"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
         let callTimer;
         let seconds = 0;
 
-        // Chatbot Functionality
         let chatStep = 0;
         function handleChat() {
             const input = document.getElementById('chat-input');
             const box = document.getElementById('chat-box');
             const text = input.value.trim();
             if(!text) return;
-
             box.innerHTML += `<div class="chat-bubble user-bubble">${text}</div>`;
             input.value = "";
             box.scrollTop = box.scrollHeight;
-
             setTimeout(() => {
                 let aiResponse = "";
                 if (chatStep === 0) {
@@ -124,20 +147,80 @@
             }, 2000);
         }
 
+        // 🚀 SEND CLAIM TO FIREBASE (OFFICER DASHBOARD)
+        function sendClaimToOfficer(claimData) {
+            // Generate unique claim ID
+            const claimId = "CLAIM_" + Date.now();
+            
+            // Prepare claim data for officer
+            const officerClaimData = {
+                claimId: claimId,
+                policyHolder: claimData.policyHolder || "Shravani Joshi",
+                amount: claimData.aiAmount,
+                userAmount: claimData.userAmount,
+                aiTriage: claimData.status,
+                incidentType: claimData.incidentType,
+                incidentDate: claimData.incidentDate,
+                paymentType: claimData.status === 'yellow' ? 'pending_officer_review' : 'flagged_for_investigation',
+                paymentMethod: claimData.status === 'yellow' ? 'pending_officer_review' : 'flagged_for_investigation',
+                status: claimData.status === 'yellow' ? 'pending_officer_review' : 'flagged_for_investigation',
+                timestamp: Date.now(),
+                submittedAt: Date.now()
+            };
+
+            // Send to Firebase
+            database.ref('claims/' + claimId).set(officerClaimData)
+                .then(() => {
+                    console.log('✅ Claim sent to Officer Dashboard:', claimId);
+                    // Show success indicator
+                    document.getElementById('firebase-status').classList.remove('hidden');
+                    setTimeout(() => {
+                        document.getElementById('firebase-status').classList.add('hidden');
+                    }, 5000);
+                })
+                .catch((error) => {
+                    console.error('❌ Error sending to Firebase:', error);
+                });
+            
+            return claimId;
+        }
+
         window.onload = function() {
-            const userAmt = parseInt(localStorage.getItem('claimedAmount') || 0); 
+            // Get user amount from document.html (saved as claimedAmount)
+            const userAmt = parseInt(localStorage.getItem('claimedAmount') || 0);
+            
+            // Get incident data (date & type) from lastIncident
+            const incidentData = JSON.parse(localStorage.getItem('lastIncident')) || {};
+            const incidentDate = incidentData.date || "Jan 29, 2026";
+            const incidentType = incidentData.type || "Road Accident";
+            
             const verdict = document.getElementById('final-verdict');
             const actionArea = document.getElementById('action-area');
             const aiComment = document.getElementById('ai-comment');
             let aiAmt = 0;
+            let status = "";
 
+            // RED CASE: >= 200,000
             if (userAmt >= 200000) {
                 aiAmt = 35000;
+                status = "red";
                 verdict.innerText = "RED FLAG";
                 verdict.className = "text-2xl font-black italic text-red-500 uppercase";
                 aiComment.innerText = "Critical anomalies found. Execution halted.";
                 document.getElementById('stage-3-dot').className = "timeline-dot danger";
                 document.getElementById('line-3').className = "timeline-line h-14 -top-14 line-danger";
+                
+                // 🔥 SEND RED CASE TO OFFICER IMMEDIATELY (on page load)
+                const claimData = {
+                    policyHolder: "Shravani Joshi",
+                    userAmount: userAmt,
+                    aiAmount: aiAmt,
+                    status: status,
+                    incidentType: incidentType,
+                    incidentDate: incidentDate
+                };
+                sendClaimToOfficer(claimData);
+                
                 actionArea.innerHTML = `
                     <div class="dropdown-container" onclick="document.getElementById('red-reasons').classList.toggle('hidden')">
                         <div class="flex justify-between items-center mb-6">
@@ -155,7 +238,7 @@
                     <div id="call-panel" class="hidden p-8 bg-white/5 border border-white/10 rounded-[36px] space-y-4 mt-4 text-center">
                         <p class="text-[10px] font-black text-gray-500 uppercase text-center tracking-widest">ENTER YOUR NUMBER</p>
                         <input type="text" id="phone-input" placeholder="+91" class="w-full bg-black/40 border border-white/10 p-4 rounded-2xl text-center font-mono">
-                        <p class="text-[10px] font-black text-gray-500 uppercase text-center tracking-widest">NOTE: YOU WILL RECEIVE CALL WITHIN 2 MINUTES</p>
+                        <p class="text-[10px] font-black text-gray-500 uppercase text-center tracking-widest">NOTE: YOU WILL GET CALL IN MINUTES</p>
                         <div class="flex gap-2">
                             <button id="call-btn" onclick="startManualCall()" class="flex-1 bg-sky-500 text-black font-black py-4 rounded-xl text-[10px] uppercase">Call Officer</button>
                             <button id="end-btn" onclick="endManualCall()" class="hidden flex-1 bg-red-500 text-white font-black py-4 rounded-xl text-[10px] uppercase">End Call</button>
@@ -166,15 +249,27 @@
                         </div>
                     </div>`;
             }
+            // YELLOW CASE: >= 50,000 and < 200,000
             else if (userAmt >= 50000) {
                 aiAmt = 25000;
+                status = "yellow";
                 verdict.innerText = "YELLOW FLAG";
                 verdict.className = "text-2xl font-black italic text-yellow-500 uppercase";
                 aiComment.innerText = "Manual Triage Required. System detected high-variance parameters.";
                 document.getElementById('stage-3-dot').className = "timeline-dot warning";
                 document.getElementById('line-3').className = "timeline-line h-14 -top-14 line-warning";
                 
-                // Toggle Logic for Chat/Call
+                // 🔥 SEND YELLOW CASE TO OFFICER IMMEDIATELY (on page load)
+                const claimData = {
+                    policyHolder: "Shravani Joshi",
+                    userAmount: userAmt,
+                    aiAmount: aiAmt,
+                    status: status,
+                    incidentType: incidentType,
+                    incidentDate: incidentDate
+                };
+                sendClaimToOfficer(claimData);
+                
                 actionArea.innerHTML = `
                     <div class="dropdown-container" onclick="document.getElementById('yellow-reasons').classList.toggle('hidden')">
                         <div class="flex justify-between items-center mb-6">
@@ -182,7 +277,7 @@
                             <span class="text-[9px] font-bold text-gray-500 uppercase">EXPAND ▼</span>
                         </div>
                         <div id="yellow-reasons" class="hidden">
-                            <div class="reason-box italic">• Manual check for claim value: ₹50,000.</div>
+                            <div class="reason-box italic">• Manual check for claim value: ₹${userAmt.toLocaleString()}.</div>
                             <div class="reason-box italic">• Fraud Score: 55/100 requires oversight.</div>
                             <div class="reason-box italic">• Late reporting more than 10 days.</div>
                             <div class="reason-box italic">• Driver not the policy owner.</div>
@@ -192,7 +287,6 @@
                         <button onclick="document.getElementById('chat-section').classList.remove('hidden'); document.getElementById('call-panel').classList.add('hidden')" class="bg-white/5 border border-white/10 py-5 rounded-3xl text-[10px] font-black uppercase tracking-widest hover:bg-yellow-500 hover:text-black transition">Chat</button>
                         <button onclick="document.getElementById('call-panel').classList.remove('hidden'); document.getElementById('chat-section').classList.add('hidden')" class="bg-white/5 border border-white/10 py-5 rounded-3xl text-[10px] font-black uppercase tracking-widest hover:bg-yellow-500 hover:text-black transition">Call</button>
                     </div>
-
                     <div id="chat-section" class="hidden mt-6 p-6 glass-panel rounded-[32px] flex flex-col">
                         <div id="chat-box" class="h-48 overflow-y-auto mb-4 flex flex-col p-2 bg-black/20 rounded-xl">
                             <div class="chat-bubble ai-bubble">Hi! How do I help you?</div>
@@ -202,11 +296,10 @@
                             <button onclick="handleChat()" class="bg-sky-500 text-black px-4 rounded-xl font-bold text-[10px]">SEND</button>
                         </div>
                     </div>
-
                     <div id="call-panel" class="hidden p-8 bg-white/5 border border-white/10 rounded-[36px] space-y-4 mt-4 text-center">
                         <p class="text-[10px] font-black text-gray-500 uppercase text-center tracking-widest">ENTER YOUR NUMBER</p>
                         <input type="text" id="phone-input" placeholder="+91" class="w-full bg-black/40 border border-white/10 p-4 rounded-2xl text-center font-mono">
-                        <p class="text-[10px] font-black text-gray-500 uppercase text-center tracking-widest">NOTE: YOU WILL RECEIVE CALL IN 2 MINUTES</p>
+                        <p class="text-[10px] font-black text-gray-500 uppercase text-center tracking-widest">NOTE: YOU WILL GET CALL IN MINUTES</p>
                         <div class="flex gap-2">
                             <button id="call-btn" onclick="startManualCall()" class="flex-1 bg-sky-500 text-black font-black py-4 rounded-xl text-[10px] uppercase">Initialize Call</button>
                             <button id="end-btn" onclick="endManualCall()" class="hidden flex-1 bg-red-500 text-white font-black py-4 rounded-xl text-[10px] uppercase">End Call</button>
@@ -217,18 +310,58 @@
                         </div>
                     </div>`;
             }
+            // GREEN CASE: < 50,000
             else {
                 aiAmt = 15000;
+                status = "green";
                 verdict.innerText = (userAmt <= 12000) ? "Green + User Wins" : "PROCEED TO PAYOUT";
                 verdict.className = "text-2xl font-black italic text-green-500 uppercase";
                 aiComment.innerText = (userAmt <= 12000) ? "Honest user! Paying your ₹15K request." : "Validation success. Within ±15% tolerance.";
                 document.getElementById('stage-3-dot').className = "timeline-dot active";
                 document.getElementById('line-3').className = "timeline-line h-14 -top-14 line-active";
+                
+                // ❌ DO NOT SEND GREEN CASE TO OFFICER HERE!
+                // It will be sent from payout.html when user clicks "Submit Payment Request"
+                
                 actionArea.innerHTML = `<button onclick="window.location.href='payout.html'" class="w-full bg-green-500 text-white font-black py-6 rounded-[30px] uppercase text-[11px]">Collect Disbursement</button>`;
             }
 
             document.getElementById('user-amt-display').innerText = "₹" + userAmt.toLocaleString();
             document.getElementById('ai-amt-display').innerText = "₹" + aiAmt.toLocaleString();
+
+            // ❌ DO NOT ADD TO HISTORY HERE!
+            // For GREEN cases: History will be added from payout.html when user submits payment
+            // For YELLOW/RED cases: History will be added immediately since no payment submission needed
+            
+            // Only add YELLOW and RED cases to history immediately
+            if (status === 'yellow' || status === 'red') {
+                let allClaimsHistory = JSON.parse(localStorage.getItem('allClaims')) || [];
+                
+                // Check if this exact claim already exists (prevent duplicates)
+                const claimExists = allClaimsHistory.some(claim => 
+                    claim.date === incidentDate && 
+                    claim.type === incidentType && 
+                    claim.amount === aiAmt &&
+                    claim.status === status
+                );
+                
+                if (!claimExists) {
+                    // Create new claim object with AI amount
+                    const newClaim = {
+                        date: incidentDate,
+                        type: incidentType,
+                        amount: aiAmt,
+                        status: status,
+                        userAmount: userAmt
+                    };
+                    
+                    // Add to beginning of array (most recent first)
+                    allClaimsHistory.unshift(newClaim);
+                    
+                    // Save back to localStorage
+                    localStorage.setItem('allClaims', JSON.stringify(allClaimsHistory));
+                }
+            }
         }
     </script>
 </body>

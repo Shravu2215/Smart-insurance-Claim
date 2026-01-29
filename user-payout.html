@@ -512,46 +512,9 @@
                 }
             }
 
-            // 🔥 THIS IS WHERE GREEN CLAIMS ARE SENT TO OFFICER!
-            // Only when user clicks "Submit Payment Request" button
+            // Send to Firebase
             database.ref('claims/' + claimData.claimId).set(paymentData)
                 .then(() => {
-                    console.log('✅ GREEN claim sent to Officer Dashboard!');
-                    
-                    // ✅ ADD TO HISTORY NOW (only for GREEN claims after payment submission)
-                    let allClaimsHistory = JSON.parse(localStorage.getItem('allClaims')) || [];
-                    
-                    // Get incident data from localStorage
-                    const incidentData = JSON.parse(localStorage.getItem('lastIncident')) || {};
-                    const incidentDate = incidentData.date || "Jan 29, 2026";
-                    const incidentType = incidentData.type || "Road Accident";
-                    
-                    // Check if this exact claim already exists (prevent duplicates)
-                    const claimExists = allClaimsHistory.some(claim => 
-                        claim.date === incidentDate && 
-                        claim.type === incidentType && 
-                        claim.amount === claimData.amount &&
-                        claim.status === 'green'
-                    );
-                    
-                    if (!claimExists) {
-                        // Create new claim object
-                        const newClaim = {
-                            date: incidentDate,
-                            type: incidentType,
-                            amount: claimData.amount,  // AI amount (15000)
-                            status: 'green',
-                            userAmount: parseInt(localStorage.getItem('claimedAmount') || 0)
-                        };
-                        
-                        // Add to beginning of array (most recent first)
-                        allClaimsHistory.unshift(newClaim);
-                        
-                        // Save back to localStorage
-                        localStorage.setItem('allClaims', JSON.stringify(allClaimsHistory));
-                        console.log('✅ GREEN claim added to history!');
-                    }
-                    
                     // Show success message
                     const statusMessage = document.getElementById('statusMessage');
                     statusMessage.className = 'status-message pending show';

@@ -115,14 +115,14 @@ button.primary {
     <div class="grid md:grid-cols-2 gap-6">
       <div>
         <label class="text-[11px] font-bold text-gray-400 uppercase">Vehicle Type</label>
-        <select class="w-full p-4 rounded-2xl mt-2">
+        <select id="vehicleSelect" class="w-full p-4 rounded-2xl mt-2">
           <option>Car</option>
           <option>Bike</option>
         </select>
       </div>
       <div>
         <label class="text-[11px] font-bold text-gray-400 uppercase">Registration Number</label>
-        <input type="text" class="w-full p-4 rounded-2xl mt-2" placeholder="MH-12-AB-1234">
+        <input id="regInput" type="text" class="w-full p-4 rounded-2xl mt-2" placeholder="MH-12-AB-1234">
       </div>
     </div>
 
@@ -156,27 +156,51 @@ button.primary {
       <input id="locationInput" type="text" class="w-full p-4 rounded-2xl mt-2" placeholder="Enter Location">
     </div>
 
+    <div class="grid md:grid-cols-2 gap-6">
+      <div>
+        <label class="text-[11px] font-bold text-gray-400 uppercase">Type of Incident</label>
+        <select id="typeSelect" class="w-full p-4 rounded-2xl mt-2">
+          <option>Road Accident</option>
+          <option>Disaster</option>
+          <option>Theft</option>
+        </select>
+      </div>
+      <div>
+        <label class="text-[11px] font-bold text-gray-400 uppercase">Incident Date</label>
+        <input id="dateInput" type="date" class="w-full p-4 rounded-2xl mt-2">
+      </div>
+    </div>
+
     <div>
       <label class="text-[11px] font-bold text-gray-400 uppercase">Description</label>
       <textarea id="descriptionInput" class="w-full p-4 rounded-2xl mt-2 h-28 resize-none" placeholder="Describe incident... (Real-time voice enabled)"></textarea>
       <div id="voiceStatus" class="text-[10px] text-sky-400 mt-2 font-bold italic"></div>
     </div>
 
-    <button class="primary mt-6" onclick="window.location.href='document.html'">
+    <button class="primary mt-6" onclick="linkPages()">
       CONTINUE TO EVIDENCE VAULT
     </button>
   </div>
 </main>
 
 <script>
-// 1. CONDITIONAL DRIVER PANEL LOGIC
+// LINKING LOGIC
+function linkPages() {
+  const data = {
+    name: document.getElementById('driverNameInput').value || "User",
+    date: document.getElementById('dateInput').value || "Jan 28, 2026",
+    type: document.getElementById('typeSelect').value
+  };
+  localStorage.setItem('lastIncident', JSON.stringify(data));
+  window.location.href='document.html';
+}
+
 function toggleDriverPanel() {
   const select = document.getElementById('policyOwnerSelect');
   const panel = document.getElementById('relatedDriverPanel');
   panel.style.display = (select.value === 'no') ? 'block' : 'none';
 }
 
-// 2. SIMULTANEOUS REAL-TIME VOICE RECOGNITION
 const micBtn = document.getElementById('voice-trigger');
 const descriptionBox = document.getElementById('descriptionInput');
 const voiceStatus = document.getElementById('voiceStatus');
@@ -187,7 +211,6 @@ if (SpeechRecognition) {
   recognition.continuous = true;
   recognition.interimResults = true;
   recognition.lang = 'en-US';
-
   let isListening = false;
 
   micBtn.addEventListener('click', () => {
@@ -207,15 +230,10 @@ if (SpeechRecognition) {
   recognition.onresult = (event) => {
     let interimTranscript = '';
     let finalTranscript = '';
-
     for (let i = event.resultIndex; i < event.results.length; ++i) {
-      if (event.results[i].isFinal) {
-        finalTranscript += event.results[i][0].transcript;
-      } else {
-        interimTranscript += event.results[i][0].transcript;
-      }
+      if (event.results[i].isFinal) { finalTranscript += event.results[i][0].transcript; } 
+      else { interimTranscript += event.results[i][0].transcript; }
     }
-    // Update text box simultaneously
     descriptionBox.value = finalTranscript + interimTranscript;
   };
 
