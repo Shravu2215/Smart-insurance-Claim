@@ -557,7 +557,7 @@
                     statusMessage.className = 'status-message pending show';
                     document.getElementById('statusTitle').textContent = '✅ Request Sent!';
                     document.getElementById('statusText').textContent = 
-                        '🚀 Your payment request has been sent to Officer Shravani Kalupure. Waiting for approval...';
+                        '🚀 Your payment request has been sent to Officer Shravani Kaulapure. Waiting for approval...';
 
                     // Hide form
                     document.getElementById('paymentFormSection').style.display = 'none';
@@ -581,7 +581,7 @@
                         statusMessage.className = 'status-message success show';
                         document.getElementById('statusTitle').textContent = '🎉 Payment Approved!';
                         document.getElementById('statusText').innerHTML = `
-                            <strong>Great news!</strong> Your claim of <strong>₹${data.amount.toLocaleString('en-IN')}</strong> has been approved by Officer ${data.approvedBy || 'Shravani Kalupure'}!<br><br>
+                            <strong>Great news!</strong> Your claim of <strong>₹${data.amount.toLocaleString('en-IN')}</strong> has been approved by Officer ${data.approvedBy || 'Shravani Kaulapure'}!<br><br>
                             💰 Payment will be processed via <strong>${data.paymentMethod}</strong><br>
                             ⏰ Expected in 2-3 business days
                         `;
