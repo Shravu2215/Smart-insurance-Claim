@@ -387,6 +387,190 @@
             flex: 1;
         }
 
+        /* Fraud Map Styles */
+        .map-section {
+            padding: 30px;
+            background: #f8f9fa;
+        }
+
+        .map-wrapper {
+            position: relative;
+            height: 600px;
+            width: 100%;
+            border-radius: 20px;
+            overflow: hidden;
+            border: 3px solid #667eea;
+            background: #111;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .google-map-iframe {
+            width: 100%;
+            height: 100%;
+            filter: invert(90%) hue-rotate(180deg) contrast(1.2) brightness(0.9);
+        }
+
+        .fraud-area-marker {
+            position: absolute;
+            z-index: 25;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            animation: markerPulse 2s infinite ease-in-out;
+        }
+
+        .fraud-area-dot {
+            width: 18px;
+            height: 18px;
+            background: #ef4444;
+            border-radius: 50%;
+            box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+            animation: ripple 2s infinite;
+        }
+
+        .area-label {
+            background: #ef4444;
+            color: white;
+            font-size: 10px;
+            font-weight: 900;
+            padding: 4px 10px;
+            border-radius: 5px;
+            text-transform: uppercase;
+            margin-top: 4px;
+            white-space: nowrap;
+        }
+
+        .garage-marker {
+            position: absolute;
+            z-index: 20;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: 0.2s;
+            cursor: pointer;
+        }
+
+        .garage-marker:hover {
+            transform: scale(1.1);
+        }
+
+        .garage-icon {
+            font-size: 24px;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+        }
+
+        .garage-label {
+            font-size: 9px;
+            font-weight: 900;
+            padding: 3px 8px;
+            border-radius: 4px;
+            text-transform: uppercase;
+            margin-top: 2px;
+        }
+
+        .red-garage {
+            background: #ef4444;
+            color: white;
+        }
+
+        .yellow-garage {
+            background: #facc15;
+            color: #422006;
+        }
+
+        .green-garage {
+            background: #22c55e;
+            color: #052e16;
+        }
+
+        @keyframes ripple {
+            0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+            50% { box-shadow: 0 0 0 15px rgba(239, 68, 68, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+        }
+
+        @keyframes markerPulse {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        /* Garage Table Styles */
+        .garage-section {
+            padding: 30px;
+        }
+
+        .garage-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .garage-table thead {
+            background: #28a745;
+            color: white;
+        }
+
+        .garage-table th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .garage-table td {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .garage-table tbody tr:hover {
+            background: #f8f9fa;
+        }
+
+        .trust-score {
+            font-weight: 700;
+            padding: 5px 10px;
+            border-radius: 5px;
+            display: inline-block;
+        }
+
+        .trust-elite {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .trust-good {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .trust-risk {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .status-verified {
+            color: #28a745;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+        }
+
+        .status-blacklisted {
+            color: #dc3545;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+        }
+
+        .status-warning {
+            color: #ffc107;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+        }
+
         @media (max-width: 768px) {
             .stats-grid {
                 grid-template-columns: 1fr;
@@ -404,6 +588,10 @@
 
             .action-buttons {
                 flex-direction: column;
+            }
+
+            .map-wrapper {
+                height: 400px;
             }
         }
     </style>
@@ -478,6 +666,81 @@
                 </tbody>
             </table>
         </div>
+
+        <!-- Fraud Map Section -->
+        <div class="map-section">
+            <div class="section-header">
+                <h2>🗺️ Pune & PCMC Fraud Hotspots</h2>
+            </div>
+            <div class="map-wrapper">
+                <iframe class="google-map-iframe" 
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d121059.04712431696!2d73.7898!3d18.5204!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bc2bf2e67461101%3A0x828d43105d9513e8!2sPune%2C%20Maharashtra!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin" 
+                    allowfullscreen="" 
+                    loading="lazy">
+                </iframe>
+                
+                <!-- Fraud Area Markers -->
+                <div class="fraud-area-marker" style="top: 20%; left: 30%;">
+                    <div class="fraud-area-dot"></div>
+                    <div class="area-label">Nigdi: 42 Frauds</div>
+                </div>
+                <div class="fraud-area-marker" style="top: 35%; left: 15%;">
+                    <div class="fraud-area-dot"></div>
+                    <div class="area-label">Wakad: 58 Frauds</div>
+                </div>
+                <div class="fraud-area-marker" style="top: 55%; left: 45%;">
+                    <div class="fraud-area-dot"></div>
+                    <div class="area-label">Swargate: 64 Frauds</div>
+                </div>
+                <div class="fraud-area-marker" style="top: 45%; left: 75%;">
+                    <div class="fraud-area-dot"></div>
+                    <div class="area-label">Hadapsar: 49 Frauds</div>
+                </div>
+                <div class="fraud-area-marker" style="top: 28%; left: 60%;">
+                    <div class="fraud-area-dot"></div>
+                    <div class="area-label">Kharadi: 37 Frauds</div>
+                </div>
+                
+                <!-- Garage Markers -->
+                <div class="garage-marker" style="top: 25%; left: 35%;" title="Shivneri Motors" onclick="showGarageInfo('Shivneri Motors PCMC')">
+                    <div class="garage-icon">🔧</div>
+                    <div class="garage-label green-garage">Shivneri Motors</div>
+                </div>
+                <div class="garage-marker" style="top: 28%; left: 28%;" title="Chavan Auto Specialists" onclick="showGarageInfo('Chavan Auto Specialists')">
+                    <div class="garage-icon">🔧</div>
+                    <div class="garage-label red-garage">Chavan Auto</div>
+                </div>
+                <div class="garage-marker" style="top: 50%; left: 50%;" title="Elite Auto Care" onclick="showGarageInfo('Elite Auto Care')">
+                    <div class="garage-icon">🔧</div>
+                    <div class="garage-label green-garage">Elite Auto</div>
+                </div>
+                <div class="garage-marker" style="top: 42%; left: 70%;" title="Precision Motors" onclick="showGarageInfo('Precision Motors')">
+                    <div class="garage-icon">🔧</div>
+                    <div class="garage-label yellow-garage">Precision</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Garage Integrity Table -->
+        <div class="garage-section">
+            <div class="section-header">
+                <h2>🔧 Partner Garage Integrity Table</h2>
+            </div>
+            <table class="garage-table" id="garageTable">
+                <thead>
+                    <tr>
+                        <th>Garage Name</th>
+                        <th>Region</th>
+                        <th>Cases Handled</th>
+                        <th>Trust Score</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="garageTableBody">
+                    <!-- Will be populated by JavaScript -->
+                </tbody>
+            </table>
+        </div>
     </div>
 
     <!-- Notification -->
@@ -509,7 +772,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
 
     <script>
-        // Firebase Configuration - REPLACE WITH YOUR ACTUAL CONFIG
+        // Firebase Configuration
         const firebaseConfig = {
             apiKey: "AIzaSyDsM-gjH1yNu7_LVINa6AHC-I4OHNY-704",
             authDomain: "claim-6d8b0.firebaseapp.com",
@@ -527,6 +790,64 @@
         // Global variables
         let claims = {};
         let notificationSound = null;
+
+        // Predefined Garage Data
+        const garageData = [
+            {
+                name: 'Shivneri Motors PCMC',
+                region: 'Nigdi',
+                cases: 412,
+                trustScore: 99,
+                status: 'verified',
+                fraudIncidents: 2,
+                rating: 4.8
+            },
+            {
+                name: 'Elite Auto Care',
+                region: 'Kharadi',
+                cases: 356,
+                trustScore: 97,
+                status: 'verified',
+                fraudIncidents: 3,
+                rating: 4.7
+            },
+            {
+                name: 'Precision Motors',
+                region: 'Hadapsar',
+                cases: 189,
+                trustScore: 82,
+                status: 'warning',
+                fraudIncidents: 12,
+                rating: 4.2
+            },
+            {
+                name: 'Chavan Auto Specialists',
+                region: 'Chinchwad',
+                cases: 88,
+                trustScore: 18,
+                status: 'blacklisted',
+                fraudIncidents: 34,
+                rating: 2.1
+            },
+            {
+                name: 'Supreme Service Center',
+                region: 'Wakad',
+                cases: 267,
+                trustScore: 94,
+                status: 'verified',
+                fraudIncidents: 5,
+                rating: 4.6
+            },
+            {
+                name: 'AutoCare Plus',
+                region: 'Swargate',
+                cases: 143,
+                trustScore: 76,
+                status: 'warning',
+                fraudIncidents: 18,
+                rating: 3.9
+            }
+        ];
 
         // Initialize notification sound
         function initSound() {
@@ -551,6 +872,56 @@
                 gain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
                 osc.stop(audioContext.currentTime + 0.5);
             };
+        }
+
+        // Load Garage Table
+        function loadGarageTable() {
+            const tableBody = document.getElementById('garageTableBody');
+            tableBody.innerHTML = garageData.map(garage => {
+                let trustBadge, statusClass, statusText;
+                
+                if (garage.trustScore >= 90) {
+                    trustBadge = 'trust-elite';
+                    statusClass = 'status-verified';
+                    statusText = '✅ Verified';
+                } else if (garage.trustScore >= 70) {
+                    trustBadge = 'trust-good';
+                    statusClass = 'status-warning';
+                    statusText = '⚠️ Warning';
+                } else {
+                    trustBadge = 'trust-risk';
+                    statusClass = 'status-blacklisted';
+                    statusText = '❌ Blacklisted';
+                }
+                
+                return `
+                    <tr>
+                        <td><strong>${garage.name}</strong></td>
+                        <td>${garage.region}</td>
+                        <td><strong>${garage.cases}</strong></td>
+                        <td>
+                            <span class="trust-score ${trustBadge}">
+                                ${garage.trustScore}% ${garage.trustScore >= 90 ? 'Elite' : garage.trustScore >= 70 ? 'Good' : 'Risk'}
+                            </span>
+                        </td>
+                        <td class="${statusClass}">${statusText}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        // Show Garage Info
+        function showGarageInfo(garageName) {
+            const garage = garageData.find(g => g.name === garageName);
+            if (!garage) return;
+            
+            let statusText = garage.status === 'verified' ? '✅ Verified' : 
+                           garage.status === 'warning' ? '⚠️ Under Review' : '❌ Blacklisted';
+            
+            showNotification(
+                `🔧 ${garage.name}`,
+                `Region: ${garage.region}\nCases: ${garage.cases}\nTrust Score: ${garage.trustScore}%\nRating: ${garage.rating}/5\nStatus: ${statusText}`
+            );
         }
 
         // Show notification
@@ -856,6 +1227,7 @@
         // Initialize
         window.addEventListener('load', () => {
             initSound();
+            loadGarageTable();
             showNotification('✅ Dashboard Active', 'Connected and listening for new claims...');
         });
 

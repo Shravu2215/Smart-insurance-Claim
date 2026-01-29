@@ -1,424 +1,1242 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Insurer Command | Pune Neural Triage</title>
-<script src="https://cdn.tailwindcss.com"></script>
-<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-<style>
-:root{ --bg:#07090f; --glass:rgba(255,255,255,0.035); --border:rgba(255,255,255,0.08); }
-body{ font-family:'Plus Jakarta Sans',sans-serif; background: var(--bg); color:white; }
-.glass{ background:var(--glass); backdrop-filter:blur(35px) saturate(160%); border:1px solid var(--border); }
-.badge{ padding:.3rem .8rem; border-radius:99px; font-weight:800; font-size:10px; text-transform: uppercase; }
-.green { background:#22c55e; color:#052e16; }
-.yellow { background:#facc15; color:#422006; }
-.red { background:#ef4444; color:#450a0a; }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Officer Dashboard - Real-time Claims Management</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-/* FIXED MAP WRAPPER */
-.map-wrapper {
-  position: relative;
-  height: 650px;
-  width: 100%;
-  border-radius: 40px;
-  overflow: hidden;
-  border: 1px solid var(--border);
-  background: #111;
-}
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
 
-.google-map-iframe {
-  width: 100%;
-  height: 100%;
-  filter: invert(90%) hue-rotate(180deg) contrast(1.2) brightness(0.9);
-}
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
 
-/* FRAUD AREA MARKERS - RED DOTS */
-.fraud-area-marker {
-  position: absolute;
-  z-index: 25;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  animation: markerPulse 2s infinite ease-in-out;
-}
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
 
-.fraud-area-dot {
-  width: 22px;
-  height: 22px;
-  background: #ef4444;
-  border-radius: 50%;
-  box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
-  animation: ripple 2s infinite;
-  margin-bottom: 4px;
-}
+        .header h1 {
+            font-size: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
 
-.area-label {
-  background: #ef4444;
-  color: white;
-  font-size: 9px;
-  font-weight: 900;
-  padding: 4px 10px;
-  border-radius: 6px;
-  text-transform: uppercase;
-  box-shadow: 0 4px 15px rgba(239, 68, 68, 0.5);
-  white-space: nowrap;
-}
+        .officer-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-size: 1.1rem;
+        }
 
-/* GARAGE MARKERS */
-.garage-marker {
-  position: absolute;
-  z-index: 20;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  cursor: pointer;
-  transition: transform 0.2s;
-}
+        .live-indicator {
+            width: 12px;
+            height: 12px;
+            background: #00ff00;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
 
-.garage-marker:hover {
-  transform: scale(1.15);
-}
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
 
-.garage-icon {
-  font-size: 26px;
-  margin-bottom: 2px;
-  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.4));
-}
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            padding: 30px;
+            background: #f8f9fa;
+        }
 
-.garage-label {
-  font-size: 8px;
-  font-weight: 900;
-  padding: 3px 7px;
-  border-radius: 4px;
-  text-transform: uppercase;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-  white-space: nowrap;
-}
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+        }
 
-.garage-label.red-garage {
-  background: #ef4444;
-  color: white;
-}
+        .stat-card:hover {
+            transform: translateY(-5px);
+        }
 
-.garage-label.yellow-garage {
-  background: #facc15;
-  color: #422006;
-}
+        .stat-card h3 {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 10px;
+        }
 
-.garage-label.green-garage {
-  background: #22c55e;
-  color: #052e16;
-}
+        .stat-card .number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #667eea;
+        }
 
-@keyframes ripple {
-  0% {
-    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7),
-                0 0 0 0 rgba(239, 68, 68, 0.7);
-  }
-  50% {
-    box-shadow: 0 0 0 15px rgba(239, 68, 68, 0),
-                0 0 0 30px rgba(239, 68, 68, 0);
-  }
-  100% {
-    box-shadow: 0 0 0 0 rgba(239, 68, 68, 0),
-                0 0 0 0 rgba(239, 68, 68, 0);
-  }
-}
+        .claims-section {
+            padding: 30px;
+        }
 
-@keyframes markerPulse {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-6px); }
-}
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
 
-.row:hover { background: rgba(255,255,255,0.05); }
-</style>
+        .section-header h2 {
+            font-size: 1.5rem;
+            color: #333;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+        }
+
+        .refresh-btn, .clear-all-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .refresh-btn {
+            background: #667eea;
+            color: white;
+        }
+
+        .refresh-btn:hover {
+            background: #5568d3;
+        }
+
+        .clear-all-btn {
+            background: #dc3545;
+            color: white;
+        }
+
+        .clear-all-btn:hover {
+            background: #c82333;
+        }
+
+        .claims-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .claims-table thead {
+            background: #667eea;
+            color: white;
+        }
+
+        .claims-table th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .claims-table td {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .claims-table tbody tr:hover {
+            background: #f8f9fa;
+        }
+
+        .badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .badge-green {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .badge-yellow {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .badge-red {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .badge-pending {
+            background: #cce5ff;
+            color: #004085;
+        }
+
+        .badge-approved {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .badge-rejected {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .btn-view {
+            background: #17a2b8;
+            color: white;
+        }
+
+        .btn-view:hover {
+            background: #138496;
+        }
+
+        .btn-approve {
+            background: #28a745;
+            color: white;
+        }
+
+        .btn-approve:hover {
+            background: #218838;
+        }
+
+        .btn-reject {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-reject:hover {
+            background: #c82333;
+        }
+
+        .btn-review {
+            background: #ffc107;
+            color: #000;
+        }
+
+        .btn-review:hover {
+            background: #e0a800;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+
+        .empty-state svg {
+            width: 100px;
+            height: 100px;
+            margin-bottom: 20px;
+            opacity: 0.3;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            max-width: 350px;
+            transform: translateX(400px);
+            transition: transform 0.3s;
+            z-index: 1000;
+        }
+
+        .notification.show {
+            transform: translateX(0);
+        }
+
+        .notification-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .notification-title {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .notification-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #999;
+        }
+
+        .notification-body {
+            color: #666;
+            font-size: 0.95rem;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #eee;
+        }
+
+        .modal-header h2 {
+            color: #333;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 2rem;
+            cursor: pointer;
+            color: #999;
+        }
+
+        .detail-row {
+            display: flex;
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .detail-label {
+            font-weight: 600;
+            color: #666;
+            width: 180px;
+        }
+
+        .detail-value {
+            color: #333;
+            flex: 1;
+        }
+
+        /* Fraud Map Styles */
+        .map-section {
+            padding: 30px;
+            background: #f8f9fa;
+        }
+
+        .map-wrapper {
+            position: relative;
+            height: 600px;
+            width: 100%;
+            border-radius: 20px;
+            overflow: hidden;
+            border: 3px solid #667eea;
+            background: #111;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .google-map-iframe {
+            width: 100%;
+            height: 100%;
+            filter: invert(90%) hue-rotate(180deg) contrast(1.2) brightness(0.9);
+        }
+
+        .fraud-area-marker {
+            position: absolute;
+            z-index: 25;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            animation: markerPulse 2s infinite ease-in-out;
+        }
+
+        .fraud-area-dot {
+            width: 18px;
+            height: 18px;
+            background: #ef4444;
+            border-radius: 50%;
+            box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+            animation: ripple 2s infinite;
+        }
+
+        .area-label {
+            background: #ef4444;
+            color: white;
+            font-size: 10px;
+            font-weight: 900;
+            padding: 4px 10px;
+            border-radius: 5px;
+            text-transform: uppercase;
+            margin-top: 4px;
+            white-space: nowrap;
+        }
+
+        .garage-marker {
+            position: absolute;
+            z-index: 20;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: 0.2s;
+            cursor: pointer;
+        }
+
+        .garage-marker:hover {
+            transform: scale(1.1);
+        }
+
+        .garage-icon {
+            font-size: 24px;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.5));
+        }
+
+        .garage-label {
+            font-size: 9px;
+            font-weight: 900;
+            padding: 3px 8px;
+            border-radius: 4px;
+            text-transform: uppercase;
+            margin-top: 2px;
+        }
+
+        .red-garage {
+            background: #ef4444;
+            color: white;
+        }
+
+        .yellow-garage {
+            background: #facc15;
+            color: #422006;
+        }
+
+        .green-garage {
+            background: #22c55e;
+            color: #052e16;
+        }
+
+        @keyframes ripple {
+            0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+            50% { box-shadow: 0 0 0 15px rgba(239, 68, 68, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+        }
+
+        @keyframes markerPulse {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        /* Garage Table Styles */
+        .garage-section {
+            padding: 30px;
+        }
+
+        .garage-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .garage-table thead {
+            background: #28a745;
+            color: white;
+        }
+
+        .garage-table th {
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .garage-table td {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .garage-table tbody tr:hover {
+            background: #f8f9fa;
+        }
+
+        .trust-score {
+            font-weight: 700;
+            padding: 5px 10px;
+            border-radius: 5px;
+            display: inline-block;
+        }
+
+        .trust-elite {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .trust-good {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .trust-risk {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .status-verified {
+            color: #28a745;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+        }
+
+        .status-blacklisted {
+            color: #dc3545;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+        }
+
+        .status-warning {
+            color: #ffc107;
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+        }
+
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+
+            .claims-table {
+                font-size: 0.85rem;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .map-wrapper {
+                height: 400px;
+            }
+        }
+    </style>
 </head>
-<body class="pb-20">
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>
+                🏥 Officer Dashboard
+            </h1>
+            <div class="officer-info">
+                <span>👤 Officer: Shravani Kalupure</span>
+                <div class="live-indicator"></div>
+                <span>LIVE</span>
+            </div>
+        </div>
 
-<nav class="sticky top-0 z-50 bg-black/60 backdrop-blur-xl border-b border-white/5">
-  <div class="max-w-7xl mx-auto px-8 h-20 flex items-center justify-between">
-    <div class="text-2xl font-black italic uppercase">SmartClaim<span class="text-sky-400 not-italic">.Pro</span></div>
-    <div class="flex gap-10 text-[11px] font-black uppercase tracking-widest text-gray-400">
-      <a href="index.html" class="hover:text-white">Home</a>
-      <a href="submit-claim.html" class="hover:text-white text-sky-400">Claims</a>
-      <a href="history.html" class="hover:text-white">History</a>
-    </div>
-  </div>
-</nav>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>Total Claims</h3>
+                <div class="number" id="totalClaims">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Green (Auto-Approve)</h3>
+                <div class="number" id="greenClaims" style="color: #28a745;">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Yellow (Review)</h3>
+                <div class="number" id="yellowClaims" style="color: #ffc107;">0</div>
+            </div>
+            <div class="stat-card">
+                <h3>Red (Flagged)</h3>
+                <div class="number" id="redClaims" style="color: #dc3545;">0</div>
+            </div>
+        </div>
 
-<main class="max-w-7xl mx-auto px-10 py-12">
+        <div class="claims-section">
+            <div class="section-header">
+                <h2>📋 Claims Queue</h2>
+                <div class="button-group">
+                    <button class="refresh-btn" onclick="refreshDashboard()">
+                        🔄 Refresh
+                    </button>
+                    <button class="clear-all-btn" onclick="confirmClearAll()">
+                        🗑️ Clear All
+                    </button>
+                </div>
+            </div>
 
-    <div class="mb-16">
-        <h3 class="text-2xl font-black italic uppercase tracking-tighter mb-8">Live Claim <span class="text-sky-400">Ledger</span></h3>
-        <div class="glass rounded-[45px] overflow-hidden shadow-2xl">
-            <table class="w-full text-sm">
-                <thead class="bg-white/5 text-gray-500 uppercase text-[9px] font-black tracking-[0.2em]">
+            <table class="claims-table">
+                <thead>
                     <tr>
-                        <th class="p-6 text-left">Claim ID</th>
-                        <th class="text-left">Policy Holder</th>
-                        <th class="text-left">Exposure</th>
-                        <th class="text-left">AI Triage</th>
-                        <th class="text-left">Risk Analysis</th>
+                        <th>Claim ID</th>
+                        <th>Policy Holder</th>
+                        <th>Amount</th>
+                        <th>AI Triage</th>
+                        <th>Payment Type</th>
+                        <th>Status</th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
-                <tbody id="table" class="divide-y divide-white/5"></tbody>
-            </table>
-        </div>
-    </div>
-
-    <div class="mb-16">
-        <h3 class="text-2xl font-black italic uppercase tracking-tighter mb-8 text-red-500">Pune Region Fraud <span class="text-white">Hotspots & Garages</span></h3>
-        <div class="glass rounded-[30px] p-6 mb-4">
-            <div class="flex gap-6 text-xs flex-wrap">
-                <div class="flex items-center gap-2">
-                    <div class="w-4 h-4 bg-red-500 rounded-full"></div>
-                    <span class="text-gray-400 font-bold">High Fraud Areas</span>
-                </div>
-                <div class="flex items-center gap-2">
-                    <span class="text-2xl">🔧</span>
-                    <span class="text-red-500 font-bold">Red: High Risk Garages (28-40% Trust)</span>
-                </div>
-                <div class="flex items-center gap-2">
-                    <span class="text-2xl">🔧</span>
-                    <span class="text-yellow-500 font-bold">Yellow: Under Audit (60-75% Trust)</span>
-                </div>
-                <div class="flex items-center gap-2">
-                    <span class="text-2xl">🔧</span>
-                    <span class="text-green-500 font-bold">Green: Verified Safe (90%+ Trust)</span>
-                </div>
-            </div>
-        </div>
-        <div class="map-wrapper">
-            <iframe 
-                class="google-map-iframe"
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d242118.08!2d73.6679!3d18.5204!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bc2bf2e67461101%3A0x828d43bf9d9ee343!2sPune%2C%20Maharashtra!5e0!3m2!1sen!2sin!4v1705400000000!5m2!1sen!2sin" 
-                allowfullscreen="" loading="lazy">
-            </iframe>
-
-            <!-- ========== FRAUD AREA MARKERS - RED DOTS (SPREAD OUT) ========== -->
-            
-            <!-- Ravet (North-West) -->
-            <div class="fraud-area-marker" style="top: 25%; left: 28%;">
-                <div class="fraud-area-dot"></div>
-                <div class="area-label">Ravet: 47 Frauds</div>
-            </div>
-
-            <!-- Hinjewadi (West) -->
-            <div class="fraud-area-marker" style="top: 40%; left: 15%;">
-                <div class="fraud-area-dot"></div>
-                <div class="area-label">Hinjewadi: 52 Frauds</div>
-            </div>
-
-            <!-- Baramati (Far South-East) -->
-            <div class="fraud-area-marker" style="top: 85%; left: 78%;">
-                <div class="fraud-area-dot"></div>
-                <div class="area-label">Baramati: 34 Frauds</div>
-            </div>
-
-            <!-- Kasarwadi (North-East) -->
-            <div class="fraud-area-marker" style="top: 28%; left: 62%;">
-                <div class="fraud-area-dot"></div>
-                <div class="area-label">Kasarwadi: 41 Frauds</div>
-            </div>
-
-            <!-- Ahilyanagar/Ahmednagar (Far North-East) -->
-            <div class="fraud-area-marker" style="top: 12%; left: 88%;">
-                <div class="fraud-area-dot"></div>
-                <div class="area-label">Ahilyanagar: 38 Frauds</div>
-            </div>
-
-
-            <!-- ========== RED GARAGES (High Risk) - SPREAD ACROSS REGIONS ========== -->
-            
-            <!-- Near Ravet -->
-            <div class="garage-marker" style="top: 27%; left: 30%;" title="Aashapuri Auto - 28% Trust - High Risk">
-                <div class="garage-icon">🔧</div>
-                <div class="garage-label red-garage">Aashapuri Auto</div>
-            </div>
-
-            <!-- Near Hinjewadi -->
-            <div class="garage-marker" style="top: 42%; left: 18%;" title="Quick Fix Hub - 32% Trust - High Risk">
-                <div class="garage-icon">🔧</div>
-                <div class="garage-label red-garage">Quick Fix Hub</div>
-            </div>
-
-            <!-- Near Baramati -->
-            <div class="garage-marker" style="top: 82%; left: 75%;" title="Rural Auto Works - 35% Trust - High Risk">
-                <div class="garage-icon">🔧</div>
-                <div class="garage-label red-garage">Rural Auto Works</div>
-            </div>
-
-            <!-- Near Kasarwadi -->
-            <div class="garage-marker" style="top: 30%; left: 65%;" title="Speed Garage - 29% Trust - High Risk">
-                <div class="garage-icon">🔧</div>
-                <div class="garage-label red-garage">Speed Garage</div>
-            </div>
-
-            <!-- Near Ahilyanagar -->
-            <div class="garage-marker" style="top: 15%; left: 85%;" title="Highway Auto - 40% Trust - High Risk">
-                <div class="garage-icon">🔧</div>
-                <div class="garage-label red-garage">Highway Auto</div>
-            </div>
-
-
-            <!-- ========== YELLOW GARAGES (Under Audit) - DISTRIBUTED ========== -->
-            
-            <!-- Between Ravet & Hinjewadi -->
-            <div class="garage-marker" style="top: 32%; left: 22%;" title="Gear Up Auto - 65% Trust - Under Audit">
-                <div class="garage-icon">🔧</div>
-                <div class="garage-label yellow-garage">Gear Up Auto</div>
-            </div>
-
-            <!-- Central Pune -->
-            <div class="garage-marker" style="top: 50%; left: 48%;" title="Auto Care Plus - 72% Trust - Under Review">
-                <div class="garage-icon">🔧</div>
-                <div class="garage-label yellow-garage">Auto Care Plus</div>
-            </div>
-
-            <!-- Near Kasarwadi -->
-            <div class="garage-marker" style="top: 35%; left: 58%;" title="City Motors - 68% Trust - Monitoring">
-                <div class="garage-icon">🔧</div>
-                <div class="garage-label yellow-garage">City Motors</div>
-            </div>
-
-            <!-- South Pune -->
-            <div class="garage-marker" style="top: 70%; left: 52%;" title="South Auto Hub - 70% Trust - Under Watch">
-                <div class="garage-icon">🔧</div>
-                <div class="garage-label yellow-garage">South Auto Hub</div>
-            </div>
-
-
-            <!-- ========== GREEN GARAGES (Verified Safe) - WELL DISTRIBUTED ========== -->
-            
-            <!-- Near Ravet -->
-            <div class="garage-marker" style="top: 23%; left: 35%;" title="Shine Motors - 98% Trust - Elite Partner">
-                <div class="garage-icon">🔧</div>
-                <div class="garage-label green-garage">Shine Motors</div>
-            </div>
-
-            <!-- Near Hinjewadi -->
-            <div class="garage-marker" style="top: 38%; left: 12%;" title="Tech Auto Service - 94% Trust - Verified">
-                <div class="garage-icon">🔧</div>
-                <div class="garage-label green-garage">Tech Auto Service</div>
-            </div>
-
-            <!-- Central Pune -->
-            <div class="garage-marker" style="top: 55%; left: 50%;" title="Car N Bike - 95% Trust - Trusted Partner">
-                <div class="garage-icon">🔧</div>
-                <div class="garage-label green-garage">Car N Bike</div>
-            </div>
-
-            <!-- Near Kasarwadi -->
-            <div class="garage-marker" style="top: 25%; left: 68%;" title="Vision Motors - 91% Trust - Certified">
-                <div class="garage-icon">🔧</div>
-                <div class="garage-label green-garage">Vision Motors</div>
-            </div>
-
-            <!-- East Pune -->
-            <div class="garage-marker" style="top: 48%; left: 72%;" title="Premium Auto Care - 96% Trust - Elite">
-                <div class="garage-icon">🔧</div>
-                <div class="garage-label green-garage">Premium Auto</div>
-            </div>
-
-            <!-- South Pune -->
-            <div class="garage-marker" style="top: 75%; left: 45%;" title="Reliable Motors - 93% Trust - Verified">
-                <div class="garage-icon">🔧</div>
-                <div class="garage-label green-garage">Reliable Motors</div>
-            </div>
-
-        </div>
-    </div>
-
-    <div class="mb-16">
-        <h3 class="text-2xl font-black italic uppercase tracking-tighter mb-8 text-emerald-400">Partner Garage <span class="text-white">Integrity Table</span></h3>
-        <div class="glass rounded-[45px] overflow-hidden">
-            <table class="w-full text-sm">
-                <thead class="bg-white/5 text-gray-500 uppercase text-[9px] font-black tracking-[0.2em]">
+                <tbody id="claimsTableBody">
                     <tr>
-                        <th class="p-6 text-left">Garage Name</th>
-                        <th class="text-left">Region</th>
-                        <th class="text-center">Cases</th>
-                        <th class="text-center">Trust Score</th>
-                        <th class="text-right p-6">AI Command</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-white/5">
-                    <tr class="row">
-                        <td class="p-6 font-extrabold uppercase">Shine Motors Multi Brand</td>
-                        <td class="text-gray-400">Ravet</td>
-                        <td class="text-center font-bold">142</td>
-                        <td class="text-center"><span class="badge green">98% Elite</span></td>
-                        <td class="text-right p-6 text-emerald-400 font-black uppercase text-[10px]">Verified Partner</td>
-                    </tr>
-                    <tr class="row">
-                        <td class="p-6 font-extrabold uppercase">Car N Bike</td>
-                        <td class="text-gray-400">Central Pune</td>
-                        <td class="text-center font-bold">328</td>
-                        <td class="text-center"><span class="badge green">95% Reliable</span></td>
-                        <td class="text-right p-6 text-emerald-400 font-black uppercase text-[10px]">Active</td>
-                    </tr>
-                    <tr class="row">
-                        <td class="p-6 font-extrabold uppercase">Gear Up Automobiles</td>
-                        <td class="text-gray-400">Hinjewadi</td>
-                        <td class="text-center font-bold">88</td>
-                        <td class="text-center"><span class="badge yellow">65% Warning</span></td>
-                        <td class="text-right p-6 text-yellow-400 font-black uppercase text-[10px]">Under Audit</td>
-                    </tr>
-                    <tr class="row">
-                        <td class="p-6 font-extrabold uppercase">Vision Motors</td>
-                        <td class="text-gray-400">Kasarwadi</td>
-                        <td class="text-center font-bold">215</td>
-                        <td class="text-center"><span class="badge green">91% Trusted</span></td>
-                        <td class="text-right p-6 text-sky-400 font-black uppercase text-[10px]">Active</td>
-                    </tr>
-                    <tr class="row">
-                        <td class="p-6 font-extrabold uppercase">Aashapuri Auto</td>
-                        <td class="text-gray-400">Ravet</td>
-                        <td class="text-center font-bold">94</td>
-                        <td class="text-center"><span class="badge red">28% Risk</span></td>
-                        <td class="text-right p-6 text-red-500 font-black uppercase text-[10px]">Blacklisted</td>
-                    </tr>
-                    <tr class="row">
-                        <td class="p-6 font-extrabold uppercase">Quick Fix Hub</td>
-                        <td class="text-gray-400">Hinjewadi</td>
-                        <td class="text-center font-bold">156</td>
-                        <td class="text-center"><span class="badge red">32% Risk</span></td>
-                        <td class="text-right p-6 text-red-500 font-black uppercase text-[10px]">Blacklisted</td>
-                    </tr>
-                    <tr class="row">
-                        <td class="p-6 font-extrabold uppercase">Premium Auto Care</td>
-                        <td class="text-gray-400">East Pune</td>
-                        <td class="text-center font-bold">287</td>
-                        <td class="text-center"><span class="badge green">96% Elite</span></td>
-                        <td class="text-right p-6 text-emerald-400 font-black uppercase text-[10px]">Verified Partner</td>
-                    </tr>
-                    <tr class="row">
-                        <td class="p-6 font-extrabold uppercase">Auto Care Plus</td>
-                        <td class="text-gray-400">Central Pune</td>
-                        <td class="text-center font-bold">103</td>
-                        <td class="text-center"><span class="badge yellow">72% Monitor</span></td>
-                        <td class="text-right p-6 text-yellow-400 font-black uppercase text-[10px]">Under Review</td>
+                        <td colspan="7" class="empty-state">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
+                            </svg>
+                            <h3>Waiting for Claims...</h3>
+                            <p>New claims will appear here automatically</p>
+                        </td>
                     </tr>
                 </tbody>
             </table>
         </div>
-    </div>
-</main>
 
-<script>
-const names=['Rahul K.','Amit S.','Sameer J.','Kunal P.','Rohit M.'];
-const t=document.getElementById('table');
-for(let i=1; i<=8; i++){
-    const status = i%4===0 ? 'red' : i%3===0 ? 'yellow' : 'green';
-    t.innerHTML += `
-    <tr class="row border-t border-white/5">
-        <td class="p-6 font-mono text-sky-400">SC-${202600 + i}</td>
-        <td class="font-bold">${names[i%5]}</td>
-        <td class="font-black text-white">₹${(15000 + i*5000).toLocaleString()}</td>
-        <td><span class="badge ${status}">${status}</span></td>
-        <td class="text-[11px] italic text-gray-400 opacity-60">${status === 'green' ? 'Identity Match' : status === 'yellow' ? 'Manual Verification' : 'Suspected Fraud Pattern'}</td>
-    </tr>`;
-}
-</script>
+        <!-- Fraud Map Section -->
+        <div class="map-section">
+            <div class="section-header">
+                <h2>🗺️ Pune & PCMC Fraud Hotspots</h2>
+            </div>
+            <div class="map-wrapper">
+                <iframe class="google-map-iframe" 
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d121059.04712431696!2d73.7898!3d18.5204!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bc2bf2e67461101%3A0x828d43105d9513e8!2sPune%2C%20Maharashtra!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin" 
+                    allowfullscreen="" 
+                    loading="lazy">
+                </iframe>
+                
+                <!-- Fraud Area Markers -->
+                <div class="fraud-area-marker" style="top: 20%; left: 30%;">
+                    <div class="fraud-area-dot"></div>
+                    <div class="area-label">Nigdi: 42 Frauds</div>
+                </div>
+                <div class="fraud-area-marker" style="top: 35%; left: 15%;">
+                    <div class="fraud-area-dot"></div>
+                    <div class="area-label">Wakad: 58 Frauds</div>
+                </div>
+                <div class="fraud-area-marker" style="top: 55%; left: 45%;">
+                    <div class="fraud-area-dot"></div>
+                    <div class="area-label">Swargate: 64 Frauds</div>
+                </div>
+                <div class="fraud-area-marker" style="top: 45%; left: 75%;">
+                    <div class="fraud-area-dot"></div>
+                    <div class="area-label">Hadapsar: 49 Frauds</div>
+                </div>
+                <div class="fraud-area-marker" style="top: 28%; left: 60%;">
+                    <div class="fraud-area-dot"></div>
+                    <div class="area-label">Kharadi: 37 Frauds</div>
+                </div>
+                
+                <!-- Garage Markers -->
+                <div class="garage-marker" style="top: 25%; left: 35%;" title="Shivneri Motors" onclick="showGarageInfo('Shivneri Motors PCMC')">
+                    <div class="garage-icon">🔧</div>
+                    <div class="garage-label green-garage">Shivneri Motors</div>
+                </div>
+                <div class="garage-marker" style="top: 28%; left: 28%;" title="Chavan Auto Specialists" onclick="showGarageInfo('Chavan Auto Specialists')">
+                    <div class="garage-icon">🔧</div>
+                    <div class="garage-label red-garage">Chavan Auto</div>
+                </div>
+                <div class="garage-marker" style="top: 50%; left: 50%;" title="Elite Auto Care" onclick="showGarageInfo('Elite Auto Care')">
+                    <div class="garage-icon">🔧</div>
+                    <div class="garage-label green-garage">Elite Auto</div>
+                </div>
+                <div class="garage-marker" style="top: 42%; left: 70%;" title="Precision Motors" onclick="showGarageInfo('Precision Motors')">
+                    <div class="garage-icon">🔧</div>
+                    <div class="garage-label yellow-garage">Precision</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Garage Integrity Table -->
+        <div class="garage-section">
+            <div class="section-header">
+                <h2>🔧 Partner Garage Integrity Table</h2>
+            </div>
+            <table class="garage-table" id="garageTable">
+                <thead>
+                    <tr>
+                        <th>Garage Name</th>
+                        <th>Region</th>
+                        <th>Cases Handled</th>
+                        <th>Trust Score</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody id="garageTableBody">
+                    <!-- Will be populated by JavaScript -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Notification -->
+    <div class="notification" id="notification">
+        <div class="notification-header">
+            <span class="notification-title" id="notificationTitle">New Notification</span>
+            <button class="notification-close" onclick="closeNotification()">×</button>
+        </div>
+        <div class="notification-body" id="notificationBody">
+            Notification message
+        </div>
+    </div>
+
+    <!-- View Details Modal -->
+    <div class="modal" id="detailsModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Claim Details</h2>
+                <button class="modal-close" onclick="closeModal()">×</button>
+            </div>
+            <div id="modalBody">
+                <!-- Details will be populated here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+
+    <script>
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDsM-gjH1yNu7_LVINa6AHC-I4OHNY-704",
+            authDomain: "claim-6d8b0.firebaseapp.com",
+            databaseURL: "https://claim-6d8b0-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "claim-6d8b0",
+            storageBucket: "claim-6d8b0.firebasestorage.app",
+            messagingSenderId: "524689855079",
+            appId: "1:524689855079:web:37974db792e49b131fbac2"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
+        // Global variables
+        let claims = {};
+        let notificationSound = null;
+
+        // Predefined Garage Data
+        const garageData = [
+            {
+                name: 'Shivneri Motors PCMC',
+                region: 'Nigdi',
+                cases: 412,
+                trustScore: 99,
+                status: 'verified',
+                fraudIncidents: 2,
+                rating: 4.8
+            },
+            {
+                name: 'Elite Auto Care',
+                region: 'Kharadi',
+                cases: 356,
+                trustScore: 97,
+                status: 'verified',
+                fraudIncidents: 3,
+                rating: 4.7
+            },
+            {
+                name: 'Precision Motors',
+                region: 'Hadapsar',
+                cases: 189,
+                trustScore: 82,
+                status: 'warning',
+                fraudIncidents: 12,
+                rating: 4.2
+            },
+            {
+                name: 'Chavan Auto Specialists',
+                region: 'Chinchwad',
+                cases: 88,
+                trustScore: 18,
+                status: 'blacklisted',
+                fraudIncidents: 34,
+                rating: 2.1
+            },
+            {
+                name: 'Supreme Service Center',
+                region: 'Wakad',
+                cases: 267,
+                trustScore: 94,
+                status: 'verified',
+                fraudIncidents: 5,
+                rating: 4.6
+            },
+            {
+                name: 'AutoCare Plus',
+                region: 'Swargate',
+                cases: 143,
+                trustScore: 76,
+                status: 'warning',
+                fraudIncidents: 18,
+                rating: 3.9
+            }
+        ];
+
+        // Initialize notification sound
+        function initSound() {
+            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            const oscillator = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+            
+            oscillator.connect(gainNode);
+            gainNode.connect(audioContext.destination);
+            
+            notificationSound = () => {
+                const osc = audioContext.createOscillator();
+                const gain = audioContext.createGain();
+                
+                osc.connect(gain);
+                gain.connect(audioContext.destination);
+                
+                osc.frequency.value = 800;
+                gain.gain.value = 0.3;
+                
+                osc.start();
+                gain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+                osc.stop(audioContext.currentTime + 0.5);
+            };
+        }
+
+        // Load Garage Table
+        function loadGarageTable() {
+            const tableBody = document.getElementById('garageTableBody');
+            tableBody.innerHTML = garageData.map(garage => {
+                let trustBadge, statusClass, statusText;
+                
+                if (garage.trustScore >= 90) {
+                    trustBadge = 'trust-elite';
+                    statusClass = 'status-verified';
+                    statusText = '✅ Verified';
+                } else if (garage.trustScore >= 70) {
+                    trustBadge = 'trust-good';
+                    statusClass = 'status-warning';
+                    statusText = '⚠️ Warning';
+                } else {
+                    trustBadge = 'trust-risk';
+                    statusClass = 'status-blacklisted';
+                    statusText = '❌ Blacklisted';
+                }
+                
+                return `
+                    <tr>
+                        <td><strong>${garage.name}</strong></td>
+                        <td>${garage.region}</td>
+                        <td><strong>${garage.cases}</strong></td>
+                        <td>
+                            <span class="trust-score ${trustBadge}">
+                                ${garage.trustScore}% ${garage.trustScore >= 90 ? 'Elite' : garage.trustScore >= 70 ? 'Good' : 'Risk'}
+                            </span>
+                        </td>
+                        <td class="${statusClass}">${statusText}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        // Show Garage Info
+        function showGarageInfo(garageName) {
+            const garage = garageData.find(g => g.name === garageName);
+            if (!garage) return;
+            
+            let statusText = garage.status === 'verified' ? '✅ Verified' : 
+                           garage.status === 'warning' ? '⚠️ Under Review' : '❌ Blacklisted';
+            
+            showNotification(
+                `🔧 ${garage.name}`,
+                `Region: ${garage.region}\nCases: ${garage.cases}\nTrust Score: ${garage.trustScore}%\nRating: ${garage.rating}/5\nStatus: ${statusText}`
+            );
+        }
+
+        // Show notification
+        function showNotification(title, message) {
+            const notification = document.getElementById('notification');
+            document.getElementById('notificationTitle').textContent = title;
+            document.getElementById('notificationBody').textContent = message;
+            notification.classList.add('show');
+            
+            if (notificationSound) {
+                notificationSound();
+            }
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 5000);
+        }
+
+        function closeNotification() {
+            document.getElementById('notification').classList.remove('show');
+        }
+
+        // Get payment type display based on triage and payment info
+        function getPaymentTypeDisplay(claim) {
+            if (claim.aiTriage === 'red' || claim.aiTriage === 'yellow') {
+                return '-';
+            }
+            
+            if (claim.aiTriage === 'green') {
+                // If cashless payment is selected, show "To Garage"
+                if (claim.paymentMethod && claim.paymentMethod.toLowerCase().includes('cashless')) {
+                    return 'To Garage';
+                }
+                // If UPI payment is selected, show "To User"
+                if (claim.paymentMethod && (
+                    claim.paymentMethod.toLowerCase().includes('upi') ||
+                    claim.paymentMethod.toLowerCase().includes('google') ||
+                    claim.paymentMethod.toLowerCase().includes('phone') ||
+                    claim.paymentMethod.toLowerCase().includes('paytm')
+                )) {
+                    return 'To User';
+                }
+                // Fallback based on paymentType if provided
+                if (claim.paymentType) {
+                    return claim.paymentType === 'toGarage' ? 'To Garage' : 'To User';
+                }
+            }
+            
+            return '-';
+        }
+
+        // Get action buttons based on AI triage status
+        function getActionButtons(claimId, claim) {
+            const viewBtn = `<button class="btn btn-view" onclick="viewDetails('${claimId}')">👁️ View</button>`;
+            
+            if (claim.status === 'approved' || claim.status === 'rejected') {
+                return viewBtn; // Only show view button for completed claims
+            }
+            
+            if (claim.aiTriage === 'red') {
+                // RED: Only Reject button
+                return `
+                    ${viewBtn}
+                    <button class="btn btn-reject" onclick="rejectClaim('${claimId}')">❌ Reject</button>
+                `;
+            } else if (claim.aiTriage === 'yellow') {
+                // YELLOW: Under Review button
+                return `
+                    ${viewBtn}
+                    <button class="btn btn-review" onclick="reviewClaim('${claimId}')">⚠️ Under Review</button>
+                `;
+            } else if (claim.aiTriage === 'green') {
+                // GREEN: Approve and Reject buttons
+                return `
+                    ${viewBtn}
+                    <button class="btn btn-approve" onclick="approveClaim('${claimId}')">✅ Approve</button>
+                    <button class="btn btn-reject" onclick="rejectClaim('${claimId}')">❌ Reject</button>
+                `;
+            }
+            
+            return viewBtn;
+        }
+
+        // Update dashboard
+        function updateDashboard() {
+            const tableBody = document.getElementById('claimsTableBody');
+            const claimKeys = Object.keys(claims);
+            
+            if (claimKeys.length === 0) {
+                tableBody.innerHTML = `
+                    <tr>
+                        <td colspan="7" class="empty-state">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/>
+                            </svg>
+                            <h3>Waiting for Claims...</h3>
+                            <p>New claims will appear here automatically</p>
+                        </td>
+                    </tr>
+                `;
+            } else {
+                tableBody.innerHTML = claimKeys.map(claimId => {
+                    const claim = claims[claimId];
+                    const triageBadge = claim.aiTriage === 'green' ? 'badge-green' : 
+                                       claim.aiTriage === 'yellow' ? 'badge-yellow' : 'badge-red';
+                    const statusBadge = claim.status === 'approved' ? 'badge-approved' : 
+                                       claim.status === 'rejected' ? 'badge-rejected' : 'badge-pending';
+                    
+                    const paymentTypeDisplay = getPaymentTypeDisplay(claim);
+                    
+                    return `
+                        <tr>
+                            <td><strong>${claim.claimId}</strong></td>
+                            <td>${claim.policyHolder}</td>
+                            <td><strong>₹${claim.amount.toLocaleString()}</strong></td>
+                            <td><span class="badge ${triageBadge}">${claim.aiTriage.toUpperCase()}</span></td>
+                            <td>${paymentTypeDisplay}</td>
+                            <td><span class="badge ${statusBadge}">${claim.status.toUpperCase()}</span></td>
+                            <td>
+                                <div class="action-buttons">
+                                    ${getActionButtons(claimId, claim)}
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                }).join('');
+            }
+            
+            // Update statistics
+            const greenCount = claimKeys.filter(id => claims[id].aiTriage === 'green').length;
+            const yellowCount = claimKeys.filter(id => claims[id].aiTriage === 'yellow').length;
+            const redCount = claimKeys.filter(id => claims[id].aiTriage === 'red').length;
+            
+            document.getElementById('totalClaims').textContent = claimKeys.length;
+            document.getElementById('greenClaims').textContent = greenCount;
+            document.getElementById('yellowClaims').textContent = yellowCount;
+            document.getElementById('redClaims').textContent = redCount;
+        }
+
+        // View claim details
+        function viewDetails(claimId) {
+            const claim = claims[claimId];
+            const paymentTypeDisplay = getPaymentTypeDisplay(claim);
+            
+            const modalBody = document.getElementById('modalBody');
+            modalBody.innerHTML = `
+                <div class="detail-row">
+                    <div class="detail-label">Claim ID:</div>
+                    <div class="detail-value"><strong>${claim.claimId}</strong></div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Policy Holder:</div>
+                    <div class="detail-value">${claim.policyHolder}</div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Amount:</div>
+                    <div class="detail-value"><strong>₹${claim.amount.toLocaleString()}</strong></div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">AI Triage:</div>
+                    <div class="detail-value">
+                        <span class="badge ${claim.aiTriage === 'green' ? 'badge-green' : 
+                                           claim.aiTriage === 'yellow' ? 'badge-yellow' : 'badge-red'}">
+                            ${claim.aiTriage.toUpperCase()}
+                        </span>
+                    </div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Payment Type:</div>
+                    <div class="detail-value">${paymentTypeDisplay}</div>
+                </div>
+                ${claim.paymentMethod ? `
+                <div class="detail-row">
+                    <div class="detail-label">Payment Method:</div>
+                    <div class="detail-value">${claim.paymentMethod}</div>
+                </div>
+                ` : ''}
+                ${claim.upiId ? `
+                <div class="detail-row">
+                    <div class="detail-label">UPI ID:</div>
+                    <div class="detail-value">${claim.upiId}</div>
+                </div>
+                ` : ''}
+                <div class="detail-row">
+                    <div class="detail-label">Status:</div>
+                    <div class="detail-value">
+                        <span class="badge ${claim.status === 'approved' ? 'badge-approved' : 
+                                           claim.status === 'rejected' ? 'badge-rejected' : 'badge-pending'}">
+                            ${claim.status.toUpperCase()}
+                        </span>
+                    </div>
+                </div>
+                <div class="detail-row">
+                    <div class="detail-label">Submitted:</div>
+                    <div class="detail-value">${new Date(claim.timestamp).toLocaleString()}</div>
+                </div>
+            `;
+            
+            document.getElementById('detailsModal').classList.add('show');
+        }
+
+        function closeModal() {
+            document.getElementById('detailsModal').classList.remove('show');
+        }
+
+        // Approve claim
+        function approveClaim(claimId) {
+            if (confirm('Are you sure you want to approve this claim?')) {
+                database.ref('claims/' + claimId).update({
+                    status: 'approved',
+                    approvedBy: 'Officer Shravani Kalupure',
+                    approvedAt: Date.now()
+                }).then(() => {
+                    showNotification('✅ Claim Approved', `Claim ${claimId} has been approved successfully!`);
+                }).catch(error => {
+                    alert('Error approving claim: ' + error.message);
+                });
+            }
+        }
+
+        // Reject claim
+        function rejectClaim(claimId) {
+            const reason = prompt('Please enter rejection reason:');
+            if (reason) {
+                database.ref('claims/' + claimId).update({
+                    status: 'rejected',
+                    rejectedBy: 'Officer Shravani Kalupure',
+                    rejectedAt: Date.now(),
+                    rejectionReason: reason
+                }).then(() => {
+                    showNotification('❌ Claim Rejected', `Claim ${claimId} has been rejected.`);
+                }).catch(error => {
+                    alert('Error rejecting claim: ' + error.message);
+                });
+            }
+        }
+
+        // Review claim (for yellow cases)
+        function reviewClaim(claimId) {
+            const claim = claims[claimId];
+            if (confirm(`This claim is under review.\n\nClaim ID: ${claim.claimId}\nAmount: ₹${claim.amount}\n\nDo you want to approve it?`)) {
+                approveClaim(claimId);
+            } else {
+                const reject = confirm('Do you want to reject this claim instead?');
+                if (reject) {
+                    rejectClaim(claimId);
+                }
+            }
+        }
+
+        // Refresh dashboard
+        function refreshDashboard() {
+            showNotification('🔄 Refreshing', 'Dashboard data is being refreshed...');
+            // Data automatically updates via Firebase listeners
+        }
+
+        // Clear all claims
+        function confirmClearAll() {
+            if (confirm('⚠️ Are you sure you want to clear ALL claims?\n\nThis action cannot be undone!')) {
+                if (confirm('⚠️ FINAL CONFIRMATION\n\nThis will permanently delete all claims from the database. Continue?')) {
+                    clearAllClaims();
+                }
+            }
+        }
+
+        function clearAllClaims() {
+            database.ref('claims').remove()
+                .then(() => {
+                    showNotification('🗑️ All Claims Cleared', 'All claims have been removed from the database.');
+                    claims = {};
+                    updateDashboard();
+                })
+                .catch(error => {
+                    alert('Error clearing claims: ' + error.message);
+                });
+        }
+
+        // Listen for real-time updates
+        database.ref('claims').on('value', (snapshot) => {
+            const data = snapshot.val();
+            const previousCount = Object.keys(claims).length;
+            
+            if (data) {
+                claims = data;
+                
+                // Show notification for new claims
+                const newCount = Object.keys(claims).length;
+                if (newCount > previousCount) {
+                    const newClaimId = Object.keys(claims)[newCount - 1];
+                    const newClaim = claims[newClaimId];
+                    showNotification(
+                        '🔔 New Claim Received!',
+                        `Claim ${newClaim.claimId} from ${newClaim.policyHolder} - ₹${newClaim.amount.toLocaleString()}`
+                    );
+                }
+            } else {
+                claims = {};
+            }
+            
+            updateDashboard();
+        });
+
+        // Initialize
+        window.addEventListener('load', () => {
+            initSound();
+            loadGarageTable();
+            showNotification('✅ Dashboard Active', 'Connected and listening for new claims...');
+        });
+
+        // Handle clicks outside modal
+        document.getElementById('detailsModal').addEventListener('click', (e) => {
+            if (e.target.id === 'detailsModal') {
+                closeModal();
+            }
+        });
+    </script>
 </body>
 </html>
