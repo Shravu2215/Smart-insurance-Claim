@@ -3,11 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>INCIDENT.AI - Real-Time Claim System</title>
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Playfair+Display:wght@700;900&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.11.0"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/coco-ssd@2.2.3"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/mobilenet@2.1.0"></script>
+    <title>SpotClaim - Instant Insurance Claims</title>
     <style>
         * {
             margin: 0;
@@ -15,1497 +11,1847 @@
             box-sizing: border-box;
         }
 
-        :root {
-            --primary: #FF2D55;
-            --secondary: #0A0A0A;
-            --accent: #00FF94;
-            --warning: #FFD60A;
-            --bg: #0F0F0F;
-            --surface: #1A1A1A;
-            --text: #FFFFFF;
-            --text-dim: #A0A0A0;
-            --border: #2A2A2A;
+        html {
+            scroll-behavior: smooth;
         }
 
         body {
-            font-family: 'JetBrains Mono', monospace;
-            background: var(--bg);
-            color: var(--text);
-            overflow-x: hidden;
-            line-height: 1.6;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
 
-        .app-container {
-            max-width: 100vw;
+        .hidden {
+            display: none !important;
+        }
+
+        /* Utility Classes */
+        .min-h-screen {
             min-height: 100vh;
-            position: relative;
         }
 
-        /* Animated Grid Background */
-        .grid-bg {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: 
-                linear-gradient(var(--border) 1px, transparent 1px),
-                linear-gradient(90deg, var(--border) 1px, transparent 1px);
-            background-size: 50px 50px;
-            opacity: 0.3;
-            z-index: 0;
-            animation: gridMove 20s linear infinite;
-        }
-
-        @keyframes gridMove {
-            0% { transform: translate(0, 0); }
-            100% { transform: translate(50px, 50px); }
-        }
-
-        /* Header */
-        .header {
-            position: relative;
-            z-index: 10;
-            padding: 2rem;
-            border-bottom: 2px solid var(--primary);
-            backdrop-filter: blur(10px);
-            background: rgba(15, 15, 15, 0.8);
-        }
-
-        .logo {
-            font-family: 'Playfair Display', serif;
-            font-size: 2.5rem;
-            font-weight: 900;
-            letter-spacing: -2px;
-            background: linear-gradient(135deg, var(--primary), var(--accent));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            display: inline-block;
-        }
-
-        .tagline {
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            color: var(--text-dim);
-            margin-top: 0.5rem;
-        }
-
-        /* Status Bar */
-        .status-bar {
-            position: relative;
-            z-index: 10;
-            background: var(--surface);
-            padding: 1rem 2rem;
+        .flex {
             display: flex;
-            justify-content: space-between;
+        }
+
+        .items-center {
             align-items: center;
-            border-bottom: 1px solid var(--border);
         }
 
-        .status-item {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
+        .justify-center {
+            justify-content: center;
         }
 
-        .status-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            animation: pulse 2s infinite;
-        }
-
-        .status-dot.active { background: var(--accent); }
-        .status-dot.warning { background: var(--warning); }
-        .status-dot.error { background: var(--primary); }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; transform: scale(1); }
-            50% { opacity: 0.5; transform: scale(0.8); }
-        }
-
-        /* Main Content */
-        .main-content {
-            position: relative;
-            z-index: 5;
-            padding: 2rem;
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
-        /* Emergency Button */
-        .emergency-trigger {
-            margin: 2rem 0;
+        .text-center {
             text-align: center;
         }
 
-        .emergency-btn {
-            position: relative;
-            padding: 2rem 4rem;
-            font-size: 1.5rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            background: var(--primary);
-            color: var(--text);
-            border: none;
-            cursor: pointer;
-            overflow: hidden;
-            transition: all 0.3s ease;
-            font-family: 'JetBrains Mono', monospace;
+        .bg-gradient-red {
+            background: linear-gradient(to bottom right, #dc2626, #991b1b);
         }
 
-        .emergency-btn::before {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.3);
-            transform: translate(-50%, -50%);
-            transition: width 0.6s, height 0.6s;
+        .bg-gradient-green {
+            background: linear-gradient(to bottom right, #16a34a, #15803d);
         }
 
-        .emergency-btn:hover::before {
-            width: 300px;
-            height: 300px;
+        .bg-gradient-yellow {
+            background: linear-gradient(to bottom right, #ca8a04, #a16207);
         }
 
-        .emergency-btn:active {
-            transform: scale(0.95);
+        .bg-gray-900 {
+            background-color: #07090f;
         }
 
-        /* Claim Flow Container */
-        .claim-flow {
-            display: none;
-            margin-top: 2rem;
+        .bg-gray-800 {
+            background-color: #0f1419;
         }
 
-        .claim-flow.active {
-            display: block;
-            animation: slideIn 0.5s ease;
+        .bg-gray-700 {
+            background-color: #1a1f2e;
         }
 
-        @keyframes slideIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+        .text-white {
+            color: white;
         }
 
-        /* Section Headers */
-        .section {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            margin-bottom: 2rem;
-            overflow: hidden;
+        .text-gray-400 {
+            color: #9ca3af;
         }
 
-        .section-header {
+        .text-gray-300 {
+            color: #d1d5db;
+        }
+
+        .text-blue-400 {
+            color: #60a5fa;
+        }
+
+        .rounded-xl {
+            border-radius: 0.75rem;
+        }
+
+        .rounded-2xl {
+            border-radius: 1rem;
+        }
+
+        .rounded-3xl {
+            border-radius: 1.5rem;
+        }
+
+        .p-4 {
+            padding: 1rem;
+        }
+
+        .p-6 {
             padding: 1.5rem;
-            background: var(--secondary);
-            border-bottom: 2px solid var(--primary);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
         }
 
-        .section-title {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.5rem;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .section-badge {
-            padding: 0.25rem 0.75rem;
-            background: var(--accent);
-            color: var(--secondary);
-            font-size: 0.65rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .section-content {
-            padding: 2rem;
-        }
-
-        /* Location Verification */
-        .location-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1rem;
-        }
-
-        .info-card {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 1.5rem;
-            border: 1px solid var(--border);
-            transition: all 0.3s ease;
-        }
-
-        .info-card:hover {
-            background: rgba(255, 255, 255, 0.08);
-            border-color: var(--accent);
-            transform: translateY(-2px);
-        }
-
-        .info-label {
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: var(--text-dim);
+        .mb-2 {
             margin-bottom: 0.5rem;
         }
 
-        .info-value {
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: var(--accent);
-        }
-
-        /* Video Stream Container */
-        .video-container {
-            position: relative;
-            background: #000;
-            border: 2px solid var(--primary);
-            overflow: hidden;
-            aspect-ratio: 16/9;
+        .mb-4 {
             margin-bottom: 1rem;
         }
 
-        #videoStream {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
+        .mb-6 {
+            margin-bottom: 1.5rem;
         }
 
-        .video-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
+        .mb-8 {
+            margin-bottom: 2rem;
         }
 
-        .detection-box {
-            position: absolute;
-            border: 3px solid var(--accent);
-            background: rgba(0, 255, 148, 0.1);
-            transition: all 0.3s ease;
+        .mb-12 {
+            margin-bottom: 3rem;
         }
 
-        .detection-label {
-            position: absolute;
-            top: -25px;
-            left: 0;
-            background: var(--accent);
-            color: var(--secondary);
-            padding: 0.25rem 0.5rem;
-            font-size: 0.7rem;
-            font-weight: 700;
-            white-space: nowrap;
+        .mt-2 {
+            margin-top: 0.5rem;
         }
 
-        /* Camera Controls */
-        .camera-controls {
-            display: flex;
-            gap: 1rem;
-            flex-wrap: wrap;
+        .mt-4 {
+            margin-top: 1rem;
         }
 
-        .control-btn {
-            flex: 1;
-            min-width: 150px;
-            padding: 1rem;
-            background: var(--surface);
-            border: 2px solid var(--border);
-            color: var(--text);
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.9rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .control-btn:hover {
-            background: var(--primary);
-            border-color: var(--primary);
-            transform: translateY(-2px);
-        }
-
-        .control-btn.active {
-            background: var(--accent);
-            border-color: var(--accent);
-            color: var(--secondary);
-        }
-
-        /* Voice Assistant */
-        .voice-assistant {
-            position: fixed;
-            bottom: 2rem;
-            right: 2rem;
-            z-index: 100;
-        }
-
-        .voice-btn {
-            width: 80px;
-            height: 80px;
-            border-radius: 50%;
-            background: var(--primary);
-            border: 4px solid var(--secondary);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2rem;
-            color: var(--text);
-            transition: all 0.3s ease;
-            box-shadow: 0 10px 30px rgba(255, 45, 85, 0.3);
-        }
-
-        .voice-btn:hover {
-            transform: scale(1.1);
-            box-shadow: 0 15px 40px rgba(255, 45, 85, 0.5);
-        }
-
-        .voice-btn.listening {
-            animation: voicePulse 1s infinite;
-            background: var(--accent);
-        }
-
-        @keyframes voicePulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.2); }
-        }
-
-        .voice-transcript {
-            position: absolute;
-            bottom: 100px;
-            right: 0;
-            background: var(--surface);
-            border: 2px solid var(--primary);
-            padding: 1rem;
-            min-width: 300px;
-            max-width: 400px;
-            display: none;
-        }
-
-        .voice-transcript.active {
-            display: block;
-            animation: slideUp 0.3s ease;
-        }
-
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* AI Analysis Results */
-        .analysis-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 1.5rem;
+        .mt-6 {
             margin-top: 1.5rem;
         }
 
-        .analysis-card {
-            background: linear-gradient(135deg, rgba(255, 45, 85, 0.1), rgba(0, 255, 148, 0.1));
-            border: 1px solid var(--border);
-            padding: 2rem;
-            position: relative;
-            overflow: hidden;
+        .mt-12 {
+            margin-top: 3rem;
         }
 
-        .analysis-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 4px;
-            height: 100%;
-            background: var(--accent);
-        }
-
-        .analysis-title {
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: var(--text-dim);
-            margin-bottom: 0.5rem;
-        }
-
-        .analysis-value {
-            font-size: 2rem;
-            font-weight: 700;
-            font-family: 'Playfair Display', serif;
-            margin-bottom: 0.5rem;
-        }
-
-        .analysis-value.low { color: var(--accent); }
-        .analysis-value.medium { color: var(--warning); }
-        .analysis-value.high { color: var(--primary); }
-
-        .analysis-description {
-            font-size: 0.8rem;
-            color: var(--text-dim);
-            line-height: 1.6;
-        }
-
-        /* Progress Indicator */
-        .progress-bar {
-            width: 100%;
-            height: 4px;
-            background: var(--surface);
-            margin-top: 1rem;
-            overflow: hidden;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--primary), var(--accent));
-            width: 0%;
-            transition: width 0.5s ease;
-        }
-
-        /* Fraud Indicators */
-        .fraud-indicators {
-            display: grid;
-            gap: 1rem;
-            margin-top: 1rem;
-        }
-
-        .fraud-item {
+        /* Emergency Screen */
+        .emergency-screen {
+            min-height: 100vh;
+            background: linear-gradient(to bottom right, #dc2626, #991b1b);
             display: flex;
             align-items: center;
-            justify-content: space-between;
+            justify-content: center;
             padding: 1rem;
-            background: rgba(255, 255, 255, 0.03);
-            border-left: 4px solid transparent;
         }
 
-        .fraud-item.pass { border-left-color: var(--accent); }
-        .fraud-item.fail { border-left-color: var(--primary); }
-        .fraud-item.warning { border-left-color: var(--warning); }
-
-        .fraud-status {
-            padding: 0.25rem 0.75rem;
-            font-size: 0.7rem;
-            font-weight: 700;
-            text-transform: uppercase;
+        .emergency-icon {
+            width: 8rem;
+            height: 8rem;
+            margin: 0 auto 1rem;
+            animation: pulse 2s infinite;
         }
 
-        .fraud-status.pass {
-            background: var(--accent);
-            color: var(--secondary);
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
         }
 
-        .fraud-status.fail {
-            background: var(--primary);
-            color: var(--text);
+        @keyframes bounce {
+            0%, 100% {
+                transform: translateY(-5%);
+                animation-timing-function: cubic-bezier(0.8, 0, 1, 1);
+            }
+            50% {
+                transform: translateY(0);
+                animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
+            }
         }
 
-        .fraud-status.warning {
-            background: var(--warning);
-            color: var(--secondary);
-        }
-
-        /* Captured Images Gallery */
-        .image-gallery {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-            gap: 1rem;
-            margin-top: 1rem;
-        }
-
-        .gallery-item {
-            position: relative;
-            aspect-ratio: 1;
-            background: #000;
-            border: 2px solid var(--border);
-            overflow: hidden;
+        .emergency-button {
+            background: white;
+            color: #dc2626;
+            font-weight: 900;
+            font-size: 1.5rem;
+            padding: 2rem 4rem;
+            border-radius: 1.5rem;
+            border: none;
             cursor: pointer;
-            transition: all 0.3s ease;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            animation: bounce 1s infinite;
+            transition: transform 0.2s;
         }
 
-        .gallery-item:hover {
-            border-color: var(--accent);
+        .emergency-button:hover {
             transform: scale(1.05);
         }
 
-        .gallery-item img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin-top: 3rem;
+            color: white;
         }
 
-        .gallery-badge {
+        .stat-number {
+            font-size: 2.25rem;
+            font-weight: bold;
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            opacity: 0.8;
+        }
+
+        /* Form Screens */
+        .form-container {
+            min-height: 100vh;
+            background-color: #07090f;
+            color: white;
+            padding: 1.5rem;
+        }
+
+        .form-wrapper {
+            max-width: 42rem;
+            margin: 0 auto;
+        }
+
+        .form-header {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-title {
+            font-size: 1.875rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-card {
+            background-color: #0f1419;
+            border-radius: 1rem;
+            padding: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: #d1d5db;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            background-color: #1a1f2e;
+            border: 1px solid #2a3340;
+            border-radius: 0.5rem;
+            color: white;
+            font-size: 1rem;
+        }
+
+        .form-input::placeholder {
+            color: #6b7280;
+        }
+
+        .form-input:focus {
+            outline: none;
+            ring: 2px;
+            ring-color: #3b82f6;
+            border-color: transparent;
+        }
+
+        .button-group {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem;
+        }
+
+        .vehicle-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            border: 2px solid;
+            background-color: #1a1f2e;
+            border-color: #2a3340;
+            color: #d1d5db;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: bold;
+        }
+
+        .vehicle-button:hover {
+            border-color: #3b4552;
+        }
+
+        .vehicle-button.active {
+            background-color: #2563eb;
+            border-color: #2563eb;
+            color: white;
+        }
+
+        .location-locked {
+            display: flex;
+            align-items: start;
+            gap: 0.75rem;
+            padding: 1rem;
+            background-color: rgba(22, 163, 74, 0.3);
+            border: 1px solid #16a34a;
+            border-radius: 0.5rem;
+        }
+
+        .btn-primary {
+            background-color: #2563eb;
+            color: white;
+            font-weight: bold;
+            padding: 1rem;
+            border-radius: 0.75rem;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .btn-primary:hover {
+            background-color: #1d4ed8;
+        }
+
+        .btn-primary:disabled {
+            background-color: #1a1f2e;
+            color: #4b5563;
+            cursor: not-allowed;
+        }
+
+        .btn-secondary {
+            background-color: #1a1f2e;
+            color: white;
+            font-weight: bold;
+            padding: 1rem;
+            border-radius: 0.75rem;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .btn-secondary:hover {
+            background-color: #2a3340;
+        }
+
+        .button-row {
+            display: flex;
+            gap: 0.75rem;
+            margin-top: 1.5rem;
+        }
+
+        .button-row button {
+            flex: 1;
+        }
+
+        /* Media Upload */
+        .media-section {
+            background-color: #0f1419;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .media-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+        }
+
+        .media-title {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.25rem;
+            font-weight: bold;
+        }
+
+        .photo-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .photo-item {
+            position: relative;
+        }
+
+        .photo-item img {
+            width: 100%;
+            height: 8rem;
+            object-fit: cover;
+            border-radius: 0.5rem;
+        }
+
+        .photo-badge {
             position: absolute;
             top: 0.5rem;
             right: 0.5rem;
-            background: var(--accent);
-            color: var(--secondary);
+            background-color: #16a34a;
+            color: white;
+            font-size: 0.75rem;
             padding: 0.25rem 0.5rem;
-            font-size: 0.6rem;
-            font-weight: 700;
+            border-radius: 9999px;
+            font-weight: bold;
         }
 
-        /* Loading Animation */
-        .loading {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid var(--border);
-            border-top-color: var(--accent);
+        .photo-timestamp {
+            position: absolute;
+            bottom: 0.5rem;
+            left: 0.5rem;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            font-size: 0.75rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+        }
+
+        .video-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            background-color: #1a1f2e;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .requirements-box {
+            background-color: rgba(37, 99, 235, 0.3);
+            border: 1px solid #2563eb;
+            border-radius: 0.75rem;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .requirements-list {
+            list-style: none;
+            font-size: 0.875rem;
+            color: #bfdbfe;
+        }
+
+        .requirements-list li {
+            margin-bottom: 0.25rem;
+        }
+
+        .requirements-list li.complete {
+            color: #4ade80;
+        }
+
+        /* Document Section */
+        .document-choice {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .doc-or {
+            text-align: center;
+            color: #9ca3af;
+            font-size: 0.875rem;
+        }
+
+        .document-item {
+            background-color: #1a1f2e;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+        }
+
+        .document-content {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .doc-icon {
+            font-size: 1.875rem;
+        }
+
+        .doc-verified {
+            font-size: 0.75rem;
+            font-weight: bold;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            background-color: rgba(34, 197, 94, 0.2);
+            color: #4ade80;
+        }
+
+        .upload-button {
+            width: 100%;
+            background-color: #1a1f2e;
+            border: 2px dashed #2a3340;
+            color: #d1d5db;
+            font-weight: bold;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .upload-button:hover {
+            background-color: #2a3340;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            z-index: 50;
+        }
+
+        .modal-content {
+            background-color: #0f1419;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            max-width: 28rem;
+            width: 100%;
+        }
+
+        /* Analyzing Screen */
+        .analyzing-screen {
+            min-height: 100vh;
+            background-color: #07090f;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1.5rem;
+        }
+
+        .analyzing-spinner {
+            width: 8rem;
+            height: 8rem;
+            border: 8px solid #2563eb;
+            border-top-color: transparent;
             border-radius: 50%;
             animation: spin 1s linear infinite;
+            margin: 0 auto 2rem;
         }
 
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
 
-        /* Toast Notifications */
-        .toast {
-            position: fixed;
-            top: 2rem;
-            right: 2rem;
-            background: var(--surface);
-            border: 2px solid var(--accent);
-            padding: 1rem 1.5rem;
-            z-index: 1000;
-            animation: slideInRight 0.3s ease;
-            max-width: 400px;
-        }
-
-        @keyframes slideInRight {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-
-        .toast.error { border-color: var(--primary); }
-        .toast.warning { border-color: var(--warning); }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .header { padding: 1rem; }
-            .logo { font-size: 2rem; }
-            .main-content { padding: 1rem; }
-            .emergency-btn {
-                padding: 1.5rem 2rem;
-                font-size: 1.2rem;
-            }
-            .section-content { padding: 1rem; }
-            .voice-assistant {
-                bottom: 1rem;
-                right: 1rem;
-            }
-            .voice-btn {
-                width: 60px;
-                height: 60px;
-                font-size: 1.5rem;
-            }
-        }
-
-        /* Real-time Stats */
-        .realtime-stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        .analyzing-checks {
+            display: flex;
+            flex-direction: column;
             gap: 1rem;
-            margin-bottom: 2rem;
+            text-align: left;
+            background-color: #0f1419;
+            border-radius: 1rem;
+            padding: 1.5rem;
         }
 
-        .stat-card {
-            background: var(--surface);
-            border: 1px solid var(--border);
+        .check-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .check-icon {
+            width: 1.5rem;
+            height: 1.5rem;
+            background-color: #2563eb;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Result Screen */
+        .result-screen {
+            min-height: 100vh;
             padding: 1.5rem;
+        }
+
+        .result-icon {
+            width: 8rem;
+            height: 8rem;
+            margin: 0 auto 1rem;
+        }
+
+        .result-icon.bounce {
+            animation: bounce 1s infinite;
+        }
+
+        .result-card {
+            background-color: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            color: white;
+        }
+
+        .result-card-white {
+            background-color: white;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        .check-result {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 0.75rem;
+        }
+
+        .check-label {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .damage-cost {
             text-align: center;
         }
 
-        .stat-number {
-            font-size: 2.5rem;
-            font-weight: 700;
-            font-family: 'Playfair Display', serif;
-            color: var(--accent);
-            margin-bottom: 0.5rem;
+        .damage-amount {
+            font-size: 3rem;
+            font-weight: 900;
+            color: #111827;
         }
 
-        .stat-label {
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: var(--text-dim);
+        .garage-info {
+            display: flex;
+            align-items: start;
+            gap: 1rem;
+        }
+
+        .btn-success {
+            width: 100%;
+            background-color: white;
+            color: #15803d;
+            font-weight: 900;
+            font-size: 1.25rem;
+            padding: 1.25rem;
+            border-radius: 1rem;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s;
+        }
+
+        .btn-success:hover {
+            transform: scale(1.05);
+        }
+
+        .info-box {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 1rem;
+            padding: 1rem;
+            color: white;
+        }
+
+        .alert-box {
+            background-color: rgba(34, 197, 94, 0.1);
+            border: 2px solid rgb(134, 239, 172);
+            border-radius: 0.5rem;
+            padding: 0.75rem;
+            margin-top: 1rem;
+        }
+
+        .tow-truck-box {
+            background-color: rgba(59, 130, 246, 0.1);
+            border: 2px solid #3b82f6;
+            border-radius: 0.5rem;
+            padding: 0.75rem;
+            margin-top: 1rem;
+        }
+
+        .icon {
+            width: 1.25rem;
+            height: 1.25rem;
+            display: inline-block;
+        }
+
+        .icon-lg {
+            width: 2rem;
+            height: 2rem;
+        }
+
+        .summary-detail {
+            margin-bottom: 1rem;
+            padding: 1rem;
+            background-color: #0f1419;
+            border-radius: 0.5rem;
+        }
+
+        .flex-between {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .space-y-3 > * + * {
+            margin-top: 0.75rem;
+        }
+
+        .space-y-5 > * + * {
+            margin-top: 1.25rem;
+        }
+
+        .btn-green {
+            background-color: #16a34a;
+            color: white;
+            font-weight: bold;
+            padding: 1rem;
+            border-radius: 0.75rem;
+            border: none;
+            cursor: pointer;
+            animation: pulse 2s infinite;
+        }
+
+        .btn-green:hover {
+            background-color: #15803d;
+        }
+
+        .btn-green:disabled {
+            background-color: #1a1f2e;
+            color: #4b5563;
+            cursor: not-allowed;
+            animation: none;
+        }
+
+        .btn-purple {
+            background-color: #9333ea;
+            color: white;
+            font-weight: bold;
+            padding: 1rem;
+            border-radius: 0.75rem;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-purple:hover {
+            background-color: #7e22ce;
+        }
+
+        .btn-border {
+            width: 100%;
+            border: 2px solid white;
+            background: transparent;
+            color: white;
+            font-weight: bold;
+            padding: 0.75rem;
+            border-radius: 0.75rem;
+            cursor: pointer;
+        }
+
+        .btn-border:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        button {
+            cursor: pointer;
+        }
+
+        select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%239ca3af' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+            background-position: right 0.5rem center;
+            background-repeat: no-repeat;
+            background-size: 1.5em 1.5em;
+            padding-right: 2.5rem;
+        }
+
+        .spinner {
+            width: 1.25rem;
+            height: 1.25rem;
+            border: 2px solid #6b7280;
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            display: inline-block;
+        }
+
+        @media (max-width: 640px) {
+            .emergency-button {
+                font-size: 1.25rem;
+                padding: 1.5rem 3rem;
+            }
+           
+            .stat-number {
+                font-size: 1.875rem;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="grid-bg"></div>
-    
-    <div class="app-container">
-        <!-- Header -->
-        <header class="header">
-            <div class="logo">INCIDENT.AI</div>
-            <div class="tagline">Neural Damage Assessment System</div>
-        </header>
-
-        <!-- Status Bar -->
-        <div class="status-bar">
-            <div class="status-item">
-                <div class="status-dot active"></div>
-                <span id="gpsStatus">GPS: Locked</span>
-            </div>
-            <div class="status-item">
-                <div class="status-dot active"></div>
-                <span id="aiStatus">AI: Ready</span>
-            </div>
-            <div class="status-item">
-                <div class="status-dot active"></div>
-                <span id="cameraStatus">Camera: Standby</span>
-            </div>
-            <div class="status-item">
-                <span id="timestamp"></span>
-            </div>
-        </div>
-
-        <!-- Main Content -->
-        <main class="main-content">
-            <!-- Emergency Trigger -->
-            <div class="emergency-trigger">
-                <button class="emergency-btn" id="emergencyBtn">
-                    🚨 INITIATE CLAIM
-                </button>
-            </div>
-
-            <!-- Real-time Stats -->
-            <div class="realtime-stats" style="display: none;" id="statsContainer">
-                <div class="stat-card">
-                    <div class="stat-number" id="processingTime">0.00s</div>
-                    <div class="stat-label">Processing Time</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number" id="detectionCount">0</div>
-                    <div class="stat-label">Objects Detected</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number" id="confidenceScore">0%</div>
-                    <div class="stat-label">AI Confidence</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number" id="fraudScore">0%</div>
-                    <div class="stat-label">Fraud Risk</div>
-                </div>
-            </div>
-
-            <!-- Claim Flow -->
-            <div class="claim-flow" id="claimFlow">
-                
-                <!-- 1. Location Verification -->
-                <section class="section" id="locationSection">
-                    <div class="section-header">
-                        <div class="section-title">
-                            📍 Location Verification
-                            <span class="section-badge">Live</span>
-                        </div>
-                    </div>
-                    <div class="section-content">
-                        <div class="location-grid">
-                            <div class="info-card">
-                                <div class="info-label">Coordinates</div>
-                                <div class="info-value" id="coordinates">Acquiring...</div>
-                            </div>
-                            <div class="info-card">
-                                <div class="info-label">Accuracy</div>
-                                <div class="info-value" id="accuracy">--</div>
-                            </div>
-                            <div class="info-card">
-                                <div class="info-label">Weather</div>
-                                <div class="info-value" id="weather">Loading...</div>
-                            </div>
-                            <div class="info-card">
-                                <div class="info-label">Timestamp</div>
-                                <div class="info-value" id="claimTimestamp">--</div>
-                            </div>
-                        </div>
-                        <div class="progress-bar">
-                            <div class="progress-fill" id="locationProgress"></div>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- 2. Live Damage Capture -->
-                <section class="section" id="captureSection">
-                    <div class="section-header">
-                        <div class="section-title">
-                            🎥 Live Damage Capture
-                            <span class="section-badge">AI-Powered</span>
-                        </div>
-                    </div>
-                    <div class="section-content">
-                        <div class="video-container">
-                            <video id="videoStream" autoplay playsinline></video>
-                            <canvas id="detectionCanvas" class="video-overlay"></canvas>
-                        </div>
-                        
-                        <div class="camera-controls">
-                            <button class="control-btn" id="startCameraBtn">
-                                📹 Start Camera
-                            </button>
-                            <button class="control-btn" id="captureBtn" disabled>
-                                📸 Capture Frame
-                            </button>
-                            <button class="control-btn" id="switchCameraBtn" disabled>
-                                🔄 Switch Camera
-                            </button>
-                            <button class="control-btn" id="stopCameraBtn" disabled>
-                                ⏹️ Stop
-                            </button>
-                        </div>
-
-                        <div class="image-gallery" id="imageGallery"></div>
-                        
-                        <div class="progress-bar">
-                            <div class="progress-fill" id="captureProgress"></div>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- 3. AI Analysis -->
-                <section class="section" id="analysisSection">
-                    <div class="section-header">
-                        <div class="section-title">
-                            🧠 Neural Analysis
-                            <span class="section-badge">Real-Time</span>
-                        </div>
-                    </div>
-                    <div class="section-content">
-                        <div class="analysis-grid">
-                            <div class="analysis-card">
-                                <div class="analysis-title">Damage Severity</div>
-                                <div class="analysis-value medium" id="damageSeverity">--</div>
-                                <div class="analysis-description" id="damageDesc">Analyzing damage patterns...</div>
-                            </div>
-                            <div class="analysis-card">
-                                <div class="analysis-title">Estimated Cost</div>
-                                <div class="analysis-value low" id="estimatedCost">--</div>
-                                <div class="analysis-description" id="costDesc">Calculating repair costs...</div>
-                            </div>
-                            <div class="analysis-card">
-                                <div class="analysis-title">AI Confidence</div>
-                                <div class="analysis-value low" id="aiConfidence">--</div>
-                                <div class="analysis-description" id="confidenceDesc">Processing image quality...</div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- 4. Fraud Detection -->
-                <section class="section" id="fraudSection">
-                    <div class="section-header">
-                        <div class="section-title">
-                            🛡️ Fraud Detection
-                            <span class="section-badge">Multi-Layer</span>
-                        </div>
-                    </div>
-                    <div class="section-content">
-                        <div class="fraud-indicators">
-                            <div class="fraud-item pass">
-                                <span>GPS Location Match</span>
-                                <span class="fraud-status pass" id="fraudGPS">PASS</span>
-                            </div>
-                            <div class="fraud-item pass">
-                                <span>Image Metadata Verification</span>
-                                <span class="fraud-status pass" id="fraudMeta">PASS</span>
-                            </div>
-                            <div class="fraud-item pass">
-                                <span>Temporal Consistency</span>
-                                <span class="fraud-status pass" id="fraudTime">PASS</span>
-                            </div>
-                            <div class="fraud-item pass">
-                                <span>Damage Pattern Analysis</span>
-                                <span class="fraud-status pass" id="fraudPattern">PASS</span>
-                            </div>
-                            <div class="fraud-item pass">
-                                <span>Historical Claim Pattern</span>
-                                <span class="fraud-status pass" id="fraudHistory">PASS</span>
-                            </div>
-                        </div>
-                        
-                        <div class="analysis-card" style="margin-top: 1.5rem;">
-                            <div class="analysis-title">Overall Risk Score</div>
-                            <div class="analysis-value low" id="overallRisk">LOW RISK</div>
-                            <div class="analysis-description" id="riskDesc">All verification checks passed. Claim approved for auto-processing.</div>
-                        </div>
-                    </div>
-                </section>
-
-                <!-- 5. Smart Routing -->
-                <section class="section" id="routingSection">
-                    <div class="section-header">
-                        <div class="section-title">
-                            🎯 Smart Routing
-                            <span class="section-badge">Automated</span>
-                        </div>
-                    </div>
-                    <div class="section-content">
-                        <div class="location-grid">
-                            <div class="info-card">
-                                <div class="info-label">Routing Status</div>
-                                <div class="info-value" id="routingStatus">Analyzing...</div>
-                            </div>
-                            <div class="info-card">
-                                <div class="info-label">Approval Time</div>
-                                <div class="info-value" id="approvalTime">--</div>
-                            </div>
-                            <div class="info-card">
-                                <div class="info-label">Assigned Garage</div>
-                                <div class="info-value" id="assignedGarage">--</div>
-                            </div>
-                            <div class="info-card">
-                                <div class="info-label">ETA</div>
-                                <div class="info-value" id="garageETA">--</div>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
-            </div>
-        </main>
-
-        <!-- Voice Assistant -->
-        <div class="voice-assistant">
-            <button class="voice-btn" id="voiceBtn">🎤</button>
-            <div class="voice-transcript" id="voiceTranscript">
-                <div class="info-label">Voice Assistant</div>
-                <div id="transcriptText">Listening...</div>
-            </div>
-        </div>
-    </div>
+    <div id="app"></div>
 
     <script>
-        // Global State
-        const state = {
-            claimActive: false,
-            location: null,
-            capturedImages: [],
-            aiModel: null,
-            cocoModel: null,
-            stream: null,
-            cameraFacing: 'environment',
-            detectionInterval: null,
-            startTime: null,
-            voiceRecognition: null,
-            detectedObjects: new Set(),
-            fraudChecks: {
-                gps: true,
-                metadata: true,
-                temporal: true,
-                pattern: true,
-                history: true
-            }
+        // SVG Icons as strings
+        const icons = {
+            alertTriangle: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>',
+            camera: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"></path><circle cx="12" cy="13" r="3"></circle></svg>',
+            mapPin: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>',
+            checkCircle: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>',
+            shield: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>',
+            clock: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>',
+            video: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 8-6 4 6 4V8Z"></path><rect x="2" y="6" width="14" height="12" rx="2" ry="2"></rect></svg>',
+            car: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"></path><circle cx="7" cy="17" r="2"></circle><path d="M9 17h6"></path><circle cx="17" cy="17" r="2"></circle></svg>',
+            bike: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="5.5" cy="17.5" r="3.5"></circle><circle cx="18.5" cy="17.5" r="3.5"></circle><path d="M15 6a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm-3 11.5V14l-3-3 4-3 2 3h2"></path></svg>',
+            xCircle: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>',
+            navigation: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 11 22 2 13 21 11 13 3 11"></polygon></svg>',
+            truck: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>'
         };
 
-        // Initialize
-        document.addEventListener('DOMContentLoaded', async () => {
-            updateTimestamp();
-            setInterval(updateTimestamp, 1000);
-            
-            // Load AI Models
-            await loadAIModels();
-            
-            // Setup Voice Recognition
-            setupVoiceRecognition();
-            
-            // Event Listeners
-            document.getElementById('emergencyBtn').addEventListener('click', initiateClaimFlow);
-            document.getElementById('startCameraBtn').addEventListener('click', startCamera);
-            document.getElementById('captureBtn').addEventListener('click', captureFrame);
-            document.getElementById('switchCameraBtn').addEventListener('click', switchCamera);
-            document.getElementById('stopCameraBtn').addEventListener('click', stopCamera);
-            document.getElementById('voiceBtn').addEventListener('click', toggleVoiceAssistant);
-        });
+        // State management
+        let state = {
+            screen: 'emergency',
+            formData: {
+                name: '',
+                vehicleNumber: '',
+                vehicleType: '',
+                policyNumber: '',
+                policyCompany: '',
+                location: null
+            },
+            photos: [],
+            videos: [],
+            documents: {
+                rc: null,
+                license: null,
+                policy: null,
+                additional: []
+            },
+            analyzing: false,
+            result: null,
+            gettingGPS: false,
+            showAddDocModal: false,
+            newDocName: '',
+            extractingFromLocker: false,
+            showDocumentChoice: true
+        };
 
-        // Update Timestamp
-        function updateTimestamp() {
-            const now = new Date();
-            const timeStr = now.toLocaleTimeString('en-US', { hour12: false });
-            document.getElementById('timestamp').textContent = timeStr;
+        // Helper functions
+        function createIcon(iconName, className = 'icon') {
+            const div = document.createElement('div');
+            div.innerHTML = icons[iconName];
+            div.className = className;
+            div.style.display = 'inline-block';
+            return div.innerHTML;
         }
 
-        // Load AI Models
-        async function loadAIModels() {
-            try {
-                showToast('Loading AI models...', 'info');
-                document.getElementById('aiStatus').textContent = 'AI: Loading...';
-                
-                // Load MobileNet for image classification
-                state.aiModel = await mobilenet.load();
-                
-                // Load COCO-SSD for object detection
-                state.cocoModel = await cocoSsd.load();
-                
-                document.getElementById('aiStatus').textContent = 'AI: Ready';
-                showToast('AI models loaded successfully', 'success');
-            } catch (error) {
-                console.error('Error loading AI models:', error);
-                document.getElementById('aiStatus').textContent = 'AI: Error';
-                showToast('Error loading AI models', 'error');
-            }
+        function handleInputChange(field, value) {
+            state.formData[field] = value;
         }
 
-        // Initiate Claim Flow
-        async function initiateClaimFlow() {
-            state.claimActive = true;
-            state.startTime = Date.now();
-            
-            document.getElementById('emergencyBtn').disabled = true;
-            document.getElementById('emergencyBtn').textContent = '⏳ PROCESSING...';
-            document.getElementById('claimFlow').classList.add('active');
-            document.getElementById('statsContainer').style.display = 'grid';
-            
-            // Step 1: Get Location
-            await getLocation();
-            
-            // Step 2: Get Weather
-            await getWeather();
-            
-            // Enable camera controls
-            document.getElementById('startCameraBtn').disabled = false;
-            
-            showToast('Claim initiated successfully', 'success');
-            speak('Claim initiated. Please start the camera to capture damage.');
-        }
-
-        // Get Location
-        async function getLocation() {
-            return new Promise((resolve, reject) => {
-                if (!navigator.geolocation) {
-                    showToast('Geolocation not supported', 'error');
-                    reject();
-                    return;
-                }
-                
-                document.getElementById('gpsStatus').textContent = 'GPS: Acquiring...';
-                
-                navigator.geolocation.getCurrentPosition(
-                    (position) => {
-                        state.location = {
-                            latitude: position.coords.latitude,
-                            longitude: position.coords.longitude,
-                            accuracy: position.coords.accuracy,
-                            timestamp: new Date(position.timestamp)
-                        };
-                        
-                        document.getElementById('coordinates').textContent = 
-                            `${state.location.latitude.toFixed(6)}, ${state.location.longitude.toFixed(6)}`;
-                        document.getElementById('accuracy').textContent = 
-                            `±${Math.round(state.location.accuracy)}m`;
-                        document.getElementById('claimTimestamp').textContent = 
-                            state.location.timestamp.toLocaleTimeString();
-                        document.getElementById('gpsStatus').textContent = 'GPS: Locked';
-                        
-                        animateProgress('locationProgress', 100);
-                        resolve();
-                    },
-                    (error) => {
-                        console.error('Geolocation error:', error);
-                        showToast('Unable to get location', 'error');
-                        document.getElementById('gpsStatus').textContent = 'GPS: Error';
-                        reject();
-                    },
-                    { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
-                );
-            });
-        }
-
-        // Get Weather (Simulated - would use real API)
-        async function getWeather() {
-            // Simulate API call
-            await new Promise(resolve => setTimeout(resolve, 1000));
-            
-            // Mock weather data
-            const conditions = ['Clear', 'Rainy', 'Cloudy', 'Foggy'];
-            const temp = Math.floor(Math.random() * 20) + 15;
-            const condition = conditions[Math.floor(Math.random() * conditions.length)];
-            
-            document.getElementById('weather').textContent = `${condition} ${temp}°C`;
-        }
-
-        // Start Camera
-        async function startCamera() {
-            try {
-                const constraints = {
-                    video: {
-                        facingMode: state.cameraFacing,
-                        width: { ideal: 1920 },
-                        height: { ideal: 1080 }
-                    }
-                };
-                
-                state.stream = await navigator.mediaDevices.getUserMedia(constraints);
-                const video = document.getElementById('videoStream');
-                video.srcObject = state.stream;
-                
-                // Wait for video to be ready
-                await new Promise(resolve => {
-                    video.onloadedmetadata = () => {
-                        video.play();
-                        resolve();
-                    };
-                });
-                
-                // Setup canvas for detections
-                const canvas = document.getElementById('detectionCanvas');
-                canvas.width = video.videoWidth;
-                canvas.height = video.videoHeight;
-                
-                // Enable controls
-                document.getElementById('startCameraBtn').disabled = true;
-                document.getElementById('captureBtn').disabled = false;
-                document.getElementById('switchCameraBtn').disabled = false;
-                document.getElementById('stopCameraBtn').disabled = false;
-                document.getElementById('startCameraBtn').classList.remove('active');
-                document.getElementById('cameraStatus').textContent = 'Camera: Active';
-                
-                // Start real-time detection
-                startRealtimeDetection();
-                
-                showToast('Camera started successfully', 'success');
-                speak('Camera active. Frame the damage area and capture images.');
-            } catch (error) {
-                console.error('Camera error:', error);
-                showToast('Unable to access camera', 'error');
-                document.getElementById('cameraStatus').textContent = 'Camera: Error';
-            }
-        }
-
-        // Real-time Object Detection
-        function startRealtimeDetection() {
-            const video = document.getElementById('videoStream');
-            const canvas = document.getElementById('detectionCanvas');
-            const ctx = canvas.getContext('2d');
-            
-            let isDetecting = false;
-            
-            state.detectionInterval = setInterval(async () => {
-                if (isDetecting || !state.cocoModel) return;
-                
-                isDetecting = true;
-                
-                try {
-                    // Detect objects
-                    const predictions = await state.cocoModel.detect(video);
-                    
-                    // Clear canvas
-                    ctx.clearRect(0, 0, canvas.width, canvas.height);
-                    
-                    // Draw detections
-                    predictions.forEach(prediction => {
-                        const [x, y, width, height] = prediction.bbox;
-                        
-                        // Draw bounding box
-                        ctx.strokeStyle = '#00FF94';
-                        ctx.lineWidth = 3;
-                        ctx.strokeRect(x, y, width, height);
-                        
-                        // Draw label background
-                        ctx.fillStyle = '#00FF94';
-                        const label = `${prediction.class} ${Math.round(prediction.score * 100)}%`;
-                        const textWidth = ctx.measureText(label).width;
-                        ctx.fillRect(x, y - 25, textWidth + 10, 25);
-                        
-                        // Draw label text
-                        ctx.fillStyle = '#0A0A0A';
-                        ctx.font = 'bold 14px JetBrains Mono';
-                        ctx.fillText(label, x + 5, y - 7);
-                        
-                        // Track detected objects
-                        state.detectedObjects.add(prediction.class);
-                    });
-                    
-                    // Update stats
-                    document.getElementById('detectionCount').textContent = state.detectedObjects.size;
-                    
-                    if (predictions.length > 0) {
-                        const avgConfidence = predictions.reduce((sum, p) => sum + p.score, 0) / predictions.length;
-                        document.getElementById('confidenceScore').textContent = 
-                            `${Math.round(avgConfidence * 100)}%`;
-                    }
-                    
-                } catch (error) {
-                    console.error('Detection error:', error);
-                }
-                
-                isDetecting = false;
-            }, 100); // Detect every 100ms
-        }
-
-        // Capture Frame
-        async function captureFrame() {
-            const video = document.getElementById('videoStream');
-            const canvas = document.createElement('canvas');
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-            
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(video, 0, 0);
-            
-            // Convert to blob
-            const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg', 0.95));
-            
-            // Create image object
-            const imageData = {
-                blob: blob,
-                url: URL.createObjectURL(blob),
-                timestamp: new Date(),
-                location: state.location,
-                metadata: {
-                    width: canvas.width,
-                    height: canvas.height,
-                    size: blob.size
-                }
-            };
-            
-            state.capturedImages.push(imageData);
-            
-            // Add to gallery
-            addToGallery(imageData);
-            
-            // Analyze image
-            await analyzeImage(canvas);
-            
-            // Update progress
-            const progress = Math.min((state.capturedImages.length / 4) * 100, 100);
-            animateProgress('captureProgress', progress);
-            
-            showToast(`Image ${state.capturedImages.length} captured`, 'success');
-            speak(`Image ${state.capturedImages.length} captured and analyzed.`);
-            
-            // Update fraud checks after each capture
-            updateFraudChecks();
-        }
-
-        // Add to Gallery
-        function addToGallery(imageData) {
-            const gallery = document.getElementById('imageGallery');
-            const item = document.createElement('div');
-            item.className = 'gallery-item';
-            
-            const img = document.createElement('img');
-            img.src = imageData.url;
-            
-            const badge = document.createElement('div');
-            badge.className = 'gallery-badge';
-            badge.textContent = `IMG ${state.capturedImages.length}`;
-            
-            item.appendChild(img);
-            item.appendChild(badge);
-            gallery.appendChild(item);
-            
-            // Add click handler for full view
-            item.addEventListener('click', () => {
-                window.open(imageData.url, '_blank');
-            });
-        }
-
-        // Analyze Image with AI
-        async function analyzeImage(canvas) {
-            if (!state.aiModel) return;
-            
-            try {
-                // Classify image
-                const predictions = await state.aiModel.classify(canvas);
-                
-                // Calculate damage severity based on detected objects and confidence
-                const avgConfidence = predictions.reduce((sum, p) => sum + p.probability, 0) / predictions.length;
-                
-                // Simulate damage analysis
-                const severityScore = Math.random() * 100;
-                let severity, severityClass, cost;
-                
-                if (severityScore < 30) {
-                    severity = 'MINOR';
-                    severityClass = 'low';
-                    cost = `$${Math.floor(Math.random() * 500 + 200)}`;
-                } else if (severityScore < 70) {
-                    severity = 'MODERATE';
-                    severityClass = 'medium';
-                    cost = `$${Math.floor(Math.random() * 2000 + 500)}`;
-                } else {
-                    severity = 'SEVERE';
-                    severityClass = 'high';
-                    cost = `$${Math.floor(Math.random() * 5000 + 2000)}`;
-                }
-                
-                // Update UI
-                const damageEl = document.getElementById('damageSeverity');
-                damageEl.textContent = severity;
-                damageEl.className = `analysis-value ${severityClass}`;
-                document.getElementById('damageDesc').textContent = 
-                    `Detected ${state.detectedObjects.size} damage indicators with ${Math.round(avgConfidence * 100)}% confidence`;
-                
-                const costEl = document.getElementById('estimatedCost');
-                costEl.textContent = cost;
-                document.getElementById('costDesc').textContent = 
-                    `Based on ${severity.toLowerCase()} damage assessment`;
-                
-                const confidenceEl = document.getElementById('aiConfidence');
-                confidenceEl.textContent = `${Math.round(avgConfidence * 100)}%`;
-                document.getElementById('confidenceDesc').textContent = 
-                    `Image quality excellent, all areas clearly visible`;
-                
-                // Update processing time
-                const elapsed = (Date.now() - state.startTime) / 1000;
-                document.getElementById('processingTime').textContent = `${elapsed.toFixed(2)}s`;
-                
-            } catch (error) {
-                console.error('Analysis error:', error);
-            }
-        }
-
-        // Update Fraud Checks
-        function updateFraudChecks() {
-            // Simulate fraud detection
-            const checks = [
-                { id: 'fraudGPS', key: 'gps', name: 'GPS Location Match' },
-                { id: 'fraudMeta', key: 'metadata', name: 'Image Metadata' },
-                { id: 'fraudTime', key: 'temporal', name: 'Temporal Consistency' },
-                { id: 'fraudPattern', key: 'pattern', name: 'Damage Pattern' },
-                { id: 'fraudHistory', key: 'history', name: 'Historical Pattern' }
-            ];
-            
-            let passCount = 0;
-            
-            checks.forEach(check => {
-                // Simulate check with 95% pass rate
-                const passed = Math.random() > 0.05;
-                state.fraudChecks[check.key] = passed;
-                
-                const element = document.getElementById(check.id);
-                const parentItem = element.closest('.fraud-item');
-                
-                if (passed) {
-                    element.textContent = 'PASS';
-                    element.className = 'fraud-status pass';
-                    parentItem.className = 'fraud-item pass';
-                    passCount++;
-                } else {
-                    element.textContent = 'FLAG';
-                    element.className = 'fraud-status warning';
-                    parentItem.className = 'fraud-item warning';
-                }
-            });
-            
-            // Calculate overall risk
-            const riskPercentage = ((5 - passCount) / 5) * 100;
-            document.getElementById('fraudScore').textContent = `${Math.round(riskPercentage)}%`;
-            
-            const riskEl = document.getElementById('overallRisk');
-            const riskDescEl = document.getElementById('riskDesc');
-            
-            if (passCount === 5) {
-                riskEl.textContent = 'LOW RISK';
-                riskEl.className = 'analysis-value low';
-                riskDescEl.textContent = 'All verification checks passed. Claim approved for auto-processing.';
-                
-                // Auto-route
-                autoRouteGreen();
-            } else if (passCount >= 3) {
-                riskEl.textContent = 'MEDIUM RISK';
-                riskEl.className = 'analysis-value medium';
-                riskDescEl.textContent = 'Some checks flagged. Routing to partial human review.';
-                
-                // Route to yellow
-                autoRouteYellow();
-            } else {
-                riskEl.textContent = 'HIGH RISK';
-                riskEl.className = 'analysis-value high';
-                riskDescEl.textContent = 'Multiple checks failed. Full manual review required.';
-                
-                // Route to red
-                autoRouteRed();
-            }
-        }
-
-        // Auto-route based on risk
-        function autoRouteGreen() {
-            document.getElementById('routingStatus').textContent = '✅ AUTO-APPROVED';
-            document.getElementById('approvalTime').textContent = '< 5 min';
-            document.getElementById('assignedGarage').textContent = 'Elite Auto Center';
-            document.getElementById('garageETA').textContent = '24 hrs';
-            
-            speak('Claim auto-approved. Garage assigned and notified.');
-        }
-
-        function autoRouteYellow() {
-            document.getElementById('routingStatus').textContent = '⚠️ PARTIAL REVIEW';
-            document.getElementById('approvalTime').textContent = '15-30 min';
-            document.getElementById('assignedGarage').textContent = 'Pending Review';
-            document.getElementById('garageETA').textContent = 'TBD';
-            
-            speak('Claim flagged for partial review. Estimated approval time: 15 to 30 minutes.');
-        }
-
-        function autoRouteRed() {
-            document.getElementById('routingStatus').textContent = '🔴 FULL REVIEW';
-            document.getElementById('approvalTime').textContent = '1-2 hrs';
-            document.getElementById('assignedGarage').textContent = 'Pending Review';
-            document.getElementById('garageETA').textContent = 'TBD';
-            
-            speak('Claim requires full manual review. Our team will contact you shortly.');
-        }
-
-        // Switch Camera
-        async function switchCamera() {
-            state.cameraFacing = state.cameraFacing === 'environment' ? 'user' : 'environment';
-            stopCamera();
-            await startCamera();
-        }
-
-        // Stop Camera
-        function stopCamera() {
-            if (state.stream) {
-                state.stream.getTracks().forEach(track => track.stop());
-                state.stream = null;
-            }
-            
-            if (state.detectionInterval) {
-                clearInterval(state.detectionInterval);
-                state.detectionInterval = null;
-            }
-            
-            document.getElementById('videoStream').srcObject = null;
-            document.getElementById('startCameraBtn').disabled = false;
-            document.getElementById('captureBtn').disabled = true;
-            document.getElementById('switchCameraBtn').disabled = true;
-            document.getElementById('stopCameraBtn').disabled = true;
-            document.getElementById('cameraStatus').textContent = 'Camera: Standby';
-            
-            // Clear detection canvas
-            const canvas = document.getElementById('detectionCanvas');
-            const ctx = canvas.getContext('2d');
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-        }
-
-        // Voice Recognition Setup
-        function setupVoiceRecognition() {
-            if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-                state.voiceRecognition = new SpeechRecognition();
-                state.voiceRecognition.continuous = false;
-                state.voiceRecognition.interimResults = false;
-                state.voiceRecognition.lang = 'en-US';
-                
-                state.voiceRecognition.onresult = (event) => {
-                    const transcript = event.results[0][0].transcript;
-                    document.getElementById('transcriptText').textContent = transcript;
-                    processVoiceCommand(transcript);
-                };
-                
-                state.voiceRecognition.onerror = (event) => {
-                    console.error('Voice recognition error:', event.error);
-                    showToast('Voice recognition error', 'error');
-                };
-                
-                state.voiceRecognition.onend = () => {
-                    document.getElementById('voiceBtn').classList.remove('listening');
-                    setTimeout(() => {
-                        document.getElementById('voiceTranscript').classList.remove('active');
-                    }, 3000);
-                };
-            }
-        }
-
-        // Toggle Voice Assistant
-        function toggleVoiceAssistant() {
-            if (!state.voiceRecognition) {
-                showToast('Voice recognition not supported', 'error');
-                return;
-            }
-            
-            const btn = document.getElementById('voiceBtn');
-            const transcript = document.getElementById('voiceTranscript');
-            
-            if (btn.classList.contains('listening')) {
-                state.voiceRecognition.stop();
-                btn.classList.remove('listening');
-                transcript.classList.remove('active');
-            } else {
-                state.voiceRecognition.start();
-                btn.classList.add('listening');
-                transcript.classList.add('active');
-                document.getElementById('transcriptText').textContent = 'Listening...';
-            }
-        }
-
-        // Process Voice Commands
-        function processVoiceCommand(command) {
-            const lowerCommand = command.toLowerCase();
-            
-            if (lowerCommand.includes('start camera') || lowerCommand.includes('open camera')) {
-                startCamera();
-                speak('Starting camera');
-            } else if (lowerCommand.includes('capture') || lowerCommand.includes('take photo')) {
-                captureFrame();
-            } else if (lowerCommand.includes('stop camera') || lowerCommand.includes('close camera')) {
-                stopCamera();
-                speak('Camera stopped');
-            } else if (lowerCommand.includes('switch camera')) {
-                switchCamera();
-                speak('Switching camera');
-            } else if (lowerCommand.includes('help')) {
-                speak('You can say: start camera, capture photo, switch camera, or stop camera');
-            } else {
-                speak('Command not recognized. Say help for available commands.');
-            }
-        }
-
-        // Text-to-Speech
-        function speak(text) {
-            if ('speechSynthesis' in window) {
-                const utterance = new SpeechSynthesisUtterance(text);
-                utterance.rate = 1.1;
-                utterance.pitch = 1;
-                window.speechSynthesis.speak(utterance);
-            }
-        }
-
-        // Progress Animation
-        function animateProgress(elementId, targetPercent) {
-            const element = document.getElementById(elementId);
-            let currentPercent = 0;
-            const increment = targetPercent / 50;
-            
-            const interval = setInterval(() => {
-                currentPercent += increment;
-                if (currentPercent >= targetPercent) {
-                    currentPercent = targetPercent;
-                    clearInterval(interval);
-                }
-                element.style.width = `${currentPercent}%`;
-            }, 20);
-        }
-
-        // Toast Notifications
-        function showToast(message, type = 'info') {
-            const toast = document.createElement('div');
-            toast.className = `toast ${type}`;
-            toast.textContent = message;
-            document.body.appendChild(toast);
-            
+        function getGPSLocation() {
+            state.gettingGPS = true;
+            render();
+           
             setTimeout(() => {
-                toast.style.opacity = '0';
-                setTimeout(() => toast.remove(), 300);
-            }, 3000);
+                state.formData.location = {
+                    lat: 12.9716,
+                    lng: 77.5946,
+                    address: "PCCOER, Ravet",
+                    accuracy: 15,
+                    timestamp: new Date()
+                };
+                state.gettingGPS = false;
+                render();
+            }, 2000);
         }
+
+        function handlePhotoCapture(e) {
+            const files = Array.from(e.target.files);
+            let loadedCount = 0;
+           
+            files.forEach(file => {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    state.photos.push({
+                        src: e.target.result,
+                        timestamp: new Date(),
+                        file: file
+                    });
+                    loadedCount++;
+                    if (loadedCount === files.length) {
+                        render();
+                    }
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        function handleVideoCapture(e) {
+            const files = Array.from(e.target.files);
+            let loadedCount = 0;
+           
+            files.forEach(file => {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    state.videos.push({
+                        src: e.target.result,
+                        timestamp: new Date(),
+                        file: file,
+                        name: file.name
+                    });
+                    loadedCount++;
+                    if (loadedCount === files.length) {
+                        render();
+                    }
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        function handleDocumentUpload(type, e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const docData = {
+                        src: e.target.result,
+                        timestamp: new Date(),
+                        file: file,
+                        name: file.name,
+                        verified: Math.random() > 0.1
+                    };
+
+                    if (type === 'additional') {
+                        state.documents.additional.push({ ...docData, customName: state.newDocName });
+                        state.newDocName = '';
+                        state.showAddDocModal = false;
+                    } else {
+                        state.documents[type] = docData;
+                    }
+                    render();
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function extractFromLocker() {
+            state.extractingFromLocker = true;
+            state.showDocumentChoice = false;
+            render();
+           
+            setTimeout(() => {
+                state.documents.rc = {
+                    name: 'RC_' + state.formData.vehicleNumber + '.pdf',
+                    timestamp: new Date(),
+                    verified: true,
+                    extracted: true
+                };
+                render();
+            }, 500);
+
+            setTimeout(() => {
+                state.documents.license = {
+                    name: 'DL_' + state.formData.name.split(' ')[0] + '.pdf',
+                    timestamp: new Date(),
+                    verified: true,
+                    extracted: true
+                };
+                render();
+            }, 1000);
+
+            setTimeout(() => {
+                state.documents.policy = {
+                    name: 'Policy_' + state.formData.policyNumber + '.pdf',
+                    timestamp: new Date(),
+                    verified: true,
+                    extracted: true
+                };
+                state.extractingFromLocker = false;
+                render();
+            }, 1500);
+        }
+
+        function runFraudChecks() {
+            state.analyzing = true;
+            state.screen = 'analyzing';
+            render();
+
+            setTimeout(() => {
+                const now = new Date();
+                const mediaAge = state.photos.length > 0 ? (now - state.photos[0].timestamp) / 1000 / 60 : 0;
+               
+                const gpsCheck = state.formData.location !== null;
+                const freshnessCheck = mediaAge < 30;
+                const damageCheck = Math.random() > 0.2;
+               
+                const checksCount = [gpsCheck, freshnessCheck, damageCheck].filter(Boolean).length;
+                
+                // Limit damage cost to maximum 12000
+                const damageCost = Math.min(Math.floor(Math.random() * 10000) + 2000, 12000);
+               
+                let status, message, action;
+               
+                if (checksCount === 3) {
+                    status = 'approved';
+                    message = 'INSTANT APPROVED!';
+                    action = 'Garage dispatched automatically';
+                } else if (checksCount === 2) {
+                    status = 'review';
+                    message = 'Quick Call Needed';
+                    action = 'Support will call in 5 minutes';
+                } else {
+                    status = 'blocked';
+                    message = 'CLAIM BLOCKED';
+                    action = 'Fraud detected - Go to accident spot';
+                }
+
+                state.result = {
+                    status,
+                    message,
+                    action,
+                    damageCost,
+                    checks: {
+                        gps: gpsCheck,
+                        freshness: freshnessCheck,
+                        damage: damageCheck
+                    },
+                    checksCount,
+                    garage: 'ABC Auto Repair',
+                    distance: '2.1 km',
+                    eta: '15 mins'
+                };
+
+                state.analyzing = false;
+                state.screen = 'result';
+                render();
+            }, 4000);
+        }
+
+        function reset() {
+            state = {
+                screen: 'emergency',
+                formData: {
+                    name: '',
+                    vehicleNumber: '',
+                    vehicleType: '',
+                    policyNumber: '',
+                    policyCompany: '',
+                    location: null
+                },
+                photos: [],
+                videos: [],
+                documents: {
+                    rc: null,
+                    license: null,
+                    policy: null,
+                    additional: []
+                },
+                analyzing: false,
+                result: null,
+                gettingGPS: false,
+                showAddDocModal: false,
+                newDocName: '',
+                extractingFromLocker: false,
+                showDocumentChoice: true
+            };
+            render();
+        }
+
+        function canProceedFromDetails() {
+            return state.formData.name &&
+                   state.formData.vehicleNumber &&
+                   state.formData.vehicleType &&
+                   state.formData.policyNumber &&
+                   state.formData.policyCompany &&
+                   state.formData.location;
+        }
+
+        function canProceedFromMedia() {
+            const hasMedia = state.photos.length >= 4 || state.videos.length >= 1;
+            const hasRequiredDocs = state.documents.rc && state.documents.license && state.documents.policy;
+            return hasMedia && hasRequiredDocs;
+        }
+
+        // Render functions
+        function renderEmergencyScreen() {
+            return `
+                <div class="emergency-screen">
+                    <div style="max-width: 600px;">
+                        <div class="emergency-icon">
+                            ${createIcon('alertTriangle', 'emergency-icon')}
+                        </div>
+                        <h1 style="font-size: 3rem; font-weight: 900; color: white; margin-bottom: 1rem;">ACCIDENT?</h1>
+                        <p style="font-size: 1.25rem; color: #fecaca; margin-bottom: 3rem;">Get your claim approved in 90 seconds</p>
+                       
+                        <button class="emergency-button" onclick="state.screen = 'details'; render();">
+                            🚨 SPOTCLAIM NOW
+                        </button>
+
+                        <div class="stats-grid">
+                            <div>
+                                <div class="stat-number">90s</div>
+                                <div class="stat-label">Total Time</div>
+                            </div>
+                            <div>
+                                <div class="stat-number">3</div>
+                                <div class="stat-label">Fraud Checks</div>
+                            </div>
+                            <div>
+                                <div class="stat-number">0</div>
+                                <div class="stat-label">Paperwork</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderDetailsScreen() {
+            return `
+                <div class="form-container">
+                    <div class="form-wrapper">
+                        <div class="form-header">
+                            <h2 class="form-title">Incident Details</h2>
+                            <p class="text-gray-400">Fill your information carefully</p>
+                            <div class="mt-2 text-blue-400" style="font-size: 0.875rem;">Step 1 of 3</div>
+                        </div>
+
+                        <div class="form-card space-y-5">
+                            <div class="form-group">
+                                <label class="form-label">Your Name *</label>
+                                <input
+                                    type="text"
+                                    class="form-input"
+                                    value="${state.formData.name}"
+                                    placeholder="Enter your full name"
+                                    onchange="handleInputChange('name', this.value); render();"
+                                    onkeyup="handleInputChange('name', this.value);"
+                                />
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Vehicle Type *</label>
+                                <div class="button-group">
+                                    <button
+                                        class="vehicle-button ${state.formData.vehicleType === 'car' ? 'active' : ''}"
+                                        onclick="handleInputChange('vehicleType', 'car'); render();"
+                                    >
+                                        ${createIcon('car', 'icon-lg')}
+                                        <span>Car</span>
+                                    </button>
+                                    <button
+                                        class="vehicle-button ${state.formData.vehicleType === 'bike' ? 'active' : ''}"
+                                        onclick="handleInputChange('vehicleType', 'bike'); render();"
+                                    >
+                                        ${createIcon('bike', 'icon-lg')}
+                                        <span>Bike</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Vehicle Number *</label>
+                                <input
+                                    type="text"
+                                    class="form-input"
+                                    style="text-transform: uppercase;"
+                                    value="${state.formData.vehicleNumber}"
+                                    placeholder="e.g., MH12AB1234"
+                                    onchange="handleInputChange('vehicleNumber', this.value.toUpperCase()); render();"
+                                    onkeyup="handleInputChange('vehicleNumber', this.value.toUpperCase());"
+                                />
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Insurance Company *</label>
+                                <select
+                                    class="form-input"
+                                    value="${state.formData.policyCompany}"
+                                    onchange="handleInputChange('policyCompany', this.value); render();"
+                                >
+                                    <option value="">Select insurance company</option>
+                                    <option value="ICICI Lombard">ICICI Lombard</option>
+                                    <option value="HDFC ERGO">HDFC ERGO</option>
+                                    <option value="Bajaj Allianz">Bajaj Allianz</option>
+                                    <option value="Tata AIG">Tata AIG</option>
+                                    <option value="Reliance General">Reliance General</option>
+                                    <option value="New India Assurance">New India Assurance</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Policy Number *</label>
+                                <input
+                                    type="text"
+                                    class="form-input"
+                                    value="${state.formData.policyNumber}"
+                                    placeholder="Enter policy number"
+                                    onchange="handleInputChange('policyNumber', this.value); render();"
+                                    onkeyup="handleInputChange('policyNumber', this.value);"
+                                />
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Accident Location *</label>
+                                ${state.formData.location ? `
+                                    <div class="location-locked">
+                                        ${createIcon('mapPin', 'icon-lg')}
+                                        <div style="flex: 1;">
+                                            <div style="color: #4ade80; font-weight: bold;">GPS Locked ✓</div>
+                                            <div style="font-size: 0.875rem; color: #d1d5db;">${state.formData.location.address}</div>
+                                            <div style="font-size: 0.75rem; color: #6b7280;">Accuracy: ${state.formData.location.accuracy}m</div>
+                                        </div>
+                                    </div>
+                                ` : `
+                                    <button
+                                        class="btn-primary"
+                                        style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 0.75rem;"
+                                        onclick="getGPSLocation()"
+                                        ${state.gettingGPS ? 'disabled' : ''}
+                                    >
+                                        ${state.gettingGPS ? `
+                                            <span class="spinner"></span>
+                                            <span>Getting GPS Location...</span>
+                                        ` : `
+                                            ${createIcon('mapPin')}
+                                            <span>Get Current Location</span>
+                                        `}
+                                    </button>
+                                `}
+                            </div>
+                        </div>
+
+                        <div class="button-row">
+                            <button class="btn-secondary" onclick="state.screen = 'emergency'; render();">
+                                ← Back
+                            </button>
+                            <button
+                                class="btn-primary"
+                                onclick="state.screen = 'capture'; render();"
+                                ${!canProceedFromDetails() ? 'disabled' : ''}
+                            >
+                                Next: Upload Media →
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderCaptureScreen() {
+            return `
+                <div class="form-container">
+                    <div class="form-wrapper">
+                        <div class="form-header">
+                            <h2 class="form-title">Upload Damage Evidence</h2>
+                            <p class="text-gray-400">Photos and videos of the damage</p>
+                            <div class="mt-2 text-blue-400" style="font-size: 0.875rem;">Step 2 of 3</div>
+                        </div>
+
+                        <div class="summary-detail">
+                            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.75rem; font-size: 0.875rem;">
+                                <div>
+                                    <span class="text-gray-400">Name:</span>
+                                    <span style="margin-left: 0.5rem; font-weight: bold;">${state.formData.name}</span>
+                                </div>
+                                <div>
+                                    <span class="text-gray-400">Vehicle:</span>
+                                    <span style="margin-left: 0.5rem; font-weight: bold;">${state.formData.vehicleNumber}</span>
+                                </div>
+                                <div>
+                                    <span class="text-gray-400">Type:</span>
+                                    <span style="margin-left: 0.5rem; font-weight: bold; text-transform: capitalize;">${state.formData.vehicleType}</span>
+                                </div>
+                                <div>
+                                    <span class="text-gray-400">Insurer:</span>
+                                    <span style="margin-left: 0.5rem; font-weight: bold;">${state.formData.policyCompany}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Photos Section -->
+                        <div class="media-section">
+                            <div class="media-header">
+                                <h3 class="media-title">
+                                    ${createIcon('camera', 'icon-lg')}
+                                    Damage Photos
+                                </h3>
+                                <span style="font-size: 0.875rem; color: #9ca3af;">${state.photos.length} uploaded</span>
+                            </div>
+
+                            ${state.photos.length > 0 ? `
+                                <div class="photo-grid">
+                                    ${state.photos.map((photo, idx) => `
+                                        <div class="photo-item">
+                                            <img src="${photo.src}" alt="Damage ${idx + 1}" />
+                                            <div class="photo-badge">✓ Photo ${idx + 1}</div>
+                                            <div class="photo-timestamp">${Math.floor((new Date() - photo.timestamp) / 1000)}s ago</div>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            ` : ''}
+
+                            <input
+                                type="file"
+                                id="photoInput"
+                                accept="image/*"
+                                capture="environment"
+                                multiple
+                                onchange="handlePhotoCapture(event)"
+                            />
+                            <button
+                                class="btn-primary"
+                                style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 0.5rem;"
+                                onclick="document.getElementById('photoInput').click()"
+                            >
+                                ${createIcon('camera')}
+                                ${state.photos.length === 0 ? 'Take Photos (Min 4)' : 'Add More Photos'}
+                            </button>
+
+                            ${state.photos.length > 0 && state.photos.length < 4 ? `
+                                <p style="color: #fbbf24; font-size: 0.875rem; margin-top: 0.5rem; text-align: center;">
+                                    ⚠️ Minimum 4 photos required (or 1 video)
+                                </p>
+                            ` : ''}
+                        </div>
+
+                        <!-- Videos Section -->
+                        <div class="media-section">
+                            <div class="media-header">
+                                <h3 class="media-title">
+                                    ${createIcon('video', 'icon-lg')}
+                                    Damage Videos
+                                </h3>
+                                <span style="font-size: 0.875rem; color: #9ca3af;">${state.videos.length} uploaded</span>
+                            </div>
+
+                            ${state.videos.length > 0 ? `
+                                <div style="margin-bottom: 1rem;">
+                                    ${state.videos.map((video, idx) => `
+                                        <div class="video-item">
+                                            ${createIcon('video', 'icon-lg')}
+                                            <div style="flex: 1;">
+                                                <div style="font-weight: bold; font-size: 0.875rem;">Video ${idx + 1}</div>
+                                                <div style="font-size: 0.75rem; color: #9ca3af;">${video.name}</div>
+                                                <div style="font-size: 0.75rem; color: #6b7280;">
+                                                    ${Math.floor((new Date() - video.timestamp) / 1000)}s ago
+                                                </div>
+                                            </div>
+                                            <div class="photo-badge">✓</div>
+                                        </div>
+                                    `).join('')}
+                                </div>
+                            ` : ''}
+
+                            <input
+                                type="file"
+                                id="videoInput"
+                                accept="video/*"
+                                capture="environment"
+                                multiple
+                                onchange="handleVideoCapture(event)"
+                            />
+                            <button
+                                class="btn-purple"
+                                style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 0.5rem;"
+                                onclick="document.getElementById('videoInput').click()"
+                            >
+                                ${createIcon('video')}
+                                ${state.videos.length === 0 ? 'Record Video (Optional)' : 'Add More Videos'}
+                            </button>
+
+                            <p style="color: #9ca3af; font-size: 0.75rem; margin-top: 0.5rem; text-align: center;">
+                                💡 Videos can replace photos - 1 360° video = all evidence needed
+                            </p>
+                        </div>
+
+                        <!-- Requirements Box -->
+                        <div class="requirements-box">
+                            <h4 style="font-weight: bold; color: #bfdbfe; margin-bottom: 0.5rem;">📋 Requirements:</h4>
+                            <ul class="requirements-list">
+                                <li class="${state.photos.length >= 4 ? 'complete' : ''}">
+                                    ${state.photos.length >= 4 ? '✓' : '○'} Minimum 4 photos OR 1 video
+                                </li>
+                                <li class="${state.photos.length > 0 || state.videos.length > 0 ? 'complete' : ''}">
+                                    ${state.photos.length > 0 || state.videos.length > 0 ? '✓' : '○'} Clear view of all damage
+                                </li>
+                                <li class="${state.documents.rc && state.documents.license && state.documents.policy ? 'complete' : ''}">
+                                    ${state.documents.rc && state.documents.license && state.documents.policy ? '✓' : '○'} All required documents uploaded
+                                </li>
+                                <li>○ Capture from multiple angles</li>
+                            </ul>
+                        </div>
+
+                        <!-- Document Locker Section -->
+                        <div class="media-section">
+                            <div class="media-header">
+                                <h3 class="media-title">
+                                    🔒 Document Locker
+                                </h3>
+                                <span style="font-size: 0.875rem; color: #9ca3af;">AI Verification</span>
+                            </div>
+
+                            ${state.showDocumentChoice && !state.documents.rc && !state.documents.license && !state.documents.policy ? `
+                                <div class="document-choice">
+                                    <button
+                                        class="btn-primary"
+                                        style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 0.5rem;"
+                                        onclick="extractFromLocker()"
+                                        ${state.extractingFromLocker ? 'disabled' : ''}
+                                    >
+                                        ${state.extractingFromLocker ? `
+                                            <span class="spinner"></span>
+                                            <span>Extracting Documents...</span>
+                                        ` : `
+                                            <span>🔓</span>
+                                            <span>Take Documents from Locker</span>
+                                        `}
+                                    </button>
+                                   
+                                    <div class="doc-or">OR</div>
+                                   
+                                    <button
+                                        class="btn-secondary"
+                                        style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 0.5rem;"
+                                        onclick="state.showDocumentChoice = false; render();"
+                                    >
+                                        <span>📤</span>
+                                        <span>Upload Documents Manually</span>
+                                    </button>
+                                </div>
+                            ` : ''}
+
+                            ${(state.documents.rc || !state.showDocumentChoice) ? `
+                                <div style="margin-bottom: 1rem;">
+                                    <div class="flex-between" style="margin-bottom: 0.5rem;">
+                                        <label class="form-label" style="margin: 0;">Registration Certificate (RC) *</label>
+                                        ${state.documents.rc ? '<span class="doc-verified">✓ AI Verified</span>' : ''}
+                                    </div>
+                                    ${state.documents.rc ? `
+                                        <div class="document-item">
+                                            <div class="document-content">
+                                                <div class="doc-icon">📄</div>
+                                                <div style="flex: 1;">
+                                                    ${state.documents.rc.extracted ? `
+                                                        <p style="font-size: 0.875rem; font-weight: bold; color: #4ade80;">✓ RC Document Extracted Successfully</p>
+                                                        <p style="font-size: 0.75rem; color: #9ca3af;">${state.documents.rc.name}</p>
+                                                        <p style="font-size: 0.75rem; color: #4ade80; margin-top: 0.25rem;">Vehicle registered, not blacklisted</p>
+                                                    ` : `
+                                                        <p style="font-size: 0.875rem; font-weight: bold;">${state.documents.rc.name}</p>
+                                                        <p style="font-size: 0.75rem; color: #9ca3af;">Uploaded ${Math.floor((new Date() - state.documents.rc.timestamp) / 1000)}s ago</p>
+                                                        ${state.documents.rc.verified ? '<p style="font-size: 0.75rem; color: #4ade80; margin-top: 0.25rem;">✓ Vehicle registered, not blacklisted</p>' : ''}
+                                                    `}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ` : `
+                                        <input type="file" id="rcInput" accept="image/*,application/pdf" onchange="handleDocumentUpload('rc', event)" />
+                                        <button class="upload-button" onclick="document.getElementById('rcInput').click()">
+                                            + Upload RC
+                                        </button>
+                                    `}
+                                </div>
+                            ` : ''}
+
+                            ${(state.documents.license || !state.showDocumentChoice) ? `
+                                <div style="margin-bottom: 1rem;">
+                                    <div class="flex-between" style="margin-bottom: 0.5rem;">
+                                        <label class="form-label" style="margin: 0;">Driving License *</label>
+                                        ${state.documents.license ? '<span class="doc-verified">✓ AI Verified</span>' : ''}
+                                    </div>
+                                    ${state.documents.license ? `
+                                        <div class="document-item">
+                                            <div class="document-content">
+                                                <div class="doc-icon">🪪</div>
+                                                <div style="flex: 1;">
+                                                    ${state.documents.license.extracted ? `
+                                                        <p style="font-size: 0.875rem; font-weight: bold; color: #4ade80;">✓ Driving License Extracted Successfully</p>
+                                                        <p style="font-size: 0.75rem; color: #9ca3af;">${state.documents.license.name}</p>
+                                                        <p style="font-size: 0.75rem; color: #4ade80; margin-top: 0.25rem;">Current, expires 2028</p>
+                                                    ` : `
+                                                        <p style="font-size: 0.875rem; font-weight: bold;">${state.documents.license.name}</p>
+                                                        <p style="font-size: 0.75rem; color: #9ca3af;">Uploaded ${Math.floor((new Date() - state.documents.license.timestamp) / 1000)}s ago</p>
+                                                        ${state.documents.license.verified ? '<p style="font-size: 0.75rem; color: #4ade80; margin-top: 0.25rem;">✓ Current, expires 2028</p>' : ''}
+                                                    `}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ` : `
+                                        <input type="file" id="licenseInput" accept="image/*,application/pdf" onchange="handleDocumentUpload('license', event)" />
+                                        <button class="upload-button" onclick="document.getElementById('licenseInput').click()">
+                                            + Upload License
+                                        </button>
+                                    `}
+                                </div>
+                            ` : ''}
+
+                            ${(state.documents.policy || !state.showDocumentChoice) ? `
+                                <div style="margin-bottom: 1rem;">
+                                    <div class="flex-between" style="margin-bottom: 0.5rem;">
+                                        <label class="form-label" style="margin: 0;">Insurance Policy *</label>
+                                        ${state.documents.policy ? '<span class="doc-verified">✓ AI Verified</span>' : ''}
+                                    </div>
+                                    ${state.documents.policy ? `
+                                        <div class="document-item">
+                                            <div class="document-content">
+                                                <div class="doc-icon">📋</div>
+                                                <div style="flex: 1;">
+                                                    ${state.documents.policy.extracted ? `
+                                                        <p style="font-size: 0.875rem; font-weight: bold; color: #4ade80;">✓ Insurance Policy Extracted Successfully</p>
+                                                        <p style="font-size: 0.75rem; color: #9ca3af;">${state.documents.policy.name}</p>
+                                                        <p style="font-size: 0.75rem; color: #4ade80; margin-top: 0.25rem;">Policy active until Dec 2026</p>
+                                                    ` : `
+                                                        <p style="font-size: 0.875rem; font-weight: bold;">${state.documents.policy.name}</p>
+                                                        <p style="font-size: 0.75rem; color: #9ca3af;">Uploaded ${Math.floor((new Date() - state.documents.policy.timestamp) / 1000)}s ago</p>
+                                                        ${state.documents.policy.verified ? '<p style="font-size: 0.75rem; color: #4ade80; margin-top: 0.25rem;">✓ Policy active until Dec 2026</p>' : ''}
+                                                    `}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ` : `
+                                        <input type="file" id="policyInput" accept="image/*,application/pdf" onchange="handleDocumentUpload('policy', event)" />
+                                        <button class="upload-button" onclick="document.getElementById('policyInput').click()">
+                                            + Upload Policy
+                                        </button>
+                                    `}
+                                </div>
+                            ` : ''}
+
+                            ${state.documents.rc && state.documents.license && state.documents.policy ? `
+                                <div>
+                                    <div class="flex-between" style="margin-bottom: 0.5rem;">
+                                        <label class="form-label" style="margin: 0;">Additional Documents</label>
+                                        <span style="font-size: 0.75rem; color: #6b7280;">Optional</span>
+                                    </div>
+                                   
+                                    ${state.documents.additional.length > 0 ? `
+                                        <div style="margin-bottom: 0.75rem;">
+                                            ${state.documents.additional.map((doc, idx) => `
+                                                <div class="document-item" style="margin-bottom: 0.5rem;">
+                                                    <div class="document-content">
+                                                        <div class="doc-icon">📎</div>
+                                                        <div style="flex: 1;">
+                                                            <p style="font-size: 0.875rem; font-weight: bold;">${doc.customName}</p>
+                                                            <p style="font-size: 0.75rem; color: #9ca3af;">${doc.name}</p>
+                                                            <p style="font-size: 0.75rem; color: #4ade80; margin-top: 0.25rem;">✓ Uploaded & AI Verified</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            `).join('')}
+                                        </div>
+                                    ` : ''}
+
+                                    <button
+                                        class="btn-purple"
+                                        style="width: 100%;"
+                                        onclick="state.showAddDocModal = true; render();"
+                                    >
+                                        + Add Additional Document
+                                    </button>
+                                </div>
+                            ` : ''}
+
+                            <div style="margin-top: 1rem; background-color: rgba(37, 99, 235, 0.3); border: 1px solid #3b82f6; border-radius: 0.5rem; padding: 0.75rem;">
+                                <p style="font-size: 0.75rem; color: #bfdbfe;">
+                                    💡 All documents are scanned by AI to verify authenticity and expiry dates
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="button-row">
+                            <button class="btn-secondary" onclick="state.screen = 'details'; render();">
+                                ← Back
+                            </button>
+                            <button
+                                class="btn-green"
+                                onclick="runFraudChecks()"
+                                ${!canProceedFromMedia() ? 'disabled' : ''}
+                            >
+                                ✨ Run AI Checks →
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                ${state.showAddDocModal ? `
+                    <div class="modal-overlay">
+                        <div class="modal-content">
+                            <h3 style="font-size: 1.25rem; font-weight: bold; margin-bottom: 1rem;">Add Additional Document</h3>
+                           
+                            <div style="margin-bottom: 1rem;">
+                                <label class="form-label">Document Name *</label>
+                                <input
+                                    type="text"
+                                    class="form-input"
+                                    value="${state.newDocName}"
+                                    placeholder="e.g., Pollution Certificate, Tax Receipt"
+                                    onchange="state.newDocName = this.value; render();"
+                                    onkeyup="state.newDocName = this.value;"
+                                />
+                            </div>
+
+                            <input type="file" id="additionalInput" accept="image/*,application/pdf" onchange="handleDocumentUpload('additional', event)" />
+
+                            <div style="display: flex; gap: 0.75rem;">
+                                <button
+                                    class="btn-secondary"
+                                    style="flex: 1;"
+                                    onclick="state.showAddDocModal = false; state.newDocName = ''; render();"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    class="btn-purple"
+                                    style="flex: 1;"
+                                    onclick="${state.newDocName ? "document.getElementById('additionalInput').click()" : ''}"
+                                    ${!state.newDocName ? 'disabled' : ''}
+                                >
+                                    Upload
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                ` : ''}
+            `;
+        }
+
+        function renderAnalyzingScreen() {
+            return `
+                <div class="analyzing-screen">
+                    <div style="max-width: 28rem; width: 100%;">
+                        <div class="analyzing-spinner"></div>
+                       
+                        <h2 style="font-size: 1.875rem; font-weight: bold; margin-bottom: 0.5rem; text-align: center;">AI SCANNING...</h2>
+                        <p class="text-gray-400" style="margin-bottom: 2rem; text-align: center;">Step 3 of 3</p>
+                       
+                        <div class="analyzing-checks">
+                            <div class="check-item">
+                                <div class="check-icon">${createIcon('shield')}</div>
+                                <span style="font-size: 1.125rem;">Verifying GPS location...</span>
+                            </div>
+                            <div class="check-item">
+                                <div class="check-icon">${createIcon('clock')}</div>
+                                <span style="font-size: 1.125rem;">Checking media freshness...</span>
+                            </div>
+                            <div class="check-item">
+                                <div class="check-icon">${createIcon('camera')}</div>
+                                <span style="font-size: 1.125rem;">Detecting real damage...</span>
+                            </div>
+                        </div>
+
+                        <div style="margin-top: 1.5rem; text-align: center; color: #9ca3af;">
+                            Analyzing ${state.photos.length} photos + ${state.videos.length} videos
+                        </div>
+                        <div style="text-align: center; font-size: 0.875rem; color: #6b7280;">This takes 3-5 seconds</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderResultScreen() {
+            const result = state.result;
+            const isApproved = result.status === 'approved';
+            const isReview = result.status === 'review';
+            const isBlocked = result.status === 'blocked';
+
+            const bgClass = isApproved ? 'bg-gradient-green' : isReview ? 'bg-gradient-yellow' : 'bg-gradient-red';
+
+            return `
+                <div class="result-screen ${bgClass}">
+                    <div style="max-width: 42rem; margin: 0 auto;">
+                        <div class="text-center mb-8">
+                            ${isApproved ? `
+                                <div class="result-icon bounce">${createIcon('checkCircle', 'result-icon')}</div>
+                                <h1 style="font-size: 3rem; font-weight: 900; color: white; margin-bottom: 0.5rem;">✅ APPROVED!</h1>
+                            ` : isReview ? `
+                                <div class="result-icon">${createIcon('alertTriangle', 'result-icon')}</div>
+                                <h1 style="font-size: 3rem; font-weight: 900; color: white; margin-bottom: 0.5rem;">🟡 REVIEW</h1>
+                            ` : `
+                                <div class="result-icon">${createIcon('xCircle', 'result-icon')}</div>
+                                <h1 style="font-size: 3rem; font-weight: 900; color: white; margin-bottom: 0.5rem;">❌ BLOCKED</h1>
+                            `}
+                            <p style="font-size: 1.5rem; color: white; opacity: 0.9;">${result.action}</p>
+                        </div>
+
+                        <div class="result-card">
+                            <h3 style="font-size: 1.125rem; font-weight: bold; margin-bottom: 0.75rem;">Claim Summary</h3>
+                            <div style="font-size: 0.875rem;">
+                                <div class="summary-row">
+                                    <span style="color: rgba(255, 255, 255, 0.7);">Name:</span>
+                                    <span style="font-weight: bold;">${state.formData.name}</span>
+                                </div>
+                                <div class="summary-row">
+                                    <span style="color: rgba(255, 255, 255, 0.7);">Vehicle:</span>
+                                    <span style="font-weight: bold;">${state.formData.vehicleNumber}</span>
+                                </div>
+                                <div class="summary-row">
+                                    <span style="color: rgba(255, 255, 255, 0.7);">Insurance:</span>
+                                    <span style="font-weight: bold;">${state.formData.policyCompany}</span>
+                                </div>
+                                <div class="summary-row">
+                                    <span style="color: rgba(255, 255, 255, 0.7);">Evidence:</span>
+                                    <span style="font-weight: bold;">${state.photos.length} photos + ${state.videos.length} videos</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="result-card">
+                            <h3 style="font-size: 1.25rem; font-weight: bold; margin-bottom: 1rem;">3 Fraud Shields: ${result.checksCount}/3 Passed</h3>
+                           
+                            <div>
+                                <div class="check-result">
+                                    <div class="check-label">
+                                        ${createIcon('mapPin')}
+                                        <span>GPS Location Match</span>
+                                    </div>
+                                    <span style="font-weight: bold; color: ${result.checks.gps ? '#86efac' : '#fca5a5'};">
+                                        ${result.checks.gps ? '✓ PASS' : '✗ FAIL'}
+                                    </span>
+                                </div>
+                               
+                                <div class="check-result">
+                                    <div class="check-label">
+                                        ${createIcon('clock')}
+                                        <span>Fresh Media (less than 30 min)</span>
+                                    </div>
+                                    <span style="font-weight: bold; color: ${result.checks.freshness ? '#86efac' : '#fca5a5'};">
+                                        ${result.checks.freshness ? '✓ PASS' : '✗ FAIL'}
+                                    </span>
+                                </div>
+                               
+                                <div class="check-result">
+                                    <div class="check-label">
+                                        ${createIcon('camera')}
+                                        <span>Real Damage Detected</span>
+                                    </div>
+                                    <span style="font-weight: bold; color: ${result.checks.damage ? '#86efac' : '#fca5a5'};">
+                                        ${result.checks.damage ? '✓ PASS' : '✗ FAIL'}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="result-card-white">
+                            <div class="damage-cost">
+                                <div style="color: #4b5563; margin-bottom: 0.5rem;">Estimated Damage</div>
+                                <div class="damage-amount">₹${result.damageCost.toLocaleString()}</div>
+                            </div>
+                        </div>
+
+                        ${isApproved ? `
+                            <div class="result-card-white">
+                                <div class="garage-info">
+                                    ${createIcon('navigation', 'icon-lg')}
+                                    <div style="flex: 1;">
+                                        <h4 style="font-weight: bold; color: #111827; font-size: 1.125rem; margin-bottom: 0.25rem;">Garage Dispatched</h4>
+                                        <p style="color: #374151; font-weight: 500;">${result.garage}</p>
+                                        <p style="color: #4b5563; font-size: 0.875rem;">${result.distance} away • ETA ${result.eta}</p>
+                                    </div>
+                                </div>
+                                <div class="alert-box">
+                                    <p style="color: #166534; font-weight: bold; font-size: 0.875rem;">💰 Direct Payment Approved</p>
+                                    <p style="color: #15803d; font-size: 0.75rem;">Insurer pays garage directly - ₹0 from your pocket</p>
+                                </div>
+                                <div class="tow-truck-box">
+                                    <p style="color: #1e40af; font-weight: bold; font-size: 0.875rem;">${createIcon('truck')} Tow Truck Dispatched</p>
+                                    <p style="color: #1d4ed8; font-size: 0.75rem;">Tow truck has been sent to your location</p>
+                                </div>
+                            </div>
+                        ` : ''}
+
+                        <div class="space-y-3">
+                            ${isApproved ? `
+                                <button class="btn-success">
+                                    🎉 DONE - RELAX!
+                                </button>
+                            ` : ''}
+                           
+                            ${isReview ? `
+                                <button class="btn-success" style="color: #a16207;">
+                                    📞 SUPPORT CALLING (5 MIN)
+                                </button>
+                            ` : ''}
+                           
+                            ${isBlocked ? `
+                                <div class="info-box">
+                                    <p style="font-weight: bold; margin-bottom: 0.5rem;">Why was I blocked?</p>
+                                    ${!result.checks.gps ? '<p style="font-size: 0.875rem;">• You are not at the accident location</p>' : ''}
+                                    ${!result.checks.freshness ? '<p style="font-size: 0.875rem;">• Photos or videos are too old (take fresh ones)</p>' : ''}
+                                    ${!result.checks.damage ? '<p style="font-size: 0.875rem;">• AI could not detect real damage</p>' : ''}
+                                </div>
+                            ` : ''}
+
+                            <button class="btn-border" onclick="window.location.href='index.html'">
+                                🏠 HOME
+                            </button>
+                        </div>
+
+                        <div style="text-align: center; margin-top: 1.5rem; color: white; opacity: 0.75;">
+                            Total time: 90 seconds ⚡
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Main render function
+        function render() {
+            const app = document.getElementById('app');
+            let content = '';
+
+            switch(state.screen) {
+                case 'emergency':
+                    content = renderEmergencyScreen();
+                    break;
+                case 'details':
+                    content = renderDetailsScreen();
+                    break;
+                case 'capture':
+                    content = renderCaptureScreen();
+                    break;
+                case 'analyzing':
+                    content = renderAnalyzingScreen();
+                    break;
+                case 'result':
+                    content = renderResultScreen();
+                    break;
+                default:
+                    content = renderEmergencyScreen();
+            }
+
+            app.innerHTML = content;
+        }
+
+        // Initial render
+        render();
     </script>
 </body>
 </html>
