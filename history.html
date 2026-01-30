@@ -81,9 +81,11 @@ window.onload = () => {
         // Determine display values based on status
         let statusText = "";
         let actionButton = "";
+        let displayAmount = aiAmt; // Default to AI amount
         
         if (status === "red") {
             statusText = "Rejected";
+            displayAmount = 0; // Red flags show ₹0
             actionButton = `<button onclick="window.location.href='submit-claim.html'" class="bg-red-500 text-white px-4 py-2 rounded-xl text-[10px] font-black uppercase hover:bg-red-600 transition">File Again</button>`;
         } else if (status === "yellow") {
             statusText = "Under Review";
@@ -98,7 +100,7 @@ window.onload = () => {
             <td class="p-6 font-mono text-sky-400">SC-${1000 + i}</td>
             <td>${incidentDate}</td>
             <td class="font-bold uppercase">${incidentType}</td>
-            <td>₹${aiAmt.toLocaleString()}</td>
+            <td>₹${displayAmount.toLocaleString()}</td>
             <td><span class="badge ${status}">${statusText}</span></td>
             <td class="text-center">${actionButton}</td>
         </tr>`;

@@ -320,6 +320,47 @@ input:focus {
   color: white;
   font-weight: bold;
 }
+
+/* Vehicle Media Styles */
+.photo-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  margin-top: 1rem;
+}
+.photo-item {
+  position: relative;
+  aspect-ratio: 4/3;
+  background: rgba(0,0,0,0.3);
+  border-radius: 12px;
+  overflow: hidden;
+}
+.photo-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.photo-badge {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  background: var(--accent-green);
+  color: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 9999px;
+  font-size: 0.7rem;
+  font-weight: 800;
+}
+.video-item {
+  position: relative;
+  background: rgba(0,0,0,0.3);
+  border-radius: 12px;
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
 </style>
 </head>
 
@@ -522,6 +563,36 @@ input:focus {
 
 </div>
 
+<!-- Vehicle Photos Section -->
+<div class="glass-panel mt-8">
+  <h3 class="text-lg font-bold mb-2">📸 Vehicle Damage Photos</h3>
+  <p class="text-xs text-gray-400 mb-4">Upload at least 4 photos of the damaged vehicle</p>
+  
+  <input type="file" id="file-photos" hidden accept="image/*" multiple onchange="handlePhotoUpload(this)">
+  <label for="file-photos" class="upload-label inline-block mb-4 cursor-pointer">
+    📷 Upload Photos (Min 4)
+  </label>
+  
+  <div id="photoGrid" class="photo-grid"></div>
+  
+  <p id="photoCount" class="text-xs text-center mt-2" style="color: var(--accent-yellow);">
+    0/4 photos uploaded
+  </p>
+</div>
+
+<!-- Vehicle Video Section -->
+<div class="glass-panel mt-8">
+  <h3 class="text-lg font-bold mb-2">🎥 Vehicle Damage Video</h3>
+  <p class="text-xs text-gray-400 mb-4">Upload a 360° video of the damaged vehicle (Optional)</p>
+  
+  <input type="file" id="file-video" hidden accept="video/*" onchange="handleVideoUpload(this)">
+  <label for="file-video" class="upload-label inline-block mb-4 cursor-pointer" style="background: var(--accent-green);">
+    🎬 Upload Video
+  </label>
+  
+  <div id="videoContainer"></div>
+</div>
+
 <div class="glass-panel mt-12">
   <label class="text-xs font-bold">Expected Claim Amount (₹)</label>
   <input id="expectedCost" type="number" class="w-full mt-2 p-3 rounded-xl" placeholder="Enter claim amount (e.g., 45000)">
@@ -537,10 +608,89 @@ input:focus {
 // Google Vision API Key (for OCR verification)
 const API_KEY = 'AIzaSyBkgxPWoa870LvoL80KjDEbJjKWamtKB4Q';
 
+// Vehicle media tracking
+let uploadedPhotos = [];
+let uploadedVideo = null;
+
 function addLog(message, color = '#38bdf8') {
   const logs = document.getElementById('logs');
   const timestamp = new Date().toLocaleTimeString();
   logs.innerHTML = `<span style="color:#666">[${timestamp}]</span> <span style="color:${color}">${message}</span><br>` + logs.innerHTML;
+}
+
+function handlePhotoUpload(input) {
+  const files = Array.from(input.files);
+  
+  files.forEach(file => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      uploadedPhotos.push({
+        src: e.target.result,
+        name: file.name
+      });
+      
+      renderPhotoGrid();
+      updatePhotoCount();
+      addLog(`📸 Photo ${uploadedPhotos.length} uploaded: ${file.name}`, '#22c55e');
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+function renderPhotoGrid() {
+  const grid = document.getElementById('photoGrid');
+  grid.innerHTML = uploadedPhotos.map((photo, idx) => `
+    <div class="photo-item">
+      <img src="${photo.src}" alt="Vehicle photo ${idx + 1}">
+      <div class="photo-badge">✓ ${idx + 1}</div>
+    </div>
+  `).join('');
+}
+
+function updatePhotoCount() {
+  const countEl = document.getElementById('photoCount');
+  const count = uploadedPhotos.length;
+  
+  if (count >= 4) {
+    countEl.textContent = `✓ ${count} photos uploaded`;
+    countEl.style.color = 'var(--accent-green)';
+  } else {
+    countEl.textContent = `${count}/4 photos uploaded`;
+    countEl.style.color = 'var(--accent-yellow)';
+  }
+}
+
+function handleVideoUpload(input) {
+  const file = input.files[0];
+  if (!file) return;
+  
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    uploadedVideo = {
+      src: e.target.result,
+      name: file.name,
+      size: (file.size / (1024 * 1024)).toFixed(2) // MB
+    };
+    
+    renderVideo();
+    addLog(`🎥 Video uploaded: ${file.name} (${uploadedVideo.size}MB)`, '#22c55e');
+  };
+  reader.readAsDataURL(file);
+}
+
+function renderVideo() {
+  const container = document.getElementById('videoContainer');
+  container.innerHTML = `
+    <div class="video-item">
+      <div style="font-size: 2rem;">🎬</div>
+      <div style="flex: 1;">
+        <div style="font-weight: bold; font-size: 0.9rem; color: var(--accent-green);">✓ Video Uploaded</div>
+        <div style="font-size: 0.75rem; color: #9ca3af; margin-top: 0.25rem;">${uploadedVideo.name}</div>
+        <div style="font-size: 0.75rem; color: #6b7280;">Size: ${uploadedVideo.size}MB</div>
+      </div>
+      <div style="color: var(--accent-green); font-size: 1.5rem;">✓</div>
+    </div>
+  `;
 }
 
 function closeOAuth() {
@@ -792,15 +942,25 @@ function startNeuralAnalysis() {
     alert('Please enter claim amount');
     return;
   }
+
+  if (uploadedPhotos.length < 4 && !uploadedVideo) {
+    alert('Please upload at least 4 photos or 1 video of the damaged vehicle');
+    return;
+  }
   
   btn.disabled = true;
   btn.innerHTML = "🧠 Analyzing...";
   
   // Save to localStorage
   localStorage.setItem('claimedAmount', cost);
+  localStorage.setItem('vehiclePhotos', JSON.stringify(uploadedPhotos));
+  if (uploadedVideo) {
+    localStorage.setItem('vehicleVideo', JSON.stringify(uploadedVideo));
+  }
   
   addLog('[AI] 🧠 Initializing neural network...', '#38bdf8');
   addLog('[AI] Loading fraud detection model (v2.4.1)...', '#38bdf8');
+  addLog(`[AI] Analyzing ${uploadedPhotos.length} photos${uploadedVideo ? ' + 1 video' : ''}...`, '#38bdf8');
   
   setTimeout(() => {
     addLog('[AI] Analyzing claim patterns against 10M+ database...', '#facc15');

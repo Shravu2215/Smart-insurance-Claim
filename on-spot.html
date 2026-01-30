@@ -3,1854 +3,1920 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SpotClaim - Instant Insurance Claims</title>
+    <title>SpotClaim Revolution - Zero-Trust Insurance</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Bricolage+Grotesque:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+       
+        :root {
+            --primary: #00ff88;
+            --danger: #ff0055;
+            --warning: #ffaa00;
+            --bg-dark: #0a0a0a;
+            --bg-card: #151515;
+            --text: #ffffff;
+            --text-dim: #888888;
+            --accent: #00ddff;
         }
-
-        html {
-            scroll-behavior: smooth;
-        }
-
+       
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
+            font-family: 'Bricolage Grotesque', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text);
+            overflow-x: hidden;
         }
-
-        .hidden {
-            display: none !important;
-        }
-
-        /* Utility Classes */
-        .min-h-screen {
-            min-height: 100vh;
-        }
-
-        .flex {
-            display: flex;
-        }
-
-        .items-center {
-            align-items: center;
-        }
-
-        .justify-center {
-            justify-content: center;
-        }
-
-        .text-center {
-            text-align: center;
-        }
-
-        .bg-gradient-red {
-            background: linear-gradient(to bottom right, #dc2626, #991b1b);
-        }
-
-        .bg-gradient-green {
-            background: linear-gradient(to bottom right, #16a34a, #15803d);
-        }
-
-        .bg-gradient-yellow {
-            background: linear-gradient(to bottom right, #ca8a04, #a16207);
-        }
-
-        .bg-gray-900 {
-            background-color: #07090f;
-        }
-
-        .bg-gray-800 {
-            background-color: #0f1419;
-        }
-
-        .bg-gray-700 {
-            background-color: #1a1f2e;
-        }
-
-        .text-white {
-            color: white;
-        }
-
-        .text-gray-400 {
-            color: #9ca3af;
-        }
-
-        .text-gray-300 {
-            color: #d1d5db;
-        }
-
-        .text-blue-400 {
-            color: #60a5fa;
-        }
-
-        .rounded-xl {
-            border-radius: 0.75rem;
-        }
-
-        .rounded-2xl {
-            border-radius: 1rem;
-        }
-
-        .rounded-3xl {
-            border-radius: 1.5rem;
-        }
-
-        .p-4 {
-            padding: 1rem;
-        }
-
-        .p-6 {
-            padding: 1.5rem;
-        }
-
-        .mb-2 {
-            margin-bottom: 0.5rem;
-        }
-
-        .mb-4 {
-            margin-bottom: 1rem;
-        }
-
-        .mb-6 {
-            margin-bottom: 1.5rem;
-        }
-
-        .mb-8 {
-            margin-bottom: 2rem;
-        }
-
-        .mb-12 {
-            margin-bottom: 3rem;
-        }
-
-        .mt-2 {
-            margin-top: 0.5rem;
-        }
-
-        .mt-4 {
-            margin-top: 1rem;
-        }
-
-        .mt-6 {
-            margin-top: 1.5rem;
-        }
-
-        .mt-12 {
-            margin-top: 3rem;
-        }
-
-        /* Emergency Screen */
+       
+        .mono { font-family: 'Space Mono', monospace; }
+       
+        /* REVOLUTIONARY EMERGENCY SCREEN */
         .emergency-screen {
             min-height: 100vh;
-            background: linear-gradient(to bottom right, #dc2626, #991b1b);
+            background: radial-gradient(circle at 50% 50%, #ff0055 0%, #0a0a0a 70%);
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 1rem;
+            position: relative;
+            overflow: hidden;
         }
-
-        .emergency-icon {
-            width: 8rem;
-            height: 8rem;
-            margin: 0 auto 1rem;
-            animation: pulse 2s infinite;
+       
+        .emergency-screen::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: repeating-linear-gradient(
+                0deg,
+                transparent,
+                transparent 2px,
+                rgba(255, 0, 85, 0.03) 2px,
+                rgba(255, 0, 85, 0.03) 4px
+            );
+            animation: scan 8s linear infinite;
+            pointer-events: none;
         }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.5; }
+       
+        @keyframes scan { 0% { transform: translateY(-100%); } 100% { transform: translateY(100%); } }
+       
+        .emergency-content {
+            text-align: center;
+            position: relative;
+            z-index: 2;
+            padding: 40px;
         }
-
-        @keyframes bounce {
-            0%, 100% {
-                transform: translateY(-5%);
-                animation-timing-function: cubic-bezier(0.8, 0, 1, 1);
-            }
-            50% {
-                transform: translateY(0);
-                animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
-            }
+       
+        .emergency-title {
+            font-size: 120px;
+            font-weight: 800;
+            line-height: 1;
+            margin-bottom: 20px;
+            text-shadow: 0 0 40px rgba(255, 0, 85, 0.8);
+            animation: pulse-glow 2s ease-in-out infinite;
         }
-
-        .emergency-button {
-            background: white;
-            color: #dc2626;
-            font-weight: 900;
-            font-size: 1.5rem;
-            padding: 2rem 4rem;
-            border-radius: 1.5rem;
-            border: none;
+       
+        @keyframes pulse-glow {
+            0%, 100% { text-shadow: 0 0 40px rgba(255, 0, 85, 0.8); }
+            50% { text-shadow: 0 0 80px rgba(255, 0, 85, 1); }
+        }
+       
+        .emergency-subtitle {
+            font-size: 24px;
+            color: var(--primary);
+            margin-bottom: 40px;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+        }
+       
+        .btn-emergency {
+            background: linear-gradient(135deg, var(--danger), #cc0044);
+            color: white;
+            font-size: 32px;
+            font-weight: 800;
+            padding: 30px 80px;
+            border: 4px solid var(--text);
+            border-radius: 0;
             cursor: pointer;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-            animation: bounce 1s infinite;
-            transition: transform 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            box-shadow: 0 0 60px rgba(255, 0, 85, 0.6), inset 0 0 20px rgba(255, 255, 255, 0.1);
+            animation: emergency-pulse 1.5s ease-in-out infinite;
+            position: relative;
+            overflow: hidden;
         }
-
-        .emergency-button:hover {
-            transform: scale(1.05);
+       
+        .btn-emergency::before {
+            content: '';
+            position: absolute;
+            top: -50%; left: -50%;
+            width: 200%; height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transform: rotate(45deg);
+            animation: shine 3s infinite;
         }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 1.5rem;
-            margin-top: 3rem;
-            color: white;
-        }
-
-        .stat-number {
-            font-size: 2.25rem;
-            font-weight: bold;
-        }
-
-        .stat-label {
-            font-size: 0.875rem;
-            opacity: 0.8;
-        }
-
-        /* Form Screens */
-        .form-container {
+       
+        @keyframes shine { 0% { transform: translateX(-100%) rotate(45deg); } 100% { transform: translateX(100%) rotate(45deg); } }
+        @keyframes emergency-pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+       
+        /* MAIN SCREENS */
+        .screen {
             min-height: 100vh;
-            background-color: #07090f;
-            color: white;
-            padding: 1.5rem;
+            background: var(--bg-dark);
+            padding: 20px;
         }
-
-        .form-wrapper {
-            max-width: 42rem;
+       
+        .container {
+            max-width: 600px;
             margin: 0 auto;
         }
-
-        .form-header {
-            margin-bottom: 1.5rem;
+       
+        .header {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid var(--primary);
         }
-
-        .form-title {
-            font-size: 1.875rem;
-            font-weight: bold;
-            margin-bottom: 0.5rem;
+       
+        .header-title {
+            font-size: 36px;
+            font-weight: 800;
+            color: var(--primary);
+            margin-bottom: 5px;
         }
-
-        .form-card {
-            background-color: #0f1419;
-            border-radius: 1rem;
-            padding: 1.5rem;
+       
+        .header-subtitle {
+            color: var(--text-dim);
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
         }
-
-        .form-group {
-            margin-bottom: 1.25rem;
+       
+        /* CARDS */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid #222;
+            padding: 25px;
+            margin-bottom: 20px;
+            position: relative;
         }
-
-        .form-label {
-            display: block;
-            font-size: 0.875rem;
-            font-weight: 500;
-            color: #d1d5db;
-            margin-bottom: 0.5rem;
+       
+        .card-title {
+            font-size: 20px;
+            font-weight: 800;
+            margin-bottom: 20px;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
-
-        .form-input {
+       
+        /* INPUTS */
+        input, select, textarea {
             width: 100%;
-            padding: 0.75rem 1rem;
-            background-color: #1a1f2e;
-            border: 1px solid #2a3340;
-            border-radius: 0.5rem;
-            color: white;
-            font-size: 1rem;
+            padding: 16px;
+            margin: 10px 0;
+            background: #0a0a0a;
+            border: 2px solid #222;
+            color: var(--text);
+            font-size: 16px;
+            font-family: 'Space Mono', monospace;
+            transition: all 0.3s ease;
         }
-
-        .form-input::placeholder {
-            color: #6b7280;
+       
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+            font-family: 'Bricolage Grotesque', sans-serif;
         }
-
-        .form-input:focus {
+       
+        input:focus, select:focus, textarea:focus {
             outline: none;
-            ring: 2px;
-            ring-color: #3b82f6;
-            border-color: transparent;
+            border-color: var(--primary);
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.2);
         }
-
-        .button-group {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 0.75rem;
+       
+        input:disabled, select:disabled, textarea:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
         }
-
-        .vehicle-button {
+       
+        /* VOICE INPUT */
+        .voice-input-container {
+            position: relative;
+        }
+       
+        .voice-btn {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--primary);
+            color: #000;
+            border: none;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 24px;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 0.75rem;
-            padding: 1rem;
-            border-radius: 0.5rem;
+            transition: all 0.3s ease;
+            z-index: 10;
+        }
+       
+        .voice-btn:hover {
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.5);
+            transform: translateY(-50%) scale(1.1);
+        }
+       
+        .voice-btn.recording {
+            background: var(--danger);
+            animation: pulse-record 1s ease-in-out infinite;
+        }
+       
+        @keyframes pulse-record {
+            0%, 100% { box-shadow: 0 0 20px rgba(255, 0, 85, 0.5); }
+            50% { box-shadow: 0 0 40px rgba(255, 0, 85, 1); }
+        }
+       
+        /* BUTTONS */
+        .btn {
+            width: 100%;
+            padding: 18px;
             border: 2px solid;
-            background-color: #1a1f2e;
-            border-color: #2a3340;
-            color: #d1d5db;
+            font-weight: 800;
             cursor: pointer;
-            transition: all 0.2s;
-            font-weight: bold;
+            font-size: 16px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            font-family: 'Bricolage Grotesque', sans-serif;
+            background: transparent;
         }
-
-        .vehicle-button:hover {
-            border-color: #3b4552;
+       
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%; left: 50%;
+            width: 0; height: 0;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
         }
-
-        .vehicle-button.active {
-            background-color: #2563eb;
-            border-color: #2563eb;
-            color: white;
+       
+        .btn:active::before {
+            width: 400px;
+            height: 400px;
         }
-
-        .location-locked {
-            display: flex;
-            align-items: start;
-            gap: 0.75rem;
-            padding: 1rem;
-            background-color: rgba(22, 163, 74, 0.3);
-            border: 1px solid #16a34a;
-            border-radius: 0.5rem;
-        }
-
-        .btn-primary {
-            background-color: #2563eb;
-            color: white;
-            font-weight: bold;
-            padding: 1rem;
-            border-radius: 0.75rem;
-            border: none;
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
-
-        .btn-primary:hover {
-            background-color: #1d4ed8;
-        }
-
-        .btn-primary:disabled {
-            background-color: #1a1f2e;
-            color: #4b5563;
+       
+        .btn:disabled {
+            opacity: 0.3;
             cursor: not-allowed;
         }
-
-        .btn-secondary {
-            background-color: #1a1f2e;
+       
+        .btn-primary {
+            background: var(--primary);
+            color: #000;
+            border-color: var(--primary);
+        }
+       
+        .btn-primary:hover:not(:disabled) {
+            box-shadow: 0 0 30px rgba(0, 255, 136, 0.5);
+        }
+       
+        .btn-danger {
+            background: var(--danger);
             color: white;
-            font-weight: bold;
-            padding: 1rem;
-            border-radius: 0.75rem;
-            border: none;
-            cursor: pointer;
-            transition: background-color 0.2s;
+            border-color: var(--danger);
         }
-
-        .btn-secondary:hover {
-            background-color: #2a3340;
+       
+        .btn-danger:hover:not(:disabled) {
+            box-shadow: 0 0 30px rgba(255, 0, 85, 0.5);
         }
-
-        .button-row {
+       
+        .btn-outline {
+            background: transparent;
+            color: var(--text);
+            border-color: #333;
+        }
+       
+        .btn-outline:hover:not(:disabled) {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+       
+        /* LIVE VIDEO STREAM */
+        .video-container {
+            position: relative;
+            width: 100%;
+            height: 300px;
+            background: #000;
+            margin: 15px 0;
+            overflow: hidden;
+        }
+       
+        .video-stream {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+       
+        .video-overlay {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.7) 100%);
             display: flex;
-            gap: 0.75rem;
-            margin-top: 1.5rem;
-        }
-
-        .button-row button {
-            flex: 1;
-        }
-
-        /* Media Upload */
-        .media-section {
-            background-color: #0f1419;
-            border-radius: 1rem;
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .media-header {
-            display: flex;
-            align-items: center;
+            flex-direction: column;
             justify-content: space-between;
-            margin-bottom: 1rem;
+            padding: 15px;
         }
-
-        .media-title {
+       
+        .video-status {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+       
+        .live-indicator {
+            background: var(--danger);
+            color: white;
+            padding: 6px 12px;
+            font-size: 12px;
+            font-weight: 800;
+            text-transform: uppercase;
+            animation: pulse 2s ease-in-out infinite;
             display: flex;
             align-items: center;
-            gap: 0.5rem;
-            font-size: 1.25rem;
-            font-weight: bold;
+            gap: 8px;
         }
-
+       
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            background: white;
+            border-radius: 50%;
+            animation: blink 1s ease-in-out infinite;
+        }
+       
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.8; } }
+       
+        .video-controls {
+            display: flex;
+            gap: 10px;
+        }
+       
+        .video-btn {
+            flex: 1;
+            padding: 12px;
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid var(--primary);
+            color: var(--primary);
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+       
+        .video-btn:hover {
+            background: var(--primary);
+            color: #000;
+        }
+       
+        .video-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+       
+        /* AI ANALYSIS GRID */
+        .analysis-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin: 20px 0;
+        }
+       
+        .analysis-item {
+            background: #0a0a0a;
+            border: 1px solid #222;
+            padding: 15px;
+            text-align: center;
+        }
+       
+        .analysis-icon {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+       
+        .analysis-label {
+            font-size: 12px;
+            color: var(--text-dim);
+            text-transform: uppercase;
+            margin-bottom: 5px;
+        }
+       
+        .analysis-value {
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--primary);
+        }
+       
+        .analysis-status {
+            display: inline-block;
+            padding: 4px 8px;
+            margin-top: 8px;
+            font-size: 10px;
+            font-weight: 800;
+            border-radius: 2px;
+        }
+       
+        .status-pass {
+            background: var(--primary);
+            color: #000;
+        }
+       
+        .status-fail {
+            background: var(--danger);
+            color: white;
+        }
+       
+        .status-warn {
+            background: var(--warning);
+            color: #000;
+        }
+       
+        /* BLOCKCHAIN PROOF */
+        .blockchain-proof {
+            background: linear-gradient(135deg, rgba(0, 221, 255, 0.1), rgba(138, 43, 226, 0.1));
+            border: 2px solid var(--accent);
+            padding: 20px;
+            margin: 20px 0;
+        }
+       
+        .blockchain-hash {
+            font-family: 'Space Mono', monospace;
+            font-size: 11px;
+            color: var(--accent);
+            word-break: break-all;
+            line-height: 1.6;
+            padding: 10px;
+            background: rgba(0, 0, 0, 0.5);
+            margin: 10px 0;
+        }
+       
+        /* SMART CONTRACT */
+        .contract-status {
+            background: linear-gradient(135deg, rgba(0, 255, 136, 0.1), rgba(0, 0, 0, 0.5));
+            border-left: 4px solid var(--primary);
+            padding: 20px;
+            margin: 20px 0;
+        }
+       
+        .contract-code {
+            font-family: 'Space Mono', monospace;
+            font-size: 12px;
+            color: var(--primary);
+            background: #000;
+            padding: 15px;
+            margin: 10px 0;
+            overflow-x: auto;
+        }
+       
+        /* REAL-TIME UPDATES */
+        .update-feed {
+            max-height: 200px;
+            overflow-y: auto;
+            margin: 15px 0;
+        }
+       
+        .update-item {
+            padding: 12px;
+            margin: 8px 0;
+            background: #0a0a0a;
+            border-left: 3px solid var(--primary);
+            font-size: 13px;
+            animation: slideIn 0.3s ease-out;
+        }
+       
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-20px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+       
+        .update-time {
+            color: var(--text-dim);
+            font-size: 11px;
+            font-family: 'Space Mono', monospace;
+        }
+       
+        /* ANALYZING SCREEN */
+        .analyzing-screen {
+            text-align: center;
+            padding: 60px 20px;
+        }
+       
+        .ai-brain {
+            width: 150px;
+            height: 150px;
+            margin: 0 auto 30px;
+            position: relative;
+        }
+       
+        .brain-core {
+            width: 100%;
+            height: 100%;
+            border: 4px solid var(--primary);
+            border-radius: 50%;
+            position: absolute;
+            animation: rotate 3s linear infinite;
+        }
+       
+        .brain-pulse {
+            width: 120%;
+            height: 120%;
+            border: 2px solid var(--primary);
+            border-radius: 50%;
+            position: absolute;
+            top: -10%;
+            left: -10%;
+            opacity: 0;
+            animation: pulse-wave 2s ease-out infinite;
+        }
+       
+        @keyframes pulse-wave {
+            0% { transform: scale(0.8); opacity: 1; }
+            100% { transform: scale(1.3); opacity: 0; }
+        }
+       
+        .processing-text {
+            font-size: 32px;
+            font-weight: 800;
+            margin-bottom: 10px;
+            color: var(--primary);
+            text-transform: uppercase;
+        }
+       
+        /* RESULT SCREEN */
+        .result-screen {
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+       
+        .result-approved {
+            background: radial-gradient(circle at 50% 0%, rgba(0, 255, 136, 0.2), var(--bg-dark) 70%);
+        }
+       
+        .result-rejected {
+            background: radial-gradient(circle at 50% 0%, rgba(255, 0, 85, 0.2), var(--bg-dark) 70%);
+        }
+       
+        .result-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+       
+        .result-icon {
+            font-size: 120px;
+            margin-bottom: 20px;
+            filter: drop-shadow(0 0 40px currentColor);
+        }
+       
+        .result-title {
+            font-size: 64px;
+            font-weight: 800;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+       
+        .result-subtitle {
+            font-size: 20px;
+            color: var(--text-dim);
+        }
+       
+        .claim-amount {
+            background: var(--bg-card);
+            border: 2px solid var(--primary);
+            padding: 30px;
+            text-align: center;
+            margin: 30px 0;
+        }
+       
+        .amount-label {
+            font-size: 14px;
+            color: var(--text-dim);
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+       
+        .amount-value {
+            font-size: 72px;
+            font-weight: 800;
+            color: var(--primary);
+            font-family: 'Space Mono', monospace;
+        }
+       
+        /* UTILITIES */
+        .hidden { display: none !important; }
+        .text-center { text-align: center; }
+        .mt-20 { margin-top: 20px; }
+        .mb-20 { margin-bottom: 20px; }
+       
+        /* PHOTO GRID */
         .photo-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
-            gap: 1rem;
-            margin-bottom: 1rem;
+            gap: 15px;
+            margin: 20px 0;
         }
-
+       
         .photo-item {
             position: relative;
+            aspect-ratio: 4/3;
+            background: #000;
+            overflow: hidden;
+            border: 2px solid #222;
         }
-
+       
         .photo-item img {
             width: 100%;
-            height: 8rem;
+            height: 100%;
             object-fit: cover;
-            border-radius: 0.5rem;
         }
-
+       
         .photo-badge {
             position: absolute;
-            top: 0.5rem;
-            right: 0.5rem;
-            background-color: #16a34a;
-            color: white;
-            font-size: 0.75rem;
-            padding: 0.25rem 0.5rem;
-            border-radius: 9999px;
-            font-weight: bold;
+            top: 10px;
+            right: 10px;
+            background: var(--primary);
+            color: #000;
+            padding: 6px 12px;
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
         }
-
-        .photo-timestamp {
+       
+        .photo-metadata {
             position: absolute;
-            bottom: 0.5rem;
-            left: 0.5rem;
-            background-color: rgba(0, 0, 0, 0.7);
-            color: white;
-            font-size: 0.75rem;
-            padding: 0.25rem 0.5rem;
-            border-radius: 0.25rem;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.9) 100%);
+            padding: 15px 10px 10px;
+            font-size: 10px;
+            font-family: 'Space Mono', monospace;
         }
-
-        .video-item {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            background-color: #1a1f2e;
-            padding: 0.75rem;
-            border-radius: 0.5rem;
-            margin-bottom: 0.75rem;
-        }
-
-        .requirements-box {
-            background-color: rgba(37, 99, 235, 0.3);
-            border: 1px solid #2563eb;
-            border-radius: 0.75rem;
-            padding: 1rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .requirements-list {
-            list-style: none;
-            font-size: 0.875rem;
-            color: #bfdbfe;
-        }
-
-        .requirements-list li {
-            margin-bottom: 0.25rem;
-        }
-
-        .requirements-list li.complete {
-            color: #4ade80;
-        }
-
-        /* Document Section */
-        .document-choice {
-            display: flex;
-            flex-direction: column;
-            gap: 0.75rem;
-            margin-bottom: 1rem;
-        }
-
-        .doc-or {
-            text-align: center;
-            color: #9ca3af;
-            font-size: 0.875rem;
-        }
-
-        .document-item {
-            background-color: #1a1f2e;
-            padding: 0.75rem;
-            border-radius: 0.5rem;
-        }
-
-        .document-content {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-
-        .doc-icon {
-            font-size: 1.875rem;
-        }
-
-        .doc-verified {
-            font-size: 0.75rem;
-            font-weight: bold;
-            padding: 0.25rem 0.5rem;
-            border-radius: 0.25rem;
-            background-color: rgba(34, 197, 94, 0.2);
-            color: #4ade80;
-        }
-
-        .upload-button {
-            width: 100%;
-            background-color: #1a1f2e;
-            border: 2px dashed #2a3340;
-            color: #d1d5db;
-            font-weight: bold;
-            padding: 0.75rem;
-            border-radius: 0.5rem;
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
-
-        .upload-button:hover {
-            background-color: #2a3340;
-        }
-
-        /* Modal */
-        .modal-overlay {
-            position: fixed;
-            inset: 0;
-            background-color: rgba(0, 0, 0, 0.8);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 1rem;
-            z-index: 50;
-        }
-
-        .modal-content {
-            background-color: #0f1419;
-            border-radius: 1rem;
-            padding: 1.5rem;
-            max-width: 28rem;
-            width: 100%;
-        }
-
-        /* Analyzing Screen */
-        .analyzing-screen {
-            min-height: 100vh;
-            background-color: #07090f;
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 1.5rem;
-        }
-
-        .analyzing-spinner {
-            width: 8rem;
-            height: 8rem;
-            border: 8px solid #2563eb;
-            border-top-color: transparent;
+       
+        /* LOADING STATES */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(0, 255, 136, 0.3);
             border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 2rem;
+            border-top-color: var(--primary);
+            animation: spin 1s ease-in-out infinite;
         }
-
+       
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
-
-        .analyzing-checks {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-            text-align: left;
-            background-color: #0f1419;
-            border-radius: 1rem;
-            padding: 1.5rem;
+       
+        /* IMPACT SENSOR DISPLAY */
+        .sensor-display {
+            background: rgba(255, 0, 85, 0.1);
+            border: 2px solid var(--danger);
+            padding: 20px;
+            margin: 15px 0;
+            text-align: center;
         }
-
-        .check-item {
+       
+        .impact-value {
+            font-size: 48px;
+            font-weight: 800;
+            color: var(--danger);
+            font-family: 'Space Mono', monospace;
+        }
+       
+        /* GARAGE CARD */
+        .garage-card {
+            background: #0a0a0a;
+            border: 2px solid var(--primary);
+            padding: 20px;
+            margin: 15px 0;
             display: flex;
+            gap: 20px;
             align-items: center;
-            gap: 0.75rem;
         }
-
-        .check-icon {
-            width: 1.5rem;
-            height: 1.5rem;
-            background-color: #2563eb;
+       
+        .garage-image {
+            width: 100px;
+            height: 100px;
+            background: #222;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
+            font-size: 48px;
         }
-
-        /* Result Screen */
-        .result-screen {
-            min-height: 100vh;
-            padding: 1.5rem;
+       
+        .garage-details {
+            flex: 1;
         }
-
-        .result-icon {
-            width: 8rem;
-            height: 8rem;
-            margin: 0 auto 1rem;
+       
+        .garage-name {
+            font-size: 20px;
+            font-weight: 800;
+            color: var(--primary);
+            margin-bottom: 8px;
         }
-
-        .result-icon.bounce {
-            animation: bounce 1s infinite;
-        }
-
-        .result-card {
-            background-color: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 1rem;
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-            color: white;
-        }
-
-        .result-card-white {
-            background-color: white;
-            border-radius: 1rem;
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .summary-row {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 0.5rem;
-            font-size: 0.875rem;
-        }
-
-        .check-result {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 0.75rem;
-        }
-
-        .check-label {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-
-        .damage-cost {
-            text-align: center;
-        }
-
-        .damage-amount {
-            font-size: 3rem;
-            font-weight: 900;
-            color: #111827;
-        }
-
+       
         .garage-info {
-            display: flex;
-            align-items: start;
-            gap: 1rem;
+            font-size: 14px;
+            color: var(--text-dim);
+            line-height: 1.6;
         }
-
-        .btn-success {
-            width: 100%;
-            background-color: white;
-            color: #15803d;
-            font-weight: 900;
-            font-size: 1.25rem;
-            padding: 1.25rem;
-            border-radius: 1rem;
-            border: none;
-            cursor: pointer;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
-            transition: transform 0.2s;
-        }
-
-        .btn-success:hover {
-            transform: scale(1.05);
-        }
-
-        .info-box {
-            background-color: rgba(255, 255, 255, 0.1);
-            border-radius: 1rem;
-            padding: 1rem;
-            color: white;
-        }
-
-        .alert-box {
-            background-color: rgba(34, 197, 94, 0.1);
-            border: 2px solid rgb(134, 239, 172);
-            border-radius: 0.5rem;
-            padding: 0.75rem;
-            margin-top: 1rem;
-        }
-
-        .tow-truck-box {
-            background-color: rgba(59, 130, 246, 0.1);
-            border: 2px solid #3b82f6;
-            border-radius: 0.5rem;
-            padding: 0.75rem;
-            margin-top: 1rem;
-        }
-
-        .icon {
-            width: 1.25rem;
-            height: 1.25rem;
+       
+        .garage-eta {
+            background: var(--primary);
+            color: #000;
+            padding: 8px 16px;
+            font-weight: 800;
+            font-size: 14px;
+            margin-top: 10px;
             display: inline-block;
-        }
-
-        .icon-lg {
-            width: 2rem;
-            height: 2rem;
-        }
-
-        .summary-detail {
-            margin-bottom: 1rem;
-            padding: 1rem;
-            background-color: #0f1419;
-            border-radius: 0.5rem;
-        }
-
-        .flex-between {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .space-y-3 > * + * {
-            margin-top: 0.75rem;
-        }
-
-        .space-y-5 > * + * {
-            margin-top: 1.25rem;
-        }
-
-        .btn-green {
-            background-color: #16a34a;
-            color: white;
-            font-weight: bold;
-            padding: 1rem;
-            border-radius: 0.75rem;
-            border: none;
-            cursor: pointer;
-            animation: pulse 2s infinite;
-        }
-
-        .btn-green:hover {
-            background-color: #15803d;
-        }
-
-        .btn-green:disabled {
-            background-color: #1a1f2e;
-            color: #4b5563;
-            cursor: not-allowed;
-            animation: none;
-        }
-
-        .btn-purple {
-            background-color: #9333ea;
-            color: white;
-            font-weight: bold;
-            padding: 1rem;
-            border-radius: 0.75rem;
-            border: none;
-            cursor: pointer;
-        }
-
-        .btn-purple:hover {
-            background-color: #7e22ce;
-        }
-
-        .btn-border {
-            width: 100%;
-            border: 2px solid white;
-            background: transparent;
-            color: white;
-            font-weight: bold;
-            padding: 0.75rem;
-            border-radius: 0.75rem;
-            cursor: pointer;
-        }
-
-        .btn-border:hover {
-            background-color: rgba(255, 255, 255, 0.1);
-        }
-
-        input[type="file"] {
-            display: none;
-        }
-
-        button {
-            cursor: pointer;
-        }
-
-        select {
-            appearance: none;
-            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%239ca3af' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
-            background-position: right 0.5rem center;
-            background-repeat: no-repeat;
-            background-size: 1.5em 1.5em;
-            padding-right: 2.5rem;
-        }
-
-        .spinner {
-            width: 1.25rem;
-            height: 1.25rem;
-            border: 2px solid #6b7280;
-            border-top-color: transparent;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            display: inline-block;
-        }
-
-        @media (max-width: 640px) {
-            .emergency-button {
-                font-size: 1.25rem;
-                padding: 1.5rem 3rem;
-            }
-           
-            .stat-number {
-                font-size: 1.875rem;
-            }
         }
     </style>
 </head>
 <body>
     <div id="app"></div>
-
+   
     <script>
-        // SVG Icons as strings
-        const icons = {
-            alertTriangle: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>',
-            camera: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"></path><circle cx="12" cy="13" r="3"></circle></svg>',
-            mapPin: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>',
-            checkCircle: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>',
-            shield: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>',
-            clock: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>',
-            video: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 8-6 4 6 4V8Z"></path><rect x="2" y="6" width="14" height="12" rx="2" ry="2"></rect></svg>',
-            car: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"></path><circle cx="7" cy="17" r="2"></circle><path d="M9 17h6"></path><circle cx="17" cy="17" r="2"></circle></svg>',
-            bike: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="5.5" cy="17.5" r="3.5"></circle><circle cx="18.5" cy="17.5" r="3.5"></circle><path d="M15 6a1 1 0 1 0 0-2 1 1 0 0 0 0 2zm-3 11.5V14l-3-3 4-3 2 3h2"></path></svg>',
-            xCircle: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>',
-            navigation: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="3 11 22 2 13 21 11 13 3 11"></polygon></svg>',
-            truck: '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>'
-        };
-
-        // State management
+        // REVOLUTIONARY STATE MANAGEMENT
         let state = {
             screen: 'emergency',
-            formData: {
+           
+            claimData: {
                 name: '',
-                vehicleNumber: '',
+                vehicle: '',
                 vehicleType: '',
                 policyNumber: '',
-                policyCompany: '',
-                location: null
+                insuranceCompany: '',
+                incidentDescription: '',
+                gpsLocation: null,
+                timestamp: null,
+                weather: null
             },
-            photos: [],
-            videos: [],
-            documents: {
-                rc: null,
-                license: null,
-                policy: null,
-                additional: []
-            },
-            analyzing: false,
-            result: null,
-            gettingGPS: false,
-            showAddDocModal: false,
-            newDocName: '',
-            extractingFromLocker: false,
-            showDocumentChoice: true
-        };
-
-        // Helper functions
-        function createIcon(iconName, className = 'icon') {
-            const div = document.createElement('div');
-            div.innerHTML = icons[iconName];
-            div.className = className;
-            div.style.display = 'inline-block';
-            return div.innerHTML;
-        }
-
-        function handleInputChange(field, value) {
-            state.formData[field] = value;
-        }
-
-        function getGPSLocation() {
-            state.gettingGPS = true;
-            render();
            
-            setTimeout(() => {
-                state.formData.location = {
-                    lat: 12.9716,
-                    lng: 77.5946,
-                    address: "PCCOER, Ravet",
-                    accuracy: 15,
-                    timestamp: new Date()
-                };
-                state.gettingGPS = false;
-                render();
-            }, 2000);
-        }
-
-        function handlePhotoCapture(e) {
-            const files = Array.from(e.target.files);
-            let loadedCount = 0;
-           
-            files.forEach(file => {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    state.photos.push({
-                        src: e.target.result,
-                        timestamp: new Date(),
-                        file: file
-                    });
-                    loadedCount++;
-                    if (loadedCount === files.length) {
-                        render();
-                    }
-                };
-                reader.readAsDataURL(file);
-            });
-        }
-
-        function handleVideoCapture(e) {
-            const files = Array.from(e.target.files);
-            let loadedCount = 0;
-           
-            files.forEach(file => {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    state.videos.push({
-                        src: e.target.result,
-                        timestamp: new Date(),
-                        file: file,
-                        name: file.name
-                    });
-                    loadedCount++;
-                    if (loadedCount === files.length) {
-                        render();
-                    }
-                };
-                reader.readAsDataURL(file);
-            });
-        }
-
-        function handleDocumentUpload(type, e) {
-            const file = e.target.files[0];
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    const docData = {
-                        src: e.target.result,
-                        timestamp: new Date(),
-                        file: file,
-                        name: file.name,
-                        verified: Math.random() > 0.1
-                    };
-
-                    if (type === 'additional') {
-                        state.documents.additional.push({ ...docData, customName: state.newDocName });
-                        state.newDocName = '';
-                        state.showAddDocModal = false;
-                    } else {
-                        state.documents[type] = docData;
-                    }
-                    render();
-                };
-                reader.readAsDataURL(file);
-            }
-        }
-
-        function extractFromLocker() {
-            state.extractingFromLocker = true;
-            state.showDocumentChoice = false;
-            render();
-           
-            setTimeout(() => {
-                state.documents.rc = {
-                    name: 'RC_' + state.formData.vehicleNumber + '.pdf',
-                    timestamp: new Date(),
-                    verified: true,
-                    extracted: true
-                };
-                render();
-            }, 500);
-
-            setTimeout(() => {
-                state.documents.license = {
-                    name: 'DL_' + state.formData.name.split(' ')[0] + '.pdf',
-                    timestamp: new Date(),
-                    verified: true,
-                    extracted: true
-                };
-                render();
-            }, 1000);
-
-            setTimeout(() => {
-                state.documents.policy = {
-                    name: 'Policy_' + state.formData.policyNumber + '.pdf',
-                    timestamp: new Date(),
-                    verified: true,
-                    extracted: true
-                };
-                state.extractingFromLocker = false;
-                render();
-            }, 1500);
-        }
-
-        function runFraudChecks() {
-            state.analyzing = true;
-            state.screen = 'analyzing';
-            render();
-
-            setTimeout(() => {
-                const now = new Date();
-                const mediaAge = state.photos.length > 0 ? (now - state.photos[0].timestamp) / 1000 / 60 : 0;
-               
-                const gpsCheck = state.formData.location !== null;
-                const freshnessCheck = mediaAge < 30;
-                const damageCheck = Math.random() > 0.2;
-               
-                const checksCount = [gpsCheck, freshnessCheck, damageCheck].filter(Boolean).length;
-                
-                // Limit damage cost to maximum 12000
-                const damageCost = Math.min(Math.floor(Math.random() * 10000) + 2000, 12000);
-               
-                let status, message, action;
-               
-                if (checksCount === 3) {
-                    status = 'approved';
-                    message = 'INSTANT APPROVED!';
-                    action = 'Garage dispatched automatically';
-                } else if (checksCount === 2) {
-                    status = 'review';
-                    message = 'Quick Call Needed';
-                    action = 'Support will call in 5 minutes';
-                } else {
-                    status = 'blocked';
-                    message = 'CLAIM BLOCKED';
-                    action = 'Fraud detected - Go to accident spot';
-                }
-
-                state.result = {
-                    status,
-                    message,
-                    action,
-                    damageCost,
-                    checks: {
-                        gps: gpsCheck,
-                        freshness: freshnessCheck,
-                        damage: damageCheck
-                    },
-                    checksCount,
-                    garage: 'ABC Auto Repair',
-                    distance: '2.1 km',
-                    eta: '15 mins'
-                };
-
-                state.analyzing = false;
-                state.screen = 'result';
-                render();
-            }, 4000);
-        }
-
-        function reset() {
-            state = {
-                screen: 'emergency',
-                formData: {
-                    name: '',
-                    vehicleNumber: '',
-                    vehicleType: '',
-                    policyNumber: '',
-                    policyCompany: '',
-                    location: null
-                },
+            evidence: {
+                liveStream: null,
                 photos: [],
                 videos: [],
-                documents: {
-                    rc: null,
-                    license: null,
-                    policy: null,
-                    additional: []
-                },
-                analyzing: false,
-                result: null,
-                gettingGPS: false,
-                showAddDocModal: false,
-                newDocName: '',
-                extractingFromLocker: false,
-                showDocumentChoice: true
+                dashcam: null,
+                impactData: null
+            },
+           
+            blockchain: {
+                blockHash: null,
+                previousHash: null,
+                timestamp: null,
+                dataHash: null
+            },
+           
+            aiAnalysis: {
+                damageDetection: null,
+                fraudScore: null,
+                costEstimate: null,
+                authenticity: null,
+                metadata: null,
+                damageParts: []
+            },
+           
+            smartContract: {
+                status: 'pending',
+                autoApproved: false,
+                payoutScheduled: false
+            },
+           
+            nearbyGarages: [],
+           
+            realTimeUpdates: []
+        };
+       
+        // VOICE RECOGNITION
+        let recognition = null;
+        let isRecording = false;
+       
+        function initializeVoiceRecognition() {
+            if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                recognition = new SpeechRecognition();
+                recognition.continuous = false;
+                recognition.interimResults = false;
+                recognition.lang = 'en-IN';
+               
+                recognition.onresult = (event) => {
+                    const transcript = event.results[0][0].transcript;
+                    const descriptionInput = document.getElementById('descriptionInput');
+                    if (descriptionInput) {
+                        const currentValue = descriptionInput.value;
+                        descriptionInput.value = currentValue + (currentValue ? ' ' : '') + transcript;
+                        state.claimData.incidentDescription = descriptionInput.value;
+                    }
+                };
+               
+                recognition.onerror = (event) => {
+                    console.error('Speech recognition error:', event.error);
+                    isRecording = false;
+                    updateVoiceButton();
+                };
+               
+                recognition.onend = () => {
+                    isRecording = false;
+                    updateVoiceButton();
+                };
+            }
+        }
+       
+        function toggleVoiceInput() {
+            if (!recognition) {
+                alert('⚠️ Voice recognition not supported on this device');
+                return;
+            }
+           
+            if (isRecording) {
+                recognition.stop();
+                isRecording = false;
+            } else {
+                recognition.start();
+                isRecording = true;
+            }
+           
+            updateVoiceButton();
+        }
+       
+        function updateVoiceButton() {
+            const voiceBtn = document.getElementById('voiceBtn');
+            if (voiceBtn) {
+                if (isRecording) {
+                    voiceBtn.classList.add('recording');
+                    voiceBtn.textContent = '⏹️';
+                } else {
+                    voiceBtn.classList.remove('recording');
+                    voiceBtn.textContent = '🎤';
+                }
+            }
+        }
+       
+        // SENSOR DATA COLLECTION
+        let impactDetected = false;
+        let accelerationData = [];
+       
+        function initializeSensors() {
+            if (window.DeviceMotionEvent) {
+                window.addEventListener('devicemotion', (event) => {
+                    const acc = event.accelerationIncludingGravity;
+                    if (acc) {
+                        const magnitude = Math.sqrt(
+                            Math.pow(acc.x || 0, 2) +
+                            Math.pow(acc.y || 0, 2) +
+                            Math.pow(acc.z || 0, 2)
+                        );
+                       
+                        accelerationData.push(magnitude);
+                       
+                        // Keep only last 10 readings
+                        if (accelerationData.length > 10) {
+                            accelerationData.shift();
+                        }
+                       
+                        // Detect sudden impact (threshold: 20 m/s²)
+                        if (magnitude > 20 && !impactDetected) {
+                            impactDetected = true;
+                            detectImpact(magnitude);
+                        }
+                    }
+                });
+            }
+        }
+       
+        function detectImpact(force) {
+            state.evidence.impactData = {
+                force: force.toFixed(2),
+                timestamp: Date.now(),
+                accelerationHistory: [...accelerationData]
             };
-            render();
+           
+            addUpdate(`⚡ IMPACT DETECTED: ${force.toFixed(2)} m/s²`);
+            addUpdate('📱 Phone sensors captured collision data');
         }
-
-        function canProceedFromDetails() {
-            return state.formData.name &&
-                   state.formData.vehicleNumber &&
-                   state.formData.vehicleType &&
-                   state.formData.policyNumber &&
-                   state.formData.policyCompany &&
-                   state.formData.location;
+       
+        // RENDER ENGINE
+        function render() {
+            const app = document.getElementById('app');
+           
+            switch(state.screen) {
+                case 'emergency':
+                    app.innerHTML = renderEmergencyScreen();
+                    break;
+                case 'capture':
+                    app.innerHTML = renderCaptureScreen();
+                    setTimeout(initializeCapture, 100);
+                    break;
+                case 'incident':
+                    app.innerHTML = renderIncidentScreen();
+                    setTimeout(initializeVoiceRecognition, 100);
+                    break;
+                case 'verification':
+                    app.innerHTML = renderVerificationScreen();
+                    break;
+                case 'analyzing':
+                    app.innerHTML = renderAnalyzingScreen();
+                    setTimeout(simulateAIAnalysis, 100);
+                    break;
+                case 'result':
+                    app.innerHTML = renderResultScreen();
+                    break;
+            }
         }
-
-        function canProceedFromMedia() {
-            const hasMedia = state.photos.length >= 4 || state.videos.length >= 1;
-            const hasRequiredDocs = state.documents.rc && state.documents.license && state.documents.policy;
-            return hasMedia && hasRequiredDocs;
-        }
-
-        // Render functions
+       
+        // EMERGENCY SCREEN
         function renderEmergencyScreen() {
             return `
                 <div class="emergency-screen">
-                    <div style="max-width: 600px;">
-                        <div class="emergency-icon">
-                            ${createIcon('alertTriangle', 'emergency-icon')}
-                        </div>
-                        <h1 style="font-size: 3rem; font-weight: 900; color: white; margin-bottom: 1rem;">ACCIDENT?</h1>
-                        <p style="font-size: 1.25rem; color: #fecaca; margin-bottom: 3rem;">Get your claim approved in 90 seconds</p>
+                    <div class="emergency-content">
+                        <div class="emergency-title">⚠️</div>
+                        <h1 class="emergency-title">ACCIDENT?</h1>
+                        <p class="emergency-subtitle">AI-Powered Instant Claims</p>
                        
-                        <button class="emergency-button" onclick="state.screen = 'details'; render();">
-                            🚨 SPOTCLAIM NOW
+                        <button class="btn-emergency" onclick="startClaim()">
+                            ACTIVATE SPOTCLAIM
                         </button>
-
-                        <div class="stats-grid">
-                            <div>
-                                <div class="stat-number">90s</div>
-                                <div class="stat-label">Total Time</div>
+                       
+                        <div style="margin-top: 60px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 30px; max-width: 600px; margin-left: auto; margin-right: auto;">
+                            <div style="text-align: center;">
+                                <div style="font-size: 48px; font-weight: 800; color: var(--primary);">45s</div>
+                                <div style="font-size: 14px; color: var(--text-dim);">APPROVAL TIME</div>
                             </div>
-                            <div>
-                                <div class="stat-number">3</div>
-                                <div class="stat-label">Fraud Checks</div>
+                            <div style="text-align: center;">
+                                <div style="font-size: 48px; font-weight: 800; color: var(--primary);">AI</div>
+                                <div style="font-size: 14px; color: var(--text-dim);">DAMAGE DETECTION</div>
                             </div>
-                            <div>
-                                <div class="stat-number">0</div>
-                                <div class="stat-label">Paperwork</div>
+                            <div style="text-align: center;">
+                                <div style="font-size: 48px; font-weight: 800; color: var(--primary);">0₹</div>
+                                <div style="font-size: 14px; color: var(--text-dim);">OUT OF POCKET</div>
                             </div>
                         </div>
                     </div>
                 </div>
             `;
         }
-
-        function renderDetailsScreen() {
-            return `
-                <div class="form-container">
-                    <div class="form-wrapper">
-                        <div class="form-header">
-                            <h2 class="form-title">Incident Details</h2>
-                            <p class="text-gray-400">Fill your information carefully</p>
-                            <div class="mt-2 text-blue-400" style="font-size: 0.875rem;">Step 1 of 3</div>
-                        </div>
-
-                        <div class="form-card space-y-5">
-                            <div class="form-group">
-                                <label class="form-label">Your Name *</label>
-                                <input
-                                    type="text"
-                                    class="form-input"
-                                    value="${state.formData.name}"
-                                    placeholder="Enter your full name"
-                                    onchange="handleInputChange('name', this.value); render();"
-                                    onkeyup="handleInputChange('name', this.value);"
-                                />
-                            </div>
-
-                            <div class="form-group">
-                                <label class="form-label">Vehicle Type *</label>
-                                <div class="button-group">
-                                    <button
-                                        class="vehicle-button ${state.formData.vehicleType === 'car' ? 'active' : ''}"
-                                        onclick="handleInputChange('vehicleType', 'car'); render();"
-                                    >
-                                        ${createIcon('car', 'icon-lg')}
-                                        <span>Car</span>
-                                    </button>
-                                    <button
-                                        class="vehicle-button ${state.formData.vehicleType === 'bike' ? 'active' : ''}"
-                                        onclick="handleInputChange('vehicleType', 'bike'); render();"
-                                    >
-                                        ${createIcon('bike', 'icon-lg')}
-                                        <span>Bike</span>
-                                    </button>
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="form-label">Vehicle Number *</label>
-                                <input
-                                    type="text"
-                                    class="form-input"
-                                    style="text-transform: uppercase;"
-                                    value="${state.formData.vehicleNumber}"
-                                    placeholder="e.g., MH12AB1234"
-                                    onchange="handleInputChange('vehicleNumber', this.value.toUpperCase()); render();"
-                                    onkeyup="handleInputChange('vehicleNumber', this.value.toUpperCase());"
-                                />
-                            </div>
-
-                            <div class="form-group">
-                                <label class="form-label">Insurance Company *</label>
-                                <select
-                                    class="form-input"
-                                    value="${state.formData.policyCompany}"
-                                    onchange="handleInputChange('policyCompany', this.value); render();"
-                                >
-                                    <option value="">Select insurance company</option>
-                                    <option value="ICICI Lombard">ICICI Lombard</option>
-                                    <option value="HDFC ERGO">HDFC ERGO</option>
-                                    <option value="Bajaj Allianz">Bajaj Allianz</option>
-                                    <option value="Tata AIG">Tata AIG</option>
-                                    <option value="Reliance General">Reliance General</option>
-                                    <option value="New India Assurance">New India Assurance</option>
-                                    <option value="Other">Other</option>
-                                </select>
-                            </div>
-
-                            <div class="form-group">
-                                <label class="form-label">Policy Number *</label>
-                                <input
-                                    type="text"
-                                    class="form-input"
-                                    value="${state.formData.policyNumber}"
-                                    placeholder="Enter policy number"
-                                    onchange="handleInputChange('policyNumber', this.value); render();"
-                                    onkeyup="handleInputChange('policyNumber', this.value);"
-                                />
-                            </div>
-
-                            <div class="form-group">
-                                <label class="form-label">Accident Location *</label>
-                                ${state.formData.location ? `
-                                    <div class="location-locked">
-                                        ${createIcon('mapPin', 'icon-lg')}
-                                        <div style="flex: 1;">
-                                            <div style="color: #4ade80; font-weight: bold;">GPS Locked ✓</div>
-                                            <div style="font-size: 0.875rem; color: #d1d5db;">${state.formData.location.address}</div>
-                                            <div style="font-size: 0.75rem; color: #6b7280;">Accuracy: ${state.formData.location.accuracy}m</div>
-                                        </div>
-                                    </div>
-                                ` : `
-                                    <button
-                                        class="btn-primary"
-                                        style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 0.75rem;"
-                                        onclick="getGPSLocation()"
-                                        ${state.gettingGPS ? 'disabled' : ''}
-                                    >
-                                        ${state.gettingGPS ? `
-                                            <span class="spinner"></span>
-                                            <span>Getting GPS Location...</span>
-                                        ` : `
-                                            ${createIcon('mapPin')}
-                                            <span>Get Current Location</span>
-                                        `}
-                                    </button>
-                                `}
-                            </div>
-                        </div>
-
-                        <div class="button-row">
-                            <button class="btn-secondary" onclick="state.screen = 'emergency'; render();">
-                                ← Back
-                            </button>
-                            <button
-                                class="btn-primary"
-                                onclick="state.screen = 'capture'; render();"
-                                ${!canProceedFromDetails() ? 'disabled' : ''}
-                            >
-                                Next: Upload Media →
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
-
+       
+        // CAPTURE SCREEN
         function renderCaptureScreen() {
             return `
-                <div class="form-container">
-                    <div class="form-wrapper">
-                        <div class="form-header">
-                            <h2 class="form-title">Upload Damage Evidence</h2>
-                            <p class="text-gray-400">Photos and videos of the damage</p>
-                            <div class="mt-2 text-blue-400" style="font-size: 0.875rem;">Step 2 of 3</div>
+                <div class="screen">
+                    <div class="container">
+                        <div class="header">
+                            <h1 class="header-title">LIVE EVIDENCE CAPTURE</h1>
+                            <p class="header-subtitle">Step 1 of 4 • Blockchain Recording Active</p>
                         </div>
-
-                        <div class="summary-detail">
-                            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.75rem; font-size: 0.875rem;">
-                                <div>
-                                    <span class="text-gray-400">Name:</span>
-                                    <span style="margin-left: 0.5rem; font-weight: bold;">${state.formData.name}</span>
-                                </div>
-                                <div>
-                                    <span class="text-gray-400">Vehicle:</span>
-                                    <span style="margin-left: 0.5rem; font-weight: bold;">${state.formData.vehicleNumber}</span>
-                                </div>
-                                <div>
-                                    <span class="text-gray-400">Type:</span>
-                                    <span style="margin-left: 0.5rem; font-weight: bold; text-transform: capitalize;">${state.formData.vehicleType}</span>
-                                </div>
-                                <div>
-                                    <span class="text-gray-400">Insurer:</span>
-                                    <span style="margin-left: 0.5rem; font-weight: bold;">${state.formData.policyCompany}</span>
-                                </div>
+                       
+                        ${state.evidence.impactData ? `
+                        <div class="sensor-display">
+                            <strong style="color: var(--danger); font-size: 18px;">⚡ IMPACT DETECTED</strong>
+                            <div class="impact-value">${state.evidence.impactData.force} m/s²</div>
+                            <div style="font-size: 12px; color: var(--text-dim); margin-top: 10px;">
+                                Phone sensors recorded collision force
                             </div>
                         </div>
-
-                        <!-- Photos Section -->
-                        <div class="media-section">
-                            <div class="media-header">
-                                <h3 class="media-title">
-                                    ${createIcon('camera', 'icon-lg')}
-                                    Damage Photos
-                                </h3>
-                                <span style="font-size: 0.875rem; color: #9ca3af;">${state.photos.length} uploaded</span>
-                            </div>
-
-                            ${state.photos.length > 0 ? `
-                                <div class="photo-grid">
-                                    ${state.photos.map((photo, idx) => `
-                                        <div class="photo-item">
-                                            <img src="${photo.src}" alt="Damage ${idx + 1}" />
-                                            <div class="photo-badge">✓ Photo ${idx + 1}</div>
-                                            <div class="photo-timestamp">${Math.floor((new Date() - photo.timestamp) / 1000)}s ago</div>
-                                        </div>
-                                    `).join('')}
-                                </div>
-                            ` : ''}
-
-                            <input
-                                type="file"
-                                id="photoInput"
-                                accept="image/*"
-                                capture="environment"
-                                multiple
-                                onchange="handlePhotoCapture(event)"
-                            />
-                            <button
-                                class="btn-primary"
-                                style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 0.5rem;"
-                                onclick="document.getElementById('photoInput').click()"
-                            >
-                                ${createIcon('camera')}
-                                ${state.photos.length === 0 ? 'Take Photos (Min 4)' : 'Add More Photos'}
-                            </button>
-
-                            ${state.photos.length > 0 && state.photos.length < 4 ? `
-                                <p style="color: #fbbf24; font-size: 0.875rem; margin-top: 0.5rem; text-align: center;">
-                                    ⚠️ Minimum 4 photos required (or 1 video)
-                                </p>
-                            ` : ''}
-                        </div>
-
-                        <!-- Videos Section -->
-                        <div class="media-section">
-                            <div class="media-header">
-                                <h3 class="media-title">
-                                    ${createIcon('video', 'icon-lg')}
-                                    Damage Videos
-                                </h3>
-                                <span style="font-size: 0.875rem; color: #9ca3af;">${state.videos.length} uploaded</span>
-                            </div>
-
-                            ${state.videos.length > 0 ? `
-                                <div style="margin-bottom: 1rem;">
-                                    ${state.videos.map((video, idx) => `
-                                        <div class="video-item">
-                                            ${createIcon('video', 'icon-lg')}
-                                            <div style="flex: 1;">
-                                                <div style="font-weight: bold; font-size: 0.875rem;">Video ${idx + 1}</div>
-                                                <div style="font-size: 0.75rem; color: #9ca3af;">${video.name}</div>
-                                                <div style="font-size: 0.75rem; color: #6b7280;">
-                                                    ${Math.floor((new Date() - video.timestamp) / 1000)}s ago
-                                                </div>
-                                            </div>
-                                            <div class="photo-badge">✓</div>
-                                        </div>
-                                    `).join('')}
-                                </div>
-                            ` : ''}
-
-                            <input
-                                type="file"
-                                id="videoInput"
-                                accept="video/*"
-                                capture="environment"
-                                multiple
-                                onchange="handleVideoCapture(event)"
-                            />
-                            <button
-                                class="btn-purple"
-                                style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 0.5rem;"
-                                onclick="document.getElementById('videoInput').click()"
-                            >
-                                ${createIcon('video')}
-                                ${state.videos.length === 0 ? 'Record Video (Optional)' : 'Add More Videos'}
-                            </button>
-
-                            <p style="color: #9ca3af; font-size: 0.75rem; margin-top: 0.5rem; text-align: center;">
-                                💡 Videos can replace photos - 1 360° video = all evidence needed
+                        ` : ''}
+                       
+                        <div class="card">
+                            <h3 class="card-title">📹 LIVE STREAM</h3>
+                            <p style="color: var(--text-dim); margin-bottom: 15px; font-size: 13px;">
+                                Recording to blockchain • AI analyzing damage in real-time
                             </p>
-                        </div>
-
-                        <!-- Requirements Box -->
-                        <div class="requirements-box">
-                            <h4 style="font-weight: bold; color: #bfdbfe; margin-bottom: 0.5rem;">📋 Requirements:</h4>
-                            <ul class="requirements-list">
-                                <li class="${state.photos.length >= 4 ? 'complete' : ''}">
-                                    ${state.photos.length >= 4 ? '✓' : '○'} Minimum 4 photos OR 1 video
-                                </li>
-                                <li class="${state.photos.length > 0 || state.videos.length > 0 ? 'complete' : ''}">
-                                    ${state.photos.length > 0 || state.videos.length > 0 ? '✓' : '○'} Clear view of all damage
-                                </li>
-                                <li class="${state.documents.rc && state.documents.license && state.documents.policy ? 'complete' : ''}">
-                                    ${state.documents.rc && state.documents.license && state.documents.policy ? '✓' : '○'} All required documents uploaded
-                                </li>
-                                <li>○ Capture from multiple angles</li>
-                            </ul>
-                        </div>
-
-                        <!-- Document Locker Section -->
-                        <div class="media-section">
-                            <div class="media-header">
-                                <h3 class="media-title">
-                                    🔒 Document Locker
-                                </h3>
-                                <span style="font-size: 0.875rem; color: #9ca3af;">AI Verification</span>
+                           
+                            <div class="video-container">
+                                <video class="video-stream" id="liveVideo" autoplay playsinline></video>
+                                <div class="video-overlay">
+                                    <div class="video-status">
+                                        <div class="live-indicator">
+                                            <div class="live-dot"></div>
+                                            LIVE
+                                        </div>
+                                        <div style="font-family: 'Space Mono', monospace; font-size: 12px;">
+                                            <span id="recordTime">00:00</span>
+                                        </div>
+                                    </div>
+                                    <div class="video-controls">
+                                        <button class="video-btn" id="captureBtn" onclick="captureFrame()">📸 CAPTURE</button>
+                                        <button class="video-btn" id="recordBtn" onclick="toggleRecording()">⏺️ RECORD</button>
+                                    </div>
+                                </div>
                             </div>
-
-                            ${state.showDocumentChoice && !state.documents.rc && !state.documents.license && !state.documents.policy ? `
-                                <div class="document-choice">
-                                    <button
-                                        class="btn-primary"
-                                        style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 0.5rem;"
-                                        onclick="extractFromLocker()"
-                                        ${state.extractingFromLocker ? 'disabled' : ''}
-                                    >
-                                        ${state.extractingFromLocker ? `
-                                            <span class="spinner"></span>
-                                            <span>Extracting Documents...</span>
-                                        ` : `
-                                            <span>🔓</span>
-                                            <span>Take Documents from Locker</span>
-                                        `}
-                                    </button>
-                                   
-                                    <div class="doc-or">OR</div>
-                                   
-                                    <button
-                                        class="btn-secondary"
-                                        style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 0.5rem;"
-                                        onclick="state.showDocumentChoice = false; render();"
-                                    >
-                                        <span>📤</span>
-                                        <span>Upload Documents Manually</span>
-                                    </button>
+                           
+                            <div class="blockchain-proof" id="blockchainStatus" style="display: none;">
+                                <strong style="color: var(--accent);">🔗 BLOCKCHAIN ANCHORED</strong>
+                                <div class="blockchain-hash" id="blockHash"></div>
+                                <div style="font-size: 11px; color: var(--text-dim); margin-top: 10px;">
+                                    ✓ Timestamp verified • GPS locked • Immutable record
                                 </div>
-                            ` : ''}
-
-                            ${(state.documents.rc || !state.showDocumentChoice) ? `
-                                <div style="margin-bottom: 1rem;">
-                                    <div class="flex-between" style="margin-bottom: 0.5rem;">
-                                        <label class="form-label" style="margin: 0;">Registration Certificate (RC) *</label>
-                                        ${state.documents.rc ? '<span class="doc-verified">✓ AI Verified</span>' : ''}
-                                    </div>
-                                    ${state.documents.rc ? `
-                                        <div class="document-item">
-                                            <div class="document-content">
-                                                <div class="doc-icon">📄</div>
-                                                <div style="flex: 1;">
-                                                    ${state.documents.rc.extracted ? `
-                                                        <p style="font-size: 0.875rem; font-weight: bold; color: #4ade80;">✓ RC Document Extracted Successfully</p>
-                                                        <p style="font-size: 0.75rem; color: #9ca3af;">${state.documents.rc.name}</p>
-                                                        <p style="font-size: 0.75rem; color: #4ade80; margin-top: 0.25rem;">Vehicle registered, not blacklisted</p>
-                                                    ` : `
-                                                        <p style="font-size: 0.875rem; font-weight: bold;">${state.documents.rc.name}</p>
-                                                        <p style="font-size: 0.75rem; color: #9ca3af;">Uploaded ${Math.floor((new Date() - state.documents.rc.timestamp) / 1000)}s ago</p>
-                                                        ${state.documents.rc.verified ? '<p style="font-size: 0.75rem; color: #4ade80; margin-top: 0.25rem;">✓ Vehicle registered, not blacklisted</p>' : ''}
-                                                    `}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    ` : `
-                                        <input type="file" id="rcInput" accept="image/*,application/pdf" onchange="handleDocumentUpload('rc', event)" />
-                                        <button class="upload-button" onclick="document.getElementById('rcInput').click()">
-                                            + Upload RC
-                                        </button>
-                                    `}
-                                </div>
-                            ` : ''}
-
-                            ${(state.documents.license || !state.showDocumentChoice) ? `
-                                <div style="margin-bottom: 1rem;">
-                                    <div class="flex-between" style="margin-bottom: 0.5rem;">
-                                        <label class="form-label" style="margin: 0;">Driving License *</label>
-                                        ${state.documents.license ? '<span class="doc-verified">✓ AI Verified</span>' : ''}
-                                    </div>
-                                    ${state.documents.license ? `
-                                        <div class="document-item">
-                                            <div class="document-content">
-                                                <div class="doc-icon">🪪</div>
-                                                <div style="flex: 1;">
-                                                    ${state.documents.license.extracted ? `
-                                                        <p style="font-size: 0.875rem; font-weight: bold; color: #4ade80;">✓ Driving License Extracted Successfully</p>
-                                                        <p style="font-size: 0.75rem; color: #9ca3af;">${state.documents.license.name}</p>
-                                                        <p style="font-size: 0.75rem; color: #4ade80; margin-top: 0.25rem;">Current, expires 2028</p>
-                                                    ` : `
-                                                        <p style="font-size: 0.875rem; font-weight: bold;">${state.documents.license.name}</p>
-                                                        <p style="font-size: 0.75rem; color: #9ca3af;">Uploaded ${Math.floor((new Date() - state.documents.license.timestamp) / 1000)}s ago</p>
-                                                        ${state.documents.license.verified ? '<p style="font-size: 0.75rem; color: #4ade80; margin-top: 0.25rem;">✓ Current, expires 2028</p>' : ''}
-                                                    `}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    ` : `
-                                        <input type="file" id="licenseInput" accept="image/*,application/pdf" onchange="handleDocumentUpload('license', event)" />
-                                        <button class="upload-button" onclick="document.getElementById('licenseInput').click()">
-                                            + Upload License
-                                        </button>
-                                    `}
-                                </div>
-                            ` : ''}
-
-                            ${(state.documents.policy || !state.showDocumentChoice) ? `
-                                <div style="margin-bottom: 1rem;">
-                                    <div class="flex-between" style="margin-bottom: 0.5rem;">
-                                        <label class="form-label" style="margin: 0;">Insurance Policy *</label>
-                                        ${state.documents.policy ? '<span class="doc-verified">✓ AI Verified</span>' : ''}
-                                    </div>
-                                    ${state.documents.policy ? `
-                                        <div class="document-item">
-                                            <div class="document-content">
-                                                <div class="doc-icon">📋</div>
-                                                <div style="flex: 1;">
-                                                    ${state.documents.policy.extracted ? `
-                                                        <p style="font-size: 0.875rem; font-weight: bold; color: #4ade80;">✓ Insurance Policy Extracted Successfully</p>
-                                                        <p style="font-size: 0.75rem; color: #9ca3af;">${state.documents.policy.name}</p>
-                                                        <p style="font-size: 0.75rem; color: #4ade80; margin-top: 0.25rem;">Policy active until Dec 2026</p>
-                                                    ` : `
-                                                        <p style="font-size: 0.875rem; font-weight: bold;">${state.documents.policy.name}</p>
-                                                        <p style="font-size: 0.75rem; color: #9ca3af;">Uploaded ${Math.floor((new Date() - state.documents.policy.timestamp) / 1000)}s ago</p>
-                                                        ${state.documents.policy.verified ? '<p style="font-size: 0.75rem; color: #4ade80; margin-top: 0.25rem;">✓ Policy active until Dec 2026</p>' : ''}
-                                                    `}
-                                                </div>
-                                            </div>
-                                        </div>
-                                    ` : `
-                                        <input type="file" id="policyInput" accept="image/*,application/pdf" onchange="handleDocumentUpload('policy', event)" />
-                                        <button class="upload-button" onclick="document.getElementById('policyInput').click()">
-                                            + Upload Policy
-                                        </button>
-                                    `}
-                                </div>
-                            ` : ''}
-
-                            ${state.documents.rc && state.documents.license && state.documents.policy ? `
-                                <div>
-                                    <div class="flex-between" style="margin-bottom: 0.5rem;">
-                                        <label class="form-label" style="margin: 0;">Additional Documents</label>
-                                        <span style="font-size: 0.75rem; color: #6b7280;">Optional</span>
-                                    </div>
-                                   
-                                    ${state.documents.additional.length > 0 ? `
-                                        <div style="margin-bottom: 0.75rem;">
-                                            ${state.documents.additional.map((doc, idx) => `
-                                                <div class="document-item" style="margin-bottom: 0.5rem;">
-                                                    <div class="document-content">
-                                                        <div class="doc-icon">📎</div>
-                                                        <div style="flex: 1;">
-                                                            <p style="font-size: 0.875rem; font-weight: bold;">${doc.customName}</p>
-                                                            <p style="font-size: 0.75rem; color: #9ca3af;">${doc.name}</p>
-                                                            <p style="font-size: 0.75rem; color: #4ade80; margin-top: 0.25rem;">✓ Uploaded & AI Verified</p>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            `).join('')}
-                                        </div>
-                                    ` : ''}
-
-                                    <button
-                                        class="btn-purple"
-                                        style="width: 100%;"
-                                        onclick="state.showAddDocModal = true; render();"
-                                    >
-                                        + Add Additional Document
-                                    </button>
-                                </div>
-                            ` : ''}
-
-                            <div style="margin-top: 1rem; background-color: rgba(37, 99, 235, 0.3); border: 1px solid #3b82f6; border-radius: 0.5rem; padding: 0.75rem;">
-                                <p style="font-size: 0.75rem; color: #bfdbfe;">
-                                    💡 All documents are scanned by AI to verify authenticity and expiry dates
-                                </p>
                             </div>
                         </div>
-
-                        <div class="button-row">
-                            <button class="btn-secondary" onclick="state.screen = 'details'; render();">
-                                ← Back
+                       
+                        ${state.evidence.photos.length > 0 ? `
+                        <div class="card">
+                            <h3 class="card-title">📸 CAPTURED EVIDENCE (${state.evidence.photos.length}/4 minimum)</h3>
+                            <div class="photo-grid">
+                                ${state.evidence.photos.map((photo, i) => `
+                                    <div class="photo-item">
+                                        <img src="${photo.src}" alt="Evidence ${i+1}">
+                                        <div class="photo-badge">✓ ${i+1}</div>
+                                        <div class="photo-metadata">
+                                            ${photo.aiDamage ? `🤖 AI: ${photo.aiDamage}<br>` : ''}
+                                            GPS: ${photo.gps?.lat.toFixed(4)}, ${photo.gps?.lng.toFixed(4)}<br>
+                                            ${new Date(photo.timestamp).toLocaleTimeString()}
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                        ` : ''}
+                       
+                        <button class="btn btn-primary" onclick="proceedToIncident()" ${state.evidence.photos.length < 4 ? 'disabled' : ''}>
+                            ${state.evidence.photos.length < 4 ? `CAPTURE ${4 - state.evidence.photos.length} MORE PHOTOS →` : 'NEXT: INCIDENT DETAILS →'}
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+       
+        // INCIDENT DETAILS SCREEN
+        function renderIncidentScreen() {
+            return `
+                <div class="screen">
+                    <div class="container">
+                        <div class="header">
+                            <h1 class="header-title">INCIDENT REPORT</h1>
+                            <p class="header-subtitle">Step 2 of 4 • AI Verification</p>
+                        </div>
+                       
+                        <div class="card">
+                            <h3 class="card-title">PERSONAL INFO</h3>
+                            <input type="text" id="nameInput" placeholder="Full Name" value="${state.claimData.name}" oninput="updateClaimData('name', this.value)" class="mono">
+                            <input type="text" id="vehicleInput" placeholder="Vehicle Number (MH12AB1234)" value="${state.claimData.vehicle}" oninput="updateClaimData('vehicle', this.value.toUpperCase())" class="mono" style="text-transform: uppercase;">
+                        </div>
+                       
+                        <div class="card">
+                            <h3 class="card-title">VEHICLE TYPE</h3>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                                <button class="btn ${state.claimData.vehicleType === 'car' ? 'btn-primary' : 'btn-outline'}" onclick="selectVehicle('car')">
+                                    🚗 CAR
+                                </button>
+                                <button class="btn ${state.claimData.vehicleType === 'bike' ? 'btn-primary' : 'btn-outline'}" onclick="selectVehicle('bike')">
+                                    🏍️ BIKE
+                                </button>
+                            </div>
+                        </div>
+                       
+                        <div class="card">
+                            <h3 class="card-title">INSURANCE</h3>
+                            <select id="insuranceSelect" onchange="updateClaimData('insuranceCompany', this.value)" class="mono">
+                                <option value="">Select Insurance Company</option>
+                                <option ${state.claimData.insuranceCompany === 'ICICI Lombard' ? 'selected' : ''}>ICICI Lombard</option>
+                                <option ${state.claimData.insuranceCompany === 'HDFC ERGO' ? 'selected' : ''}>HDFC ERGO</option>
+                                <option ${state.claimData.insuranceCompany === 'Bajaj Allianz' ? 'selected' : ''}>Bajaj Allianz</option>
+                                <option ${state.claimData.insuranceCompany === 'Tata AIG' ? 'selected' : ''}>Tata AIG</option>
+                                <option ${state.claimData.insuranceCompany === 'ACKO' ? 'selected' : ''}>ACKO</option>
+                                <option ${state.claimData.insuranceCompany === 'Digit Insurance' ? 'selected' : ''}>Digit Insurance</option>
+                            </select>
+                            <input type="text" id="policyInput" placeholder="Policy Number" value="${state.claimData.policyNumber}" oninput="updateClaimData('policyNumber', this.value)" class="mono">
+                        </div>
+                       
+                        <div class="card">
+                            <h3 class="card-title">🎤 INCIDENT DESCRIPTION</h3>
+                            <p style="color: var(--text-dim); margin-bottom: 15px; font-size: 13px;">
+                                Describe what happened (tap mic for voice input)
+                            </p>
+                            <div class="voice-input-container">
+                                <textarea
+                                    id="descriptionInput"
+                                    placeholder="E.g., Hit from behind while stopped at red light..."
+                                    style="padding-right: 70px;"
+                                    oninput="updateClaimData('incidentDescription', this.value)"
+                                >${state.claimData.incidentDescription}</textarea>
+                                <button class="voice-btn" id="voiceBtn" onclick="toggleVoiceInput()">🎤</button>
+                            </div>
+                        </div>
+                       
+                        <div class="card">
+                            <h3 class="card-title">LOCATION & ENVIRONMENT</h3>
+                            ${!state.claimData.gpsLocation ? `
+                                <button class="btn btn-primary" onclick="lockGPS()">
+                                    📍 LOCK GPS & WEATHER
+                                </button>
+                            ` : `
+                                <div style="background: rgba(0, 255, 136, 0.1); border: 2px solid var(--primary); padding: 15px; margin: 10px 0;">
+                                    <strong style="color: var(--primary);">✓ GPS LOCKED</strong>
+                                    <div style="font-size: 13px; margin-top: 8px; font-family: 'Space Mono', monospace;">
+                                        ${state.claimData.gpsLocation.address}<br>
+                                        Accuracy: ${state.claimData.gpsLocation.accuracy}m<br>
+                                        Weather: ${state.claimData.weather.condition} • ${state.claimData.weather.temp}°C
+                                    </div>
+                                </div>
+                            `}
+                        </div>
+                       
+                        <div style="display: flex; gap: 15px;">
+                            <button class="btn btn-outline" onclick="goBack('capture')">
+                                ← BACK
                             </button>
-                            <button
-                                class="btn-green"
-                                onclick="runFraudChecks()"
-                                ${!canProceedFromMedia() ? 'disabled' : ''}
-                            >
-                                ✨ Run AI Checks →
+                            <button class="btn btn-primary" onclick="proceedToVerification()" ${!canProceedToVerification() ? 'disabled' : ''}>
+                                NEXT: AI ANALYSIS →
                             </button>
                         </div>
                     </div>
                 </div>
-
-                ${state.showAddDocModal ? `
-                    <div class="modal-overlay">
-                        <div class="modal-content">
-                            <h3 style="font-size: 1.25rem; font-weight: bold; margin-bottom: 1rem;">Add Additional Document</h3>
-                           
-                            <div style="margin-bottom: 1rem;">
-                                <label class="form-label">Document Name *</label>
-                                <input
-                                    type="text"
-                                    class="form-input"
-                                    value="${state.newDocName}"
-                                    placeholder="e.g., Pollution Certificate, Tax Receipt"
-                                    onchange="state.newDocName = this.value; render();"
-                                    onkeyup="state.newDocName = this.value;"
-                                />
-                            </div>
-
-                            <input type="file" id="additionalInput" accept="image/*,application/pdf" onchange="handleDocumentUpload('additional', event)" />
-
-                            <div style="display: flex; gap: 0.75rem;">
-                                <button
-                                    class="btn-secondary"
-                                    style="flex: 1;"
-                                    onclick="state.showAddDocModal = false; state.newDocName = ''; render();"
-                                >
-                                    Cancel
-                                </button>
-                                <button
-                                    class="btn-purple"
-                                    style="flex: 1;"
-                                    onclick="${state.newDocName ? "document.getElementById('additionalInput').click()" : ''}"
-                                    ${!state.newDocName ? 'disabled' : ''}
-                                >
-                                    Upload
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                ` : ''}
             `;
         }
-
+       
+        // VERIFICATION SCREEN
+        function renderVerificationScreen() {
+            return `
+                <div class="screen">
+                    <div class="container">
+                        <div class="header">
+                            <h1 class="header-title">ADDITIONAL EVIDENCE</h1>
+                            <p class="header-subtitle">Step 3 of 4 • Optional Enhancements</p>
+                        </div>
+                       
+                        <div class="card">
+                            <h3 class="card-title">🎥 DASHCAM INTEGRATION</h3>
+                            <p style="color: var(--text-dim); margin-bottom: 15px; font-size: 13px;">
+                                Upload dashcam footage for comprehensive 360° evidence
+                            </p>
+                           
+                            ${!state.evidence.dashcam ? `
+                                <input type="file" id="dashcamInput" accept="video/*" style="display:none;" onchange="uploadDashcam(event)">
+                                <button class="btn btn-primary" onclick="document.getElementById('dashcamInput').click()">
+                                    📹 UPLOAD DASHCAM VIDEO
+                                </button>
+                            ` : `
+                                <div style="background: rgba(0, 255, 136, 0.1); border: 2px solid var(--primary); padding: 15px;">
+                                    <strong style="color: var(--primary);">✓ DASHCAM UPLOADED</strong>
+                                    <div style="font-size: 13px; margin-top: 8px; font-family: 'Space Mono', monospace;">
+                                        ${state.evidence.dashcam.name}<br>
+                                        Duration: ${state.evidence.dashcam.duration}s • AI analyzing impact angle...
+                                    </div>
+                                </div>
+                            `}
+                        </div>
+                       
+                        <div class="card">
+                            <h3 class="card-title">📊 REAL-TIME UPDATES</h3>
+                            <div class="update-feed">
+                                ${state.realTimeUpdates.length > 0 ? state.realTimeUpdates.map(update => `
+                                    <div class="update-item">
+                                        <div>${update.message}</div>
+                                        <div class="update-time">${new Date(update.timestamp).toLocaleTimeString()}</div>
+                                    </div>
+                                `).join('') : '<div style="text-align: center; color: var(--text-dim); padding: 20px;">No updates yet</div>'}
+                            </div>
+                        </div>
+                       
+                        <div style="display: flex; gap: 15px;">
+                            <button class="btn btn-outline" onclick="goBack('incident')">
+                                ← BACK
+                            </button>
+                            <button class="btn btn-danger" onclick="runAIAnalysis()">
+                                ⚡ RUN AI ANALYSIS
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+       
+        // ANALYZING SCREEN
         function renderAnalyzingScreen() {
             return `
-                <div class="analyzing-screen">
-                    <div style="max-width: 28rem; width: 100%;">
-                        <div class="analyzing-spinner"></div>
+                <div class="screen">
+                    <div class="analyzing-screen">
+                        <div class="ai-brain">
+                            <div class="brain-core"></div>
+                            <div class="brain-pulse" style="animation-delay: 0s;"></div>
+                            <div class="brain-pulse" style="animation-delay: 0.5s;"></div>
+                            <div class="brain-pulse" style="animation-delay: 1s;"></div>
+                        </div>
                        
-                        <h2 style="font-size: 1.875rem; font-weight: bold; margin-bottom: 0.5rem; text-align: center;">AI SCANNING...</h2>
-                        <p class="text-gray-400" style="margin-bottom: 2rem; text-align: center;">Step 3 of 3</p>
+                        <h2 class="processing-text">AI ANALYSIS RUNNING</h2>
+                        <p style="color: var(--text-dim); margin-bottom: 40px;">
+                            Step 4 of 4 • Computer Vision + Machine Learning
+                        </p>
                        
-                        <div class="analyzing-checks">
-                            <div class="check-item">
-                                <div class="check-icon">${createIcon('shield')}</div>
-                                <span style="font-size: 1.125rem;">Verifying GPS location...</span>
+                        <div class="container">
+                            <div class="analysis-grid">
+                                <div class="analysis-item">
+                                    <div class="analysis-icon">🔍</div>
+                                    <div class="analysis-label">Damage Detection</div>
+                                    <div class="analysis-value">ANALYZING...</div>
+                                </div>
+                                <div class="analysis-item">
+                                    <div class="analysis-icon">💰</div>
+                                    <div class="analysis-label">Cost Estimation</div>
+                                    <div class="analysis-value">COMPUTING...</div>
+                                </div>
+                                <div class="analysis-item">
+                                    <div class="analysis-icon">📍</div>
+                                    <div class="analysis-label">GPS Verification</div>
+                                    <div class="analysis-value">CHECKING...</div>
+                                </div>
+                                <div class="analysis-item">
+                                    <div class="analysis-icon">🖼️</div>
+                                    <div class="analysis-label">Image Authenticity</div>
+                                    <div class="analysis-value">SCANNING...</div>
+                                </div>
+                                <div class="analysis-item">
+                                    <div class="analysis-icon">⚡</div>
+                                    <div class="analysis-label">Impact Force</div>
+                                    <div class="analysis-value">VALIDATING...</div>
+                                </div>
+                                <div class="analysis-item">
+                                    <div class="analysis-icon">🛡️</div>
+                                    <div class="analysis-label">Fraud Score</div>
+                                    <div class="analysis-value">CALCULATING...</div>
+                                </div>
+                                <div class="analysis-item">
+                                    <div class="analysis-icon">🏪</div>
+                                    <div class="analysis-label">Garage Matching</div>
+                                    <div class="analysis-value">SEARCHING...</div>
+                                </div>
+                                <div class="analysis-item">
+                                    <div class="analysis-icon">⛅</div>
+                                    <div class="analysis-label">Weather Match</div>
+                                    <div class="analysis-value">MATCHING...</div>
+                                </div>
+                                <div class="analysis-item">
+                                    <div class="analysis-icon">🎥</div>
+                                    <div class="analysis-label">Video Analysis</div>
+                                    <div class="analysis-value">PROCESSING...</div>
+                                </div>
+                                <div class="analysis-item">
+                                    <div class="analysis-icon">🔗</div>
+                                    <div class="analysis-label">Blockchain Proof</div>
+                                    <div class="analysis-value">ANCHORING...</div>
+                                </div>
                             </div>
-                            <div class="check-item">
-                                <div class="check-icon">${createIcon('clock')}</div>
-                                <span style="font-size: 1.125rem;">Checking media freshness...</span>
-                            </div>
-                            <div class="check-item">
-                                <div class="check-icon">${createIcon('camera')}</div>
-                                <span style="font-size: 1.125rem;">Detecting real damage...</span>
+                           
+                            <div class="contract-status" style="margin-top: 30px;">
+                                <strong style="color: var(--primary);">⚙️ SMART CONTRACT EXECUTION</strong>
+                                <div class="contract-code">
+                                    if (fraudScore < 20 && damageVerified) {
+                                        autoApprove();
+                                        findNearestGarage();
+                                        initiateDirectPayment();
+                                    }
+                                </div>
                             </div>
                         </div>
-
-                        <div style="margin-top: 1.5rem; text-align: center; color: #9ca3af;">
-                            Analyzing ${state.photos.length} photos + ${state.videos.length} videos
-                        </div>
-                        <div style="text-align: center; font-size: 0.875rem; color: #6b7280;">This takes 3-5 seconds</div>
                     </div>
                 </div>
             `;
         }
-
+       
+        // RESULT SCREEN
         function renderResultScreen() {
-            const result = state.result;
-            const isApproved = result.status === 'approved';
-            const isReview = result.status === 'review';
-            const isBlocked = result.status === 'blocked';
-
-            const bgClass = isApproved ? 'bg-gradient-green' : isReview ? 'bg-gradient-yellow' : 'bg-gradient-red';
-
+            const result = state.aiAnalysis;
+            const approved = result.fraudScore < 25;
+           
             return `
-                <div class="result-screen ${bgClass}">
-                    <div style="max-width: 42rem; margin: 0 auto;">
-                        <div class="text-center mb-8">
-                            ${isApproved ? `
-                                <div class="result-icon bounce">${createIcon('checkCircle', 'result-icon')}</div>
-                                <h1 style="font-size: 3rem; font-weight: 900; color: white; margin-bottom: 0.5rem;">✅ APPROVED!</h1>
-                            ` : isReview ? `
-                                <div class="result-icon">${createIcon('alertTriangle', 'result-icon')}</div>
-                                <h1 style="font-size: 3rem; font-weight: 900; color: white; margin-bottom: 0.5rem;">🟡 REVIEW</h1>
-                            ` : `
-                                <div class="result-icon">${createIcon('xCircle', 'result-icon')}</div>
-                                <h1 style="font-size: 3rem; font-weight: 900; color: white; margin-bottom: 0.5rem;">❌ BLOCKED</h1>
-                            `}
-                            <p style="font-size: 1.5rem; color: white; opacity: 0.9;">${result.action}</p>
+                <div class="result-screen ${approved ? 'result-approved' : 'result-rejected'}">
+                    <div class="container">
+                        <div class="result-header">
+                            <div class="result-icon" style="color: ${approved ? 'var(--primary)' : 'var(--danger)'}">
+                                ${approved ? '✅' : '❌'}
+                            </div>
+                            <h1 class="result-title" style="color: ${approved ? 'var(--primary)' : 'var(--danger)'}">
+                                ${approved ? 'APPROVED' : 'REVIEW REQUIRED'}
+                            </h1>
+                            <p class="result-subtitle">
+                                ${approved ? 'Garage dispatched • Payment processing' : 'Human review initiated'}
+                            </p>
                         </div>
-
-                        <div class="result-card">
-                            <h3 style="font-size: 1.125rem; font-weight: bold; margin-bottom: 0.75rem;">Claim Summary</h3>
-                            <div style="font-size: 0.875rem;">
-                                <div class="summary-row">
-                                    <span style="color: rgba(255, 255, 255, 0.7);">Name:</span>
-                                    <span style="font-weight: bold;">${state.formData.name}</span>
-                                </div>
-                                <div class="summary-row">
-                                    <span style="color: rgba(255, 255, 255, 0.7);">Vehicle:</span>
-                                    <span style="font-weight: bold;">${state.formData.vehicleNumber}</span>
-                                </div>
-                                <div class="summary-row">
-                                    <span style="color: rgba(255, 255, 255, 0.7);">Insurance:</span>
-                                    <span style="font-weight: bold;">${state.formData.policyCompany}</span>
-                                </div>
-                                <div class="summary-row">
-                                    <span style="color: rgba(255, 255, 255, 0.7);">Evidence:</span>
-                                    <span style="font-weight: bold;">${state.photos.length} photos + ${state.videos.length} videos</span>
-                                </div>
+                       
+                        <div class="claim-amount">
+                            <div class="amount-label">Estimated Damage</div>
+                            <div class="amount-value">₹${result.costEstimate.toLocaleString()}</div>
+                        </div>
+                       
+                        ${result.damageParts.length > 0 ? `
+                        <div class="card">
+                            <h3 class="card-title">🤖 AI DAMAGE ASSESSMENT</h3>
+                            <div style="display: grid; gap: 10px;">
+                                ${result.damageParts.map(part => `
+                                    <div style="background: #0a0a0a; padding: 15px; border-left: 3px solid var(--primary);">
+                                        <strong style="color: var(--primary);">${part.part}</strong>
+                                        <div style="font-size: 13px; color: var(--text-dim); margin-top: 5px;">
+                                            Severity: ${part.severity}% • Est. Cost: ₹${part.cost.toLocaleString()}
+                                        </div>
+                                    </div>
+                                `).join('')}
                             </div>
                         </div>
-
-                        <div class="result-card">
-                            <h3 style="font-size: 1.25rem; font-weight: bold; margin-bottom: 1rem;">3 Fraud Shields: ${result.checksCount}/3 Passed</h3>
-                           
-                            <div>
-                                <div class="check-result">
-                                    <div class="check-label">
-                                        ${createIcon('mapPin')}
-                                        <span>GPS Location Match</span>
-                                    </div>
-                                    <span style="font-weight: bold; color: ${result.checks.gps ? '#86efac' : '#fca5a5'};">
-                                        ${result.checks.gps ? '✓ PASS' : '✗ FAIL'}
-                                    </span>
-                                </div>
-                               
-                                <div class="check-result">
-                                    <div class="check-label">
-                                        ${createIcon('clock')}
-                                        <span>Fresh Media (less than 30 min)</span>
-                                    </div>
-                                    <span style="font-weight: bold; color: ${result.checks.freshness ? '#86efac' : '#fca5a5'};">
-                                        ${result.checks.freshness ? '✓ PASS' : '✗ FAIL'}
-                                    </span>
-                                </div>
-                               
-                                <div class="check-result">
-                                    <div class="check-label">
-                                        ${createIcon('camera')}
-                                        <span>Real Damage Detected</span>
-                                    </div>
-                                    <span style="font-weight: bold; color: ${result.checks.damage ? '#86efac' : '#fca5a5'};">
-                                        ${result.checks.damage ? '✓ PASS' : '✗ FAIL'}
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="result-card-white">
-                            <div class="damage-cost">
-                                <div style="color: #4b5563; margin-bottom: 0.5rem;">Estimated Damage</div>
-                                <div class="damage-amount">₹${result.damageCost.toLocaleString()}</div>
-                            </div>
-                        </div>
-
-                        ${isApproved ? `
-                            <div class="result-card-white">
-                                <div class="garage-info">
-                                    ${createIcon('navigation', 'icon-lg')}
-                                    <div style="flex: 1;">
-                                        <h4 style="font-weight: bold; color: #111827; font-size: 1.125rem; margin-bottom: 0.25rem;">Garage Dispatched</h4>
-                                        <p style="color: #374151; font-weight: 500;">${result.garage}</p>
-                                        <p style="color: #4b5563; font-size: 0.875rem;">${result.distance} away • ETA ${result.eta}</p>
-                                    </div>
-                                </div>
-                                <div class="alert-box">
-                                    <p style="color: #166534; font-weight: bold; font-size: 0.875rem;">💰 Direct Payment Approved</p>
-                                    <p style="color: #15803d; font-size: 0.75rem;">Insurer pays garage directly - ₹0 from your pocket</p>
-                                </div>
-                                <div class="tow-truck-box">
-                                    <p style="color: #1e40af; font-weight: bold; font-size: 0.875rem;">${createIcon('truck')} Tow Truck Dispatched</p>
-                                    <p style="color: #1d4ed8; font-size: 0.75rem;">Tow truck has been sent to your location</p>
-                                </div>
-                            </div>
                         ` : ''}
-
-                        <div class="space-y-3">
-                            ${isApproved ? `
-                                <button class="btn-success">
-                                    🎉 DONE - RELAX!
-                                </button>
-                            ` : ''}
-                           
-                            ${isReview ? `
-                                <button class="btn-success" style="color: #a16207;">
-                                    📞 SUPPORT CALLING (5 MIN)
-                                </button>
-                            ` : ''}
-                           
-                            ${isBlocked ? `
-                                <div class="info-box">
-                                    <p style="font-weight: bold; margin-bottom: 0.5rem;">Why was I blocked?</p>
-                                    ${!result.checks.gps ? '<p style="font-size: 0.875rem;">• You are not at the accident location</p>' : ''}
-                                    ${!result.checks.freshness ? '<p style="font-size: 0.875rem;">• Photos or videos are too old (take fresh ones)</p>' : ''}
-                                    ${!result.checks.damage ? '<p style="font-size: 0.875rem;">• AI could not detect real damage</p>' : ''}
+                       
+                        <div class="card">
+                            <h3 class="card-title">📊 AI ANALYSIS RESULTS</h3>
+                            <div class="analysis-grid">
+                                <div class="analysis-item">
+                                    <div class="analysis-icon">🛡️</div>
+                                    <div class="analysis-label">Fraud Score</div>
+                                    <div class="analysis-value">${result.fraudScore}/100</div>
+                                    <div class="analysis-status ${result.fraudScore < 30 ? 'status-pass' : result.fraudScore < 70 ? 'status-warn' : 'status-fail'}">
+                                        ${result.fraudScore < 30 ? 'LOW RISK' : result.fraudScore < 70 ? 'MEDIUM' : 'HIGH RISK'}
+                                    </div>
                                 </div>
-                            ` : ''}
-
-                            <button class="btn-border" onclick="window.location.href='index.html'">
-                                🏠 HOME
-                            </button>
+                                <div class="analysis-item">
+                                    <div class="analysis-icon">📍</div>
+                                    <div class="analysis-label">GPS Match</div>
+                                    <div class="analysis-value">${result.gpsMatch ? '✓' : '✗'}</div>
+                                    <div class="analysis-status ${result.gpsMatch ? 'status-pass' : 'status-fail'}">
+                                        ${result.gpsMatch ? 'VERIFIED' : 'FAILED'}
+                                    </div>
+                                </div>
+                                <div class="analysis-item">
+                                    <div class="analysis-icon">🖼️</div>
+                                    <div class="analysis-label">Image Real</div>
+                                    <div class="analysis-value">${result.imageAuthenticity ? '✓' : '✗'}</div>
+                                    <div class="analysis-status ${result.imageAuthenticity ? 'status-pass' : 'status-fail'}">
+                                        ${result.imageAuthenticity ? 'AUTHENTIC' : 'SUSPICIOUS'}
+                                    </div>
+                                </div>
+                                <div class="analysis-item">
+                                    <div class="analysis-icon">⏱️</div>
+                                    <div class="analysis-label">Timestamp</div>
+                                    <div class="analysis-value">${result.timestampValid ? '✓' : '✗'}</div>
+                                    <div class="analysis-status ${result.timestampValid ? 'status-pass' : 'status-fail'}">
+                                        ${result.timestampValid ? 'FRESH' : 'OLD'}
+                                    </div>
+                                </div>
+                                ${state.evidence.impactData ? `
+                                <div class="analysis-item">
+                                    <div class="analysis-icon">⚡</div>
+                                    <div class="analysis-label">Impact Force</div>
+                                    <div class="analysis-value">${state.evidence.impactData.force}</div>
+                                    <div class="analysis-status status-pass">RECORDED</div>
+                                </div>
+                                ` : ''}
+                            </div>
                         </div>
-
-                        <div style="text-align: center; margin-top: 1.5rem; color: white; opacity: 0.75;">
-                            Total time: 90 seconds ⚡
+                       
+                        <div class="blockchain-proof">
+                            <strong style="color: var(--accent);">🔗 BLOCKCHAIN CERTIFICATE</strong>
+                            <div class="blockchain-hash">${state.blockchain.blockHash}</div>
+                            <div style="font-size: 11px; color: var(--text-dim); margin-top: 10px; font-family: 'Space Mono', monospace;">
+                                Block Height: 1,847,293 • Confirmations: 6<br>
+                                Previous Hash: ${state.blockchain.previousHash}
+                            </div>
+                        </div>
+                       
+                        ${approved && state.nearbyGarages.length > 0 ? `
+                        <div class="card">
+                            <h3 class="card-title">🚗 NEAREST GARAGES (AUTO-MATCHED)</h3>
+                            ${state.nearbyGarages.map(garage => `
+                                <div class="garage-card">
+                                    <div class="garage-image">${garage.icon}</div>
+                                    <div class="garage-details">
+                                        <div class="garage-name">${garage.name}</div>
+                                        <div class="garage-info">
+                                            📍 ${garage.distance} km away<br>
+                                            📞 ${garage.phone}<br>
+                                            ⭐ ${garage.rating}/5 (${garage.reviews} reviews)
+                                        </div>
+                                        <div class="garage-eta">ETA: ${garage.eta} min</div>
+                                    </div>
+                                </div>
+                            `).join('')}
+                           
+                            <div style="background: rgba(0, 255, 136, 0.1); border: 2px solid var(--primary); padding: 20px; margin-top: 15px;">
+                                <strong style="color: var(--primary); font-size: 18px;">💰 DIRECT PAYMENT APPROVED</strong>
+                                <div style="margin-top: 10px; font-size: 14px;">
+                                    ₹0 out of pocket • Insurance pays garage directly
+                                </div>
+                            </div>
+                           
+                            <div style="background: rgba(0, 221, 255, 0.1); border: 2px solid var(--accent); padding: 20px; margin-top: 15px;">
+                                <strong style="color: var(--accent); font-size: 18px;">🚛 TOW TRUCK DISPATCHED</strong>
+                                <div style="margin-top: 10px; font-size: 14px; line-height: 1.6;">
+                                    A tow truck will reach your location very soon and will directly take your vehicle to the garage. You don't have to worry about anything - just sit back and relax!
+                                </div>
+                            </div>
+                        </div>
+                        ` : ''}
+                       
+                        <button class="btn btn-primary" onclick="resetApp()">
+                            🏠 RETURN HOME
+                        </button>
+                       
+                        <div style="text-align: center; margin-top: 30px; color: var(--text-dim);">
+                            <strong>Total Processing Time: 43 seconds</strong>
                         </div>
                     </div>
                 </div>
             `;
         }
-
-        // Main render function
-        function render() {
-            const app = document.getElementById('app');
-            let content = '';
-
-            switch(state.screen) {
-                case 'emergency':
-                    content = renderEmergencyScreen();
-                    break;
-                case 'details':
-                    content = renderDetailsScreen();
-                    break;
-                case 'capture':
-                    content = renderCaptureScreen();
-                    break;
-                case 'analyzing':
-                    content = renderAnalyzingScreen();
-                    break;
-                case 'result':
-                    content = renderResultScreen();
-                    break;
-                default:
-                    content = renderEmergencyScreen();
-            }
-
-            app.innerHTML = content;
+       
+        // CORE FUNCTIONS
+        function startClaim() {
+            state.screen = 'capture';
+            addUpdate('🚨 Emergency claim initiated');
+            addUpdate('📍 Acquiring GPS coordinates...');
+            initializeSensors();
+            render();
         }
-
-        // Initial render
+       
+        function goBack(screen) {
+            state.screen = screen;
+            render();
+        }
+       
+        function updateClaimData(field, value) {
+            state.claimData[field] = value;
+        }
+       
+        let mediaStream = null;
+        let mediaRecorder = null;
+        let recordedChunks = [];
+        let recordTimer = null;
+       
+        async function initializeCapture() {
+            try {
+                mediaStream = await navigator.mediaDevices.getUserMedia({
+                    video: { facingMode: 'environment' },
+                    audio: true
+                });
+               
+                const videoElement = document.getElementById('liveVideo');
+                if (videoElement) {
+                    videoElement.srcObject = mediaStream;
+                }
+               
+                setTimeout(() => {
+                    if (!state.claimData.gpsLocation) {
+                        state.claimData.gpsLocation = {
+                            lat: 18.5204 + (Math.random() - 0.5) * 0.01,
+                            lng: 73.8567 + (Math.random() - 0.5) * 0.01,
+                            accuracy: Math.floor(Math.random() * 10) + 5,
+                            address: 'PCCOER, Ravet, Pune, Maharashtra'
+                        };
+                       
+                        state.claimData.weather = {
+                            condition: ['Clear', 'Partly Cloudy', 'Overcast'][Math.floor(Math.random() * 3)],
+                            temp: Math.floor(Math.random() * 10) + 25
+                        };
+                       
+                        state.claimData.timestamp = Date.now();
+                       
+                        addUpdate('✓ GPS locked with ' + state.claimData.gpsLocation.accuracy + 'm accuracy');
+                        addUpdate('✓ Weather data captured: ' + state.claimData.weather.condition);
+                    }
+                }, 1000);
+               
+            } catch (error) {
+                console.error('Camera access error:', error);
+                addUpdate('⚠️ Camera unavailable - using fallback mode');
+            }
+        }
+       
+        const damageParts = [
+            { parts: ['Front Bumper', 'Hood', 'Headlight'], severity: [60, 45, 70] },
+            { parts: ['Side Door', 'Side Mirror', 'Window'], severity: [55, 80, 90] },
+            { parts: ['Rear Bumper', 'Tail Light', 'Trunk'], severity: [40, 65, 35] }
+        ];
+       
+        function captureFrame() {
+            const video = document.getElementById('liveVideo');
+            if (!video || !video.videoWidth) {
+                alert('⚠️ Camera not ready. Please wait a moment.');
+                return;
+            }
+           
+            const canvas = document.createElement('canvas');
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            canvas.getContext('2d').drawImage(video, 0, 0);
+           
+            const imageData = canvas.toDataURL('image/jpeg', 0.95);
+           
+            // AI damage detection simulation
+            const damageSet = damageParts[Math.floor(Math.random() * damageParts.length)];
+            const aiDamage = damageSet.parts[Math.floor(Math.random() * damageSet.parts.length)];
+           
+            state.evidence.photos.push({
+                src: imageData,
+                timestamp: Date.now(),
+                gps: state.claimData.gpsLocation,
+                aiDamage: aiDamage,
+                metadata: {
+                    camera: 'Mobile Camera',
+                    exif: true,
+                    edited: false
+                }
+            });
+           
+            if (!state.blockchain.blockHash) {
+                state.blockchain.blockHash = generateHash();
+                state.blockchain.previousHash = generateHash();
+                state.blockchain.timestamp = Date.now();
+               
+                setTimeout(() => {
+                    const blockStatus = document.getElementById('blockchainStatus');
+                    const blockHash = document.getElementById('blockHash');
+                    if (blockStatus && blockHash) {
+                        blockStatus.style.display = 'block';
+                        blockHash.textContent = state.blockchain.blockHash;
+                    }
+                }, 100);
+               
+                addUpdate('✓ Evidence anchored to blockchain');
+            }
+           
+            addUpdate(`✓ Photo ${state.evidence.photos.length} captured • AI detected: ${aiDamage}`);
+            render();
+        }
+       
+        function toggleRecording() {
+            if (!mediaRecorder || mediaRecorder.state === 'inactive') {
+                startRecording();
+            } else {
+                stopRecording();
+            }
+        }
+       
+        function startRecording() {
+            if (!mediaStream) {
+                alert('⚠️ Camera not initialized');
+                return;
+            }
+           
+            recordedChunks = [];
+           
+            try {
+                mediaRecorder = new MediaRecorder(mediaStream);
+               
+                mediaRecorder.ondataavailable = (event) => {
+                    if (event.data.size > 0) {
+                        recordedChunks.push(event.data);
+                    }
+                };
+               
+                mediaRecorder.start();
+               
+                const recordBtn = document.getElementById('recordBtn');
+                if (recordBtn) {
+                    recordBtn.textContent = '⏹️ STOP';
+                }
+               
+                let seconds = 0;
+                recordTimer = setInterval(() => {
+                    seconds++;
+                    const mins = Math.floor(seconds / 60);
+                    const secs = seconds % 60;
+                    const timeDisplay = document.getElementById('recordTime');
+                    if (timeDisplay) {
+                        timeDisplay.textContent =
+                            `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+                    }
+                       
+                    if (mediaRecorder && mediaRecorder.state === 'inactive') {
+                        clearInterval(recordTimer);
+                    }
+                }, 1000);
+               
+                addUpdate('🎥 Video recording started');
+            } catch (error) {
+                console.error('Recording error:', error);
+                alert('⚠️ Recording failed. Please try again.');
+            }
+        }
+       
+        function stopRecording() {
+            if (!mediaRecorder) return;
+           
+            mediaRecorder.stop();
+           
+            const recordBtn = document.getElementById('recordBtn');
+            if (recordBtn) {
+                recordBtn.textContent = '⏺️ RECORD';
+            }
+           
+            if (recordTimer) {
+                clearInterval(recordTimer);
+                recordTimer = null;
+            }
+           
+            mediaRecorder.onstop = () => {
+                const blob = new Blob(recordedChunks, { type: 'video/webm' });
+                state.evidence.videos.push({
+                    blob: blob,
+                    timestamp: Date.now(),
+                    duration: recordedChunks.length
+                });
+               
+                addUpdate('✓ Video saved and encrypted');
+            };
+        }
+       
+        function proceedToIncident() {
+            if (state.evidence.photos.length < 4) {
+                alert('⚠️ Please capture at least 4 photos for evidence');
+                return;
+            }
+           
+            if (mediaStream) {
+                mediaStream.getTracks().forEach(track => track.stop());
+            }
+            state.screen = 'incident';
+            render();
+        }
+       
+        function selectVehicle(type) {
+            state.claimData.vehicleType = type;
+            render();
+        }
+       
+        function lockGPS() {
+            if (state.claimData.gpsLocation) {
+                addUpdate('✓ GPS already locked');
+                render();
+                return;
+            }
+           
+            addUpdate('📍 Locking GPS...');
+           
+            setTimeout(() => {
+                state.claimData.gpsLocation = {
+                    lat: 18.5204 + (Math.random() - 0.5) * 0.01,
+                    lng: 73.8567 + (Math.random() - 0.5) * 0.01,
+                    accuracy: Math.floor(Math.random() * 10) + 5,
+                    address: 'PCCOER, Ravet, Pune, Maharashtra'
+                };
+               
+                state.claimData.weather = {
+                    condition: ['Clear', 'Partly Cloudy', 'Overcast'][Math.floor(Math.random() * 3)],
+                    temp: Math.floor(Math.random() * 10) + 25
+                };
+               
+                state.claimData.timestamp = Date.now();
+               
+                addUpdate('✓ GPS locked successfully');
+                addUpdate('✓ Weather data captured');
+                render();
+            }, 1500);
+        }
+       
+        function canProceedToVerification() {
+            return state.claimData.name &&
+                   state.claimData.vehicle &&
+                   state.claimData.vehicleType &&
+                   state.claimData.policyNumber &&
+                   state.claimData.insuranceCompany &&
+                   state.claimData.gpsLocation;
+        }
+       
+        function proceedToVerification() {
+            if (!canProceedToVerification()) {
+                alert('⚠️ Please fill all required fields');
+                return;
+            }
+           
+            state.screen = 'verification';
+            addUpdate('📋 Basic details verified');
+            render();
+        }
+       
+        function uploadDashcam(event) {
+            const file = event.target.files[0];
+            if (file) {
+                state.evidence.dashcam = {
+                    name: file.name,
+                    size: file.size,
+                    duration: Math.floor(Math.random() * 180) + 30
+                };
+               
+                addUpdate('🎥 Dashcam footage uploaded');
+                addUpdate('🤖 AI extracting impact angle and speed...');
+                render();
+            }
+        }
+       
+        function runAIAnalysis() {
+            state.screen = 'analyzing';
+            addUpdate('🔄 Initiating AI computer vision analysis...');
+            render();
+        }
+       
+        function simulateAIAnalysis() {
+            const analysisSteps = [
+                { delay: 500, text: '✓ GPS verification complete' },
+                { delay: 1000, text: '✓ Image authenticity confirmed' },
+                { delay: 1500, text: '✓ AI damage detection complete' },
+                { delay: 2000, text: '✓ Cost estimation calculated' },
+                { delay: 2500, text: '✓ Fraud score computed' },
+                { delay: 3000, text: '✓ Weather matching verified' },
+                { delay: 3500, text: '✓ Impact force validated' },
+                { delay: 4000, text: '✓ Searching nearby garages...' },
+                { delay: 4500, text: '✓ Video analysis finished' },
+                { delay: 5000, text: '✓ Blockchain proof anchored' }
+            ];
+           
+            analysisSteps.forEach(step => {
+                setTimeout(() => {
+                    addUpdate(step.text);
+                }, step.delay);
+            });
+           
+            setTimeout(() => {
+                completeAIAnalysis();
+            }, 5500);
+        }
+       
+        function completeAIAnalysis() {
+            let fraudScore = 0;
+           
+            const gpsMatch = state.claimData.gpsLocation?.accuracy < 20;
+            if (!gpsMatch) fraudScore += 30;
+           
+            const timeDiff = Date.now() - state.claimData.timestamp;
+            const timestampValid = timeDiff < 30 * 60 * 1000;
+            if (!timestampValid) fraudScore += 20;
+           
+            const imageAuthenticity = state.evidence.photos.every(p => !p.metadata?.edited);
+            if (!imageAuthenticity) fraudScore += 25;
+           
+            const metadataPresent = state.evidence.photos.every(p => p.metadata?.exif);
+            if (!metadataPresent) fraudScore += 10;
+           
+            if (state.evidence.impactData) fraudScore -= 5;
+           
+            fraudScore = Math.max(0, Math.min(100, fraudScore));
+           
+            // Generate AI damage parts with CAPPED costs
+            const detectedParts = [];
+            const uniqueParts = new Set();
+           
+            state.evidence.photos.forEach(photo => {
+                if (photo.aiDamage && !uniqueParts.has(photo.aiDamage)) {
+                    uniqueParts.add(photo.aiDamage);
+                    const severity = Math.floor(Math.random() * 40) + 40;
+                    // Cap individual part cost between 2000-5000
+                    const baseCost = Math.floor(Math.random() * 3000) + 2000;
+                    detectedParts.push({
+                        part: photo.aiDamage,
+                        severity: severity,
+                        cost: baseCost
+                    });
+                }
+            });
+           
+            // Calculate total and cap at 15000
+            let totalCost = detectedParts.reduce((sum, part) => sum + part.cost, 0);
+           
+            // If total exceeds 15000, proportionally reduce all parts
+            if (totalCost > 15000) {
+                const scaleFactor = 15000 / totalCost;
+                detectedParts.forEach(part => {
+                    part.cost = Math.round(part.cost * scaleFactor);
+                });
+                totalCost = 15000;
+            }
+           
+            // Find nearby garages
+            state.nearbyGarages = [
+                {
+                    name: 'Elite Auto Repair Centre',
+                    distance: 2.3,
+                    phone: '+91 98765 43210',
+                    rating: 4.8,
+                    reviews: 2431,
+                    eta: 12,
+                    icon: '🏪'
+                },
+                {
+                    name: 'Premium Car Care',
+                    distance: 3.7,
+                    phone: '+91 98765 43211',
+                    rating: 4.6,
+                    reviews: 1876,
+                    eta: 18,
+                    icon: '🔧'
+                },
+                {
+                    name: 'AutoFix Pro Service',
+                    distance: 5.1,
+                    phone: '+91 98765 43212',
+                    rating: 4.7,
+                    reviews: 3012,
+                    eta: 24,
+                    icon: '⚙️'
+                }
+            ];
+           
+            state.aiAnalysis = {
+                fraudScore,
+                costEstimate: Math.round(totalCost),
+                gpsMatch,
+                timestampValid,
+                imageAuthenticity,
+                metadataPresent,
+                damageParts: detectedParts
+            };
+           
+            state.blockchain.dataHash = generateHash();
+           
+            addUpdate('✓ Analysis complete');
+            addUpdate(`🎯 Fraud score: ${fraudScore}/100`);
+            addUpdate(`💰 Total damage: ₹${Math.round(totalCost).toLocaleString()}`);
+           
+            state.screen = 'result';
+            render();
+        }
+       
+        function generateHash() {
+            const chars = '0123456789abcdef';
+            let hash = '0x';
+            for (let i = 0; i < 64; i++) {
+                hash += chars[Math.floor(Math.random() * chars.length)];
+            }
+            return hash;
+        }
+       
+        function addUpdate(message) {
+            state.realTimeUpdates.unshift({
+                message,
+                timestamp: Date.now()
+            });
+           
+            if (state.realTimeUpdates.length > 10) {
+                state.realTimeUpdates.pop();
+            }
+        }
+       
+        function resetApp() {
+            state = {
+                screen: 'emergency',
+               
+                claimData: {
+                    name: '',
+                    vehicle: '',
+                    vehicleType: '',
+                    policyNumber: '',
+                    insuranceCompany: '',
+                    incidentDescription: '',
+                    gpsLocation: null,
+                    timestamp: null,
+                    weather: null
+                },
+               
+                evidence: {
+                    liveStream: null,
+                    photos: [],
+                    videos: [],
+                    dashcam: null,
+                    impactData: null
+                },
+               
+                blockchain: {
+                    blockHash: null,
+                    previousHash: null,
+                    timestamp: null,
+                    dataHash: null
+                },
+               
+                aiAnalysis: {
+                    damageDetection: null,
+                    fraudScore: null,
+                    costEstimate: null,
+                    authenticity: null,
+                    metadata: null,
+                    damageParts: []
+                },
+               
+                smartContract: {
+                    status: 'pending',
+                    autoApproved: false,
+                    payoutScheduled: false
+                },
+               
+                nearbyGarages: [],
+               
+                realTimeUpdates: []
+            };
+           
+            render();
+        }
+       
+        // Initialize
         render();
     </script>
 </body>
